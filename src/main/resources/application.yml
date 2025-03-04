@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    vault:
+      uri: http://localhost:8200
+      token: root-token  # Dev ?? ??
+      generic:
+        enabled: true
+        backend: secret
+        default-context: my-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
