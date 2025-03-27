@@ -74,7 +74,7 @@ public class JwtTokenizer {
     return Keys.hmacShaKeyFor(secretKey);
   }
 
-  public String reissueTokenPair(HttpServletResponse response , User user){
+  public void String reissueTokenPair(HttpServletResponse response , User user){
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
 
@@ -87,10 +87,11 @@ public class JwtTokenizer {
     refreshTokenObj.setValue(refreshToken);
     refreshTokenService.saveRefreshToken(refreshTokenObj);
 
-    
+    addRefreshTokenCookie(response,refreshToken,REFRESH_TOKEN_EXPIRATION_TIME);
+    addAccessTokenCookie(response,accessToken,ACCESS_TOKEN_EXPIRATION_TIME);
   }
   
-  private void addRefreshToken(HttpServletResponse response,String tokenValue, Long expirationTime){
+  private void addRefreshTokenCookie(HttpServletResponse response,String tokenValue, Long expirationTime){
     Cookie refreshToken = new Cookie("refreshToken", tokenValue);
     refreshToken.setHttpOnly(true);
     refreshToken.setPath("/");
@@ -101,7 +102,7 @@ public class JwtTokenizer {
     response.addCookie(refreshToken);
   }
 
-  private void addAccessToken(HttpServletResponse response,String tokenValue, Long expirationTime){
+  private void addAccessTokenCookie(HttpServletResponse response,String tokenValue, Long expirationTime){
     Cookie accessToken = new Cookie("accessToken", tokenValue);
     accessToken.setHttpOnly(true);
     accessToken.setPath("/");
