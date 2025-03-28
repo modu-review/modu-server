@@ -27,7 +27,6 @@ public class UpdateBoardRequestDto {
                 .content(this.content != null ? this.content : existingBoard.getContent())
                 .view_count(existingBoard.getView_count())
                 .user(existingBoard.getUser())
-                .status(existingBoard.getStatus())
                 .build();
 
     }

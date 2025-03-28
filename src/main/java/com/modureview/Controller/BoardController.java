@@ -83,9 +83,9 @@ public class BoardController{
     return ResponseEntity.ok(responseDto);
   }*/
   @DeleteMapping("{BoardId}/delete")
-  public ResponseEntity<DeleteBoardResponseDto> delete_Board(
+  public ResponseEntity<?> delete_Board(
       @PathVariable("BoardId") Long BoardId, DeleteBoardRequestDto dto, @AuthenticationPrincipal CustomUserDetails user){
     return ResponseEntity.status(HttpStatus.OK).body(
-        boardService.delete_Board(BoardId, dto,user));
+        boardService.delete_Board(BoardId,user));
   }
 }

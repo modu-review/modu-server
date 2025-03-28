@@ -1,6 +1,7 @@
 package com.modureview.Repository;
 
 import com.modureview.Entity.Board;
+import com.modureview.Entity.Status.Category;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 public interface BoardRepository extends JpaRepository<Board,Long>{
 
   //게시글 상세 조회
-  @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.Id = :Board AND b.status = 'ALIVE'")
+  @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.Id = :Board ")
   Optional<Board> findByIdWithUserAndCommentsAndFiles(@Param("BoardId") Long BoardId);
 
 
@@ -20,22 +21,24 @@ public interface BoardRepository extends JpaRepository<Board,Long>{
   Page<Board> findAllWithUserAndComments(Pageable pageable);
 
   //첫 페이징 화면 (STATUS가 DELETE가 아닌 페이지를 가져옵니다.)
-  @Query("SELECT b FROM Board b JOIN b.user u WHERE b.status = 'ALIVE'")
+  @Query("SELECT b FROM Board b JOIN b.user u ")
   Page<Board> findAllWithUserAndCommentsALIVE_Board(Pageable pageable);
 
 
   //제목 검색
-  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.title LIKE %:title% AND b.status = 'ALIVE'")
+  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.title LIKE %:title% ")
   Page<Board> findAllTitleContaining(@Param("title")String title, Pageable pageable);
 
   //내용 검색
-  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.content LIKE %:content AND b.status = 'ALIVE'")
+  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.content LIKE %:content%")
   Page<Board> findAllContentContaining(@Param("content")String content, Pageable pageable);
 
   //작성자 검색
-  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.user.email LIKE %:username% AND b.status = 'ALIVE'")
+  @Query(value = "SELECT b FROM Board b JOIN FETCH b.user WHERE b.user.email LIKE %:username%")
   Page<Board> findAllWriterNameContaining(@Param("Eamil")String email, Pageable pageable);
 
 
+  @Query("SELECT b FROM Board b WHERE b.category = :category")
+  Page<Board> findAllByCategory(Pageable pageable,@Param("category") Category category);
 
 }

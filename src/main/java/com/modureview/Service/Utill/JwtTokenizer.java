@@ -12,8 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import lombok.Value;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -35,8 +36,8 @@ public class JwtTokenizer {
 
   
 
-  public String createToken(Long Id,Long expire,byte[] secretKey){
-    Claims claims = Jwts.claims().setSubject(Id.toString());
+  public String createToken(String email,Long expire,byte[] secretKey){
+    Claims claims = Jwts.claims().setSubject(email);
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(new Date())
@@ -46,11 +47,11 @@ public class JwtTokenizer {
   }
 
   public String createAccessToken(User user){
-    return createToken(user.getId(),ACCESS_TOKEN_EXPIRATION_TIME,accessSecretKey);
+    return createToken(user.getEmail(),ACCESS_TOKEN_EXPIRATION_TIME,accessSecretKey);
   }
 
   public String createRefreshToken(User user){
-    return createToken(user.getId(),REFRESH_TOKEN_EXPIRATION_TIME,refreshSecretKey);
+    return createToken(user.getEmail(),REFRESH_TOKEN_EXPIRATION_TIME,refreshSecretKey);
   }
 
   public Claims parseToken(String token,byte[] secretKey){
@@ -74,7 +75,7 @@ public class JwtTokenizer {
     return Keys.hmacShaKeyFor(secretKey);
   }
 
-  public void String reissueTokenPair(HttpServletResponse response , User user){
+  public void reissueTokenPair(HttpServletResponse response , User user){
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
 
@@ -86,12 +87,13 @@ public class JwtTokenizer {
         });
     refreshTokenObj.setValue(refreshToken);
     refreshTokenService.saveRefreshToken(refreshTokenObj);
+    addAccessToken(response,accessToken,ACCESS_TOKEN_EXPIRATION_TIME);
+    addRefreshToken(response,refreshToken,REFRESH_TOKEN_EXPIRATION_TIME);
 
-    addRefreshTokenCookie(response,refreshToken,REFRESH_TOKEN_EXPIRATION_TIME);
-    addAccessTokenCookie(response,accessToken,ACCESS_TOKEN_EXPIRATION_TIME);
+    
   }
   
-  private void addRefreshTokenCookie(HttpServletResponse response,String tokenValue, Long expirationTime){
+  private void addRefreshToken(HttpServletResponse response,String tokenValue, Long expirationTime){
     Cookie refreshToken = new Cookie("refreshToken", tokenValue);
     refreshToken.setHttpOnly(true);
     refreshToken.setPath("/");
@@ -102,7 +104,7 @@ public class JwtTokenizer {
     response.addCookie(refreshToken);
   }
 
-  private void addAccessTokenCookie(HttpServletResponse response,String tokenValue, Long expirationTime){
+  private void addAccessToken(HttpServletResponse response,String tokenValue, Long expirationTime){
     Cookie accessToken = new Cookie("accessToken", tokenValue);
     accessToken.setHttpOnly(true);
     accessToken.setPath("/");

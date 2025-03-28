@@ -25,7 +25,6 @@ public class WriteBoardRequestDto {
         return Board.builder()
                 .title(dto.title)
                 .content(dto.content)
-                .status(BoardStatus.ALIVE)
                 .user(user)
                 .build();
     }

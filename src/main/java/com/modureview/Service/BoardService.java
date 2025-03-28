@@ -1,14 +1,21 @@
 package com.modureview.Service;
 
 import com.modureview.Dto.Board.Request.DeleteBoardRequestDto;
+import com.modureview.Dto.Board.Request.SearchBoardDataRequestDto;
 import com.modureview.Dto.Board.Request.WriteBoardRequestDto;
 import com.modureview.Dto.Board.Response.DeleteBoardResponseDto;
+import com.modureview.Dto.Board.Response.ListBoardResponseDto;
 import com.modureview.Dto.Board.Response.WriteBoardResponseDto;
 import com.modureview.Entity.Board;
 import com.modureview.Entity.User;
 import com.modureview.Repository.BoardRepository;
 import com.modureview.Service.Utill.CustomUserDetails;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +48,7 @@ public class BoardService {
   // ---- 게시글 검색,isEmpty() =="" ---- //
 
   //TODO : 파일세팅시 확인
-/*  public Page<ListBoardResponseDto> search_Board(SearchBoardDataRequestDto dto, Pageable pageable) {
+  public Page<ListBoardResponseDto> search_Board(SearchBoardDataRequestDto dto, Pageable pageable) {
     Page<Board> result = null;
     if(!dto.getTitle().isEmpty()){
       result = boardRepository.findAllTitleContaining(dto.getTitle(),pageable);
@@ -55,6 +62,7 @@ public class BoardService {
         .collect(Collectors.toList());
     return new PageImpl<>(list,pageable, result.getTotalElements());
   }
+  /*
   // ---- 게시글 검색,isEmpty() =="" ---- //
   // ---- 게시글 상세보기 ---- //
   public DetailBoardResponseDto detail_Board(Long boardId) {
@@ -115,10 +123,10 @@ public class BoardService {
 
 
   //TODO : 파일도 같이 지워야함.
-  public DeleteBoardResponseDto delete_Board(Long boardId, DeleteBoardRequestDto dto, CustomUserDetails user) {
+  public Long delete_Board(Long boardId, CustomUserDetails user) {
 
     // 게시글이 존재하는지 확인
-    Board findBoard = checkExistGalleryBoard(boardId);
+    Board findBoard = checkExistBoard(boardId);
 
     if (findBoard == null) {
       //throw new CustomLogicException(ExceptionCode.RESOURCE_NOT_FOUND, "GalleryBoard", "GalleryBoard Id", String.valueOf(GalleryBoardId));
@@ -133,14 +141,14 @@ public class BoardService {
     }
 
     // 상태가 DELETE로 설정된 엔티티 저장
-    Board savedBoard = boardRepository.save(dto.toEntity(findBoard));
-
+    //Board savedBoard = boardRepository.save(dto.toEntity(findBoard));
+/*
     if (savedBoard == null) {
       //throw new CustomLogicException(ExceptionCode.SAVE_GALLERY_BOARD_FAILED, "GalleryBoard", "Unable to save the deleted state");
       throw new RuntimeException("GalleryBoard not status == DELETE : " + savedBoard.getStatus());
-    }
+    }*/
 
-    return DeleteBoardResponseDto.fromEntity(savedBoard);
+    return boardId;
   }
 
 
@@ -156,6 +164,7 @@ public class BoardService {
     return new PageImpl<>(list, pageable, galleryBoards.getTotalElements());
   }
 
+*/
 
   public Page<ListBoardResponseDto> get_ALIVE_Board(Pageable pageable) {
     Page<Board> galleryBoards_ALIVE = boardRepository.findAllWithUserAndCommentsALIVE_Board(pageable);
@@ -163,10 +172,26 @@ public class BoardService {
         .map(ListBoardResponseDto::fromEntity)
         .collect(Collectors.toList());
     return new PageImpl<>(list_ALIVE,pageable,galleryBoards_ALIVE.getTotalElements());
-  }*/
+  }
+
+  public Page<ListBoardResponseDto> get_AllBoard(Pageable pageable) {
+    Page<Board> galleryBoards_ALIVE = boardRepository.findAllWithUserAndCommentsALIVE_Board(pageable);
+    List<ListBoardResponseDto> list_ALIVE = galleryBoards_ALIVE.getContent().stream()
+        .map(ListBoardResponseDto::fromEntity)
+        .collect(Collectors.toList());
+    return new PageImpl<>(list_ALIVE,pageable,galleryBoards_ALIVE.getTotalElements());
+  }
+
+  public Page<ListBoardResponseDto> get_All_Board_Category(Pageable pageable,String category) {
+    Page<Board> galleryBoards_ALIVE = boardRepository.findAllWithUserAndCommentsALIVE_Board(pageable);
+    List<ListBoardResponseDto> list_ALIVE = galleryBoards_ALIVE.getContent().stream()
+        .map(ListBoardResponseDto::fromEntity)
+        .collect(Collectors.toList());
+    return new PageImpl<>(list_ALIVE,pageable,galleryBoards_ALIVE.getTotalElements());
+  }
 
   // ---- 페이징 리스트 ---- //
-  public Board checkExistGalleryBoard(Long boardId) {
+  public Board checkExistBoard(Long boardId) {
     return boardRepository.findByIdWithUserAndCommentsAndFiles(boardId)
         .orElseThrow(() -> new RuntimeException("Board not found with id: " + boardId));
   }

@@ -1,6 +1,7 @@
 package com.modureview.Entity;
 
 import com.modureview.Entity.Status.BoardStatus;
+import com.modureview.Entity.Status.Category;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,14 +54,14 @@ public class Board extends Auditable {
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  public BoardStatus status;
+  public Category category;
 
   @Column(name = "DELETE_TIME")
   private LocalDateTime deleteAt;
-
+/*
   @Builder.Default
   @OneToMany(mappedBy = "galleryBoard", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  List<File> fileEntities = new ArrayList<>();
+  List<File> fileEntities = new ArrayList<>();*/
 /*
   //TODO : COMMENT 설정 이후
   @Builder.Default

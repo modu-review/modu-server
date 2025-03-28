@@ -28,7 +28,6 @@ public class DeleteBoardResponseDto {
                 .Id(board.getId())
                 .title(board.getTitle())
                 .writerName(board.getUser().getEmail())
-                .status(board.getStatus())
                 .deleteAt(board.getDeleteAt())
                 .build();
     }
