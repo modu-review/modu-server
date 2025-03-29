@@ -31,12 +31,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "GalleryBoard")
+@Table(name = "Board")
 public class Board extends Auditable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "gallery_board_id")
+  @Column(name = "board_id")
   private Long Id;
 
   @Column(nullable = false)
@@ -44,7 +44,6 @@ public class Board extends Auditable {
 
   @Column(nullable = false)
   private String content;
-
 
   private int view_count;
 

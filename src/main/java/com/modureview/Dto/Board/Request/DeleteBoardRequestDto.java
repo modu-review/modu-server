@@ -15,6 +15,7 @@ public class DeleteBoardRequestDto {
                 .title(existingBoard.getTitle())
                 .content(existingBoard.getContent())
                 .view_count(existingBoard.getView_count())
+                .category(existingBoard.getCategory())
                 .user(existingBoard.getUser())
                 .build();
     }

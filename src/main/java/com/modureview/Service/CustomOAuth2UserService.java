@@ -32,6 +32,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     String userNameAttributeName = userRequest.getClientRegistration()
         .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
     Map<String, Object> attributes = oAuth2User.getAttributes();
+
+    // Kakao 정보 추출
     String providerId = String.valueOf(attributes.get("id"));
     Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
     String email = null;
@@ -44,27 +46,26 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
       }
     }
     log.info("Kakao 사용자 정보 - providerId: {}, email: {}, nickname: {}", providerId, email, nickname);
+
+    // 기존 사용자가 있는지 확인하거나 신규 사용자 생성
+    User user = getUser(email);
+
     Set<GrantedAuthority> authorities = new HashSet<>();
     authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
     return new CustomOAuth2User(
         authorities,
         attributes,
         userNameAttributeName,
-        email
+        user.getEmail()  // 저장된 사용자의 이메일을 사용
     );
   }
 
-  private User getUser(String email){
-    return userRepository.findByEmail(email).orElseThrow(
-        ()->new RuntimeException("User not found with email: "+email));
-  }
-
-  private User saveUser(String email){
-    User createUser = User.builder()
-        .email(email)
-        .build();
-    return userRepository.save(createUser);
+  private User getUser(String email) {
+    return userRepository.findByEmail(email).orElseGet(() -> {
+      User newUser = User.builder()
+          .email(email)
+          .build();
+      return userRepository.save(newUser);
+    });
   }
 }
-
-// 사용자 정의 OAuth2User 클래스 (예시)

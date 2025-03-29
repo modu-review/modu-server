@@ -41,6 +41,8 @@ public class BoardController{
     return ResponseEntity.status(HttpStatus.OK).body(listDto_ALIVE);
   }*/
 
+
+
   //글쓰기
   @PostMapping("/write")
   public ResponseEntity<WriteBoardResponseDto> write_Board(
@@ -82,6 +84,7 @@ public class BoardController{
     System.out.println("Controller 응답 객체: " + responseDto);  // 응답 객체 확인 로그
     return ResponseEntity.ok(responseDto);
   }*/
+
   @DeleteMapping("{BoardId}/delete")
   public ResponseEntity<?> delete_Board(
       @PathVariable("BoardId") Long BoardId, DeleteBoardRequestDto dto, @AuthenticationPrincipal CustomUserDetails user){

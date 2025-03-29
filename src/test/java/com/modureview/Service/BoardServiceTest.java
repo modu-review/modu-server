@@ -95,7 +95,7 @@ public class BoardServiceTest {
   @Test
   public void testSearchBoardByTitle() {
     // 제목으로 검색하는 경우
-    SearchBoardDataRequestDto searchDto = SearchBoardDataRequestDto.createSearchData("Test", "", "");
+    SearchBoardDataRequestDto searchDto = SearchBoardDataRequestDto.createSearchData("Test", "", "",Category.A);
     PageRequest pageable = PageRequest.of(0, 10);
     Page<Board> boardPage = new PageImpl<>(Arrays.asList(board), pageable, 1);
 

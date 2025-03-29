@@ -31,18 +31,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     try{
       CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-      //UUID user_uuid = userEntity.getUuid();
-      //
-
       String redirectUrl = frontUrl + "/oauth2/redirect?user_email=" + oAuth2User.getEmail();
       log.info("====================================OAuth2LoginSuccessHandler====================================");
       log.info("oAuth2User: {} ", oAuth2User);
-      //log.info("userInfoJwt = {}",userInfoJwt);
       log.info("리다이렉트 URL: {}", redirectUrl);
-      //log.info("JWT: {}", userInfoJwt);
-      //log.info("ROLE: {}", role);
-      getRedirectStrategy().sendRedirect(request,response,redirectUrl);
       log.info("====================================OAuth2LoginSuccessHandler====================================");
+      getRedirectStrategy().sendRedirect(request,response,redirectUrl);
     }catch(Exception e){
       log.error("OAuth2 로그인 성공 처리 중 오류 발생",e);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,"internal Server Error");

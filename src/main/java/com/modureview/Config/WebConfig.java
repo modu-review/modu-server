@@ -1,18 +1,17 @@
 package com.modureview.Config;
 
+
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@Configuration
 public class WebConfig implements WebMvcConfigurer {
-  //TODO :: 추가할지 미지수
-  /*@Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new LoggingInterceptor());
-  }*/
 
   @Value("${app.cors.allowed-origins}")
   private String allowedOrigins;
@@ -20,15 +19,15 @@ public class WebConfig implements WebMvcConfigurer {
   @Bean
   public CorsConfigurationSource corsConfigurationSource(){
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin(allowedOrigins);//허용할 Origin
-    configuration.addAllowedMethod("*");//모든 HTTP 메서드 허용
-    configuration.addAllowedHeader("*");// 모든 헤더 허용
-    configuration.addExposedHeader("Authorization");
-    configuration.setAllowCredentials(true);// 인증 정보 허용
+    // allowedOrigins를 리스트로 설정 (예: "http://localhost:3000")
+    configuration.setAllowedOrigins(List.of(allowedOrigins));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setExposedHeaders(List.of("Authorization"));
+    configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**",configuration);
+    source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-
 }

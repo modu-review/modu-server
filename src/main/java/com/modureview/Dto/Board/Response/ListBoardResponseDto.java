@@ -2,6 +2,7 @@ package com.modureview.Dto.Board.Response;
 
 import com.modureview.Entity.Board;
 import com.modureview.Entity.Status.BoardStatus;
+import com.modureview.Entity.Status.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class ListBoardResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedDate;
     private String writerName;
-    private BoardStatus status;
+    private Category category;
     //TODO : FileResponse 밀기
     //private DetailsFileResponseDto thumnail;
 
@@ -40,8 +41,7 @@ public class ListBoardResponseDto {
                 .createdAt(board.getCreatedAt())
                 .modifiedDate(board.getModifiedAt())
                 .writerName(board.getUser().getEmail())
-
-                //.thumnail(thumnail)
+                .category(board.getCategory())
                 .build();
 
     }

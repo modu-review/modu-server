@@ -7,6 +7,7 @@ import com.modureview.Dto.Board.Request.WriteBoardRequestDto;
 
 import com.modureview.Dto.Board.Response.ListBoardResponseDto;
 import com.modureview.Dto.Board.Response.WriteBoardResponseDto;
+import com.modureview.Entity.Status.Category;
 import com.modureview.Service.BoardService;
 import com.modureview.Service.Utill.CustomUserDetails;
 import org.junit.jupiter.api.DisplayName;
@@ -138,7 +139,8 @@ public class BoardControllerTest {
   @Test
   @DisplayName("GET /api/v0/Board/search - 게시글 검색")
   public void testSearchBoard() throws Exception {
-    SearchBoardDataRequestDto searchDto = SearchBoardDataRequestDto.createSearchData("Test", "", "");
+    SearchBoardDataRequestDto searchDto = SearchBoardDataRequestDto.createSearchData("Test", "", "",
+        Category.A);
     ListBoardResponseDto listDto = ListBoardResponseDto.builder()
         .Id(1L)
         .title("Test Title")

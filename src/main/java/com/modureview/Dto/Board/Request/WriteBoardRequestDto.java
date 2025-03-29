@@ -3,6 +3,7 @@ package com.modureview.Dto.Board.Request;
 
 import com.modureview.Entity.Board;
 import com.modureview.Entity.Status.BoardStatus;
+import com.modureview.Entity.Status.Category;
 import com.modureview.Entity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -20,11 +21,16 @@ public class WriteBoardRequestDto {
     @NotBlank
     private String content;
 
+    @NotBlank
+    private Category category;
+
+
     private User user;
     public static Board toEntity(WriteBoardRequestDto dto,User user){
         return Board.builder()
                 .title(dto.title)
                 .content(dto.content)
+                .category(dto.category)
                 .user(user)
                 .build();
     }
