@@ -1,6 +1,7 @@
 package com.modureview.Service;
 
 import com.modureview.Entity.RefreshToken;
+import com.modureview.Entity.User;
 import com.modureview.Repository.RefreshTokenRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,10 @@ public class RefreshTokenService {
 
   public void removeRefreshTokenByUserId(Long Id){
     getRefreshTokenByUserId(Id).ifPresent(refreshTokenRepository::delete);
+  }
+
+  public void removeRefreshTokenDB(User user){
+    refreshTokenRepository.findByUserId(user.getId()).ifPresent(refreshTokenRepository::delete);
   }
 
 
