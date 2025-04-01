@@ -1,4 +1,4 @@
-package com.modureview.Service.Utill;
+package com.modureview.service.utill;
 
 import java.util.Collection;
 import java.util.Map;

@@ -1,10 +1,10 @@
-package com.modureview.FIlter;
+package com.modureview.fIlter;
 
-import com.modureview.Service.Utill.CustomUserDetails;
-import com.modureview.Service.Utill.JwtAuthenticationToken;
-import com.modureview.Service.Utill.JwtTokenizer;
-import com.modureview.Service.Utill.CustomAuthenticationEntryPoint;
-import com.modureview.Exception.JwtAuthenticationException;
+import com.modureview.service.utill.CustomUserDetails;
+import com.modureview.service.utill.JwtAuthenticationToken;
+import com.modureview.service.utill.JwtTokenizer;
+import com.modureview.service.utill.CustomAuthenticationEntryPoint;
+import com.modureview.exception.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -69,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //Role role = Role.valueOf(claims.get("roles", String.class));
     List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(userEmail));
 
-    CustomUserDetails userDetails = new CustomUserDetails("","" , userEmail, authorities);
+    CustomUserDetails userDetails = new CustomUserDetails(userEmail);
     Authentication authentication = new JwtAuthenticationToken(authorities, userDetails, null);
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }

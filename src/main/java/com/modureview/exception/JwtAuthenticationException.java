@@ -1,4 +1,4 @@
-package com.modureview.Exception;
+package com.modureview.exception;
 import org.springframework.security.core.AuthenticationException;
 
 public class JwtAuthenticationException extends AuthenticationException {

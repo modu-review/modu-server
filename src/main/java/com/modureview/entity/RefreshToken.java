@@ -1,4 +1,4 @@
-package com.modureview.Entity;
+package com.modureview.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

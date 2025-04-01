@@ -1,8 +1,7 @@
-package com.modureview.Repository;
+package com.modureview.repository;
 
-import com.modureview.Entity.RefreshToken;
+import com.modureview.entity.RefreshToken;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

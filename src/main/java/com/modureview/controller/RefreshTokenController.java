@@ -1,8 +1,8 @@
-package com.modureview.Controller;
+package com.modureview.controller;
 
-import com.modureview.Entity.User;
-import com.modureview.Repository.UserRepository;
-import com.modureview.Service.Utill.JwtTokenizer;
+import com.modureview.entity.User;
+import com.modureview.repository.UserRepository;
+import com.modureview.service.utill.JwtTokenizer;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v0/token")
+@RequestMapping("/api/token")
 public class RefreshTokenController {
   private final JwtTokenizer jwtTokenizer;
   private final UserRepository userRepository;

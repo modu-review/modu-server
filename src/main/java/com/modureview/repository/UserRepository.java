@@ -1,6 +1,6 @@
-package com.modureview.Repository;
+package com.modureview.repository;
 
-import com.modureview.Entity.User;
+import com.modureview.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

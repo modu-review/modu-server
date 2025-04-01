@@ -1,4 +1,4 @@
-package com.modureview.Service.Utill;
+package com.modureview.service.utill;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 import jakarta.servlet.ServletException;
@@ -26,7 +26,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
     response.setCharacterEncoding("UTF-8");
 
-    // JSON 형식의 응답 직접 구성
     Map<String, Object> errorResponse = new HashMap<>();
     errorResponse.put("error", "Unauthorized");
     errorResponse.put("message", authException.getMessage());

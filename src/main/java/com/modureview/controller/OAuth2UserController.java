@@ -1,9 +1,9 @@
-package com.modureview.Controller;
+package com.modureview.controller;
 
-import com.modureview.Entity.User;
+import com.modureview.entity.User;
 
-import com.modureview.Service.UserService;
-import com.modureview.Service.Utill.JwtTokenizer;
+import com.modureview.service.UserService;
+import com.modureview.service.utill.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,8 +34,9 @@ public class OAuth2UserController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user email");
     }
   }
-  @PostMapping("/api/v0/user/logout")
+  @PostMapping("/api/user/logout")
   public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request){
+    jwtTokenizer.removeTokenFromDB(request);
     jwtTokenizer.removeToken(response,request);
     return ResponseEntity.status(HttpStatus.OK).body(null);
   }

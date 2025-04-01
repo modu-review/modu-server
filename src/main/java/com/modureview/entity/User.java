@@ -1,4 +1,4 @@
-package com.modureview.Entity;
+package com.modureview.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends Auditable{
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

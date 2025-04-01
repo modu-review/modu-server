@@ -1,4 +1,4 @@
-package com.modureview.Handler;
+package com.modureview.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

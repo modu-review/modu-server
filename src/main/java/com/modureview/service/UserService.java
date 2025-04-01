@@ -1,7 +1,7 @@
-package com.modureview.Service;
+package com.modureview.service;
 
-import com.modureview.Entity.User;
-import com.modureview.Repository.UserRepository;
+import com.modureview.entity.User;
+import com.modureview.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
