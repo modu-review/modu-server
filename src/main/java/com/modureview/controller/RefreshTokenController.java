@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/token")
 public class RefreshTokenController {
   private final JwtTokenizer jwtTokenizer;
   private final UserRepository userRepository;
 
-  @GetMapping("/refresh")
+  @GetMapping("/api/token/refresh")
   public ResponseEntity<?> refreshToken(@CookieValue(name = "refreshToken") String refreshToken, HttpServletResponse response){
     if(jwtTokenizer.validateToken(refreshToken)){
       Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);

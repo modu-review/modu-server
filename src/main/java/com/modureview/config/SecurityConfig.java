@@ -39,7 +39,7 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/v0/user/checkEmail", "/user/oauth2/**", "/api/v0/token/refresh","/api/v0/user/logout").permitAll()
+            .requestMatchers("/api/v0/user/checkEmail", "/user/oauth2/**", "/api/token/refresh","/api/user/logout").permitAll()
             .anyRequest().authenticated()
         )
         .cors(Customizer.withDefaults())

@@ -21,43 +21,45 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class JwtTokenizer {
+
   private final RefreshTokenService refreshTokenService;
   private final UserService userService;
   private final byte[] accessSecretKey;
   private final byte[] refreshSecretKey;
 
-  public static Long ACCESS_TOKEN_EXPIRATION_TIME = (Long)(2*30*10*1000L);
-  public static Long REFRESH_TOKEN_EXPIRATION_TIME = (Long)(2*60*60*1000L);
+  public static Long ACCESS_TOKEN_EXPIRATION_TIME = (Long) (2 * 30 * 10 * 1000L);
+  public static Long REFRESH_TOKEN_EXPIRATION_TIME = (Long) (2 * 60 * 60 * 1000L);
 
 
-  public JwtTokenizer(@Value("${jwt.secretKey}")String accessSecretKey,@Value("${jwt.refreshKey}")String refreshSecretKey,RefreshTokenService refreshTokenService,UserService userService){
+  public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecretKey,
+      @Value("${jwt.refreshKey}") String refreshSecretKey, RefreshTokenService refreshTokenService,
+      UserService userService) {
     this.refreshTokenService = refreshTokenService;
     this.accessSecretKey = accessSecretKey.getBytes(StandardCharsets.UTF_8);
     this.refreshSecretKey = refreshSecretKey.getBytes(StandardCharsets.UTF_8);
     this.userService = userService;
   }
 
-  
 
-  public String createToken(String email,Long expire,byte[] secretKey){
+  public String createToken(String email, Long expire, byte[] secretKey) {
     Claims claims = Jwts.claims().setSubject(email);
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(new Date())
-        .setExpiration(new Date(new Date().getTime()+expire))
+        .setExpiration(new Date(new Date().getTime() + expire))
         .signWith(getSigningKey(secretKey))
         .compact();
   }
 
-  public String createAccessToken(User user){
-    return createToken(user.getEmail(),ACCESS_TOKEN_EXPIRATION_TIME,accessSecretKey);
+  public String createAccessToken(User user) {
+    return createToken(user.getEmail(), ACCESS_TOKEN_EXPIRATION_TIME, accessSecretKey);
   }
 
-  public String createRefreshToken(User user){
-    return createToken(user.getEmail(),REFRESH_TOKEN_EXPIRATION_TIME,refreshSecretKey);
+  public String createRefreshToken(User user) {
+    return createToken(user.getEmail(), REFRESH_TOKEN_EXPIRATION_TIME, refreshSecretKey);
   }
 
-  public Claims parseToken(String token,byte[] secretKey){
+  public Claims parseToken(String token, byte[] secretKey) {
     return Jwts.parserBuilder()
         .setSigningKey(getSigningKey(secretKey))
         .build()
@@ -65,12 +67,12 @@ public class JwtTokenizer {
         .getBody();
   }
 
-  public Claims parseAccessToken(String accessToken){
-    return parseToken(accessToken,accessSecretKey);
+  public Claims parseAccessToken(String accessToken) {
+    return parseToken(accessToken, accessSecretKey);
   }
 
-  public Claims parseRefreshToken(String refreshToken){
-    return parseToken(refreshToken,refreshSecretKey);
+  public Claims parseRefreshToken(String refreshToken) {
+    return parseToken(refreshToken, refreshSecretKey);
   }
 
 
@@ -78,7 +80,7 @@ public class JwtTokenizer {
     return Keys.hmacShaKeyFor(secretKey);
   }
 
-  public void reissueTokenPair(HttpServletResponse response , User user){
+  public void reissueTokenPair(HttpServletResponse response, User user) {
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
 
@@ -90,61 +92,67 @@ public class JwtTokenizer {
         });
     refreshTokenObj.setValue(refreshToken);
     refreshTokenService.saveRefreshToken(refreshTokenObj);
-    addAccessToken(response,accessToken,ACCESS_TOKEN_EXPIRATION_TIME);
-    addRefreshToken(response,refreshToken,REFRESH_TOKEN_EXPIRATION_TIME);
-    addUserCookie(response,user,ACCESS_TOKEN_EXPIRATION_TIME);
+    addAccessToken(response, accessToken, ACCESS_TOKEN_EXPIRATION_TIME);
+    addRefreshToken(response, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME);
+    addUserCookie(response, user, ACCESS_TOKEN_EXPIRATION_TIME);
 
-    
+
   }
-  
-  private void addRefreshToken(HttpServletResponse response,String tokenValue, Long expirationTime){
+
+  private void addRefreshToken(HttpServletResponse response, String tokenValue,
+      Long expirationTime) {
     Cookie refreshToken = new Cookie("refreshToken", tokenValue);
     refreshToken.setHttpOnly(true);
     refreshToken.setPath("/");
     refreshToken.setMaxAge(Math.toIntExact(expirationTime));
     refreshToken.setSecure(true);
-    refreshToken.setAttribute("SameSite","Lax");
-    log.info("Setting Cookie - Name : {} , Value : {}",refreshToken.getName(),refreshToken);
+    refreshToken.setAttribute("SameSite", "Lax");
+    log.info("Setting Cookie - Name : {} , Value : {}", refreshToken.getName(), refreshToken);
     response.addCookie(refreshToken);
   }
 
-  private void addAccessToken(HttpServletResponse response,String tokenValue, Long expirationTime){
+  private void addAccessToken(HttpServletResponse response, String tokenValue,
+      Long expirationTime) {
     Cookie accessToken = new Cookie("accessToken", tokenValue);
     accessToken.setHttpOnly(true);
     accessToken.setPath("/");
     accessToken.setMaxAge(Math.toIntExact(expirationTime));
     accessToken.setSecure(true);
-    accessToken.setAttribute("SameSite","Lax");
-    log.info("Setting Cookie - Name : {} , Value : {}",accessToken.getName(),accessToken);
+    accessToken.setAttribute("SameSite", "Lax");
+    log.info("Setting Cookie - Name : {} , Value : {}", accessToken.getName(), accessToken);
     response.addCookie(accessToken);
   }
 
-  private void addUserCookie(HttpServletResponse response,User user,Long expirationTime){
-    Cookie userCookie = new Cookie("UserEmail",user.getEmail());
+  private void addUserCookie(HttpServletResponse response, User user, Long expirationTime) {
+    Cookie userCookie = new Cookie("UserEmail", user.getEmail());
     userCookie.setHttpOnly(false);
     userCookie.setPath("/");
     userCookie.setMaxAge(Math.toIntExact(expirationTime));
     userCookie.setSecure(false);
-    userCookie.setAttribute("SameSite","Lax");
+    userCookie.setAttribute("SameSite", "Lax");
     log.info(" ========================= addUserCookie =======================");
-    log.info("Setting Cookie - Name : {}m Value : {} ",userCookie.getName(),userCookie.getValue());
+    log.info("Setting Cookie - Name : {}m Value : {} ", userCookie.getName(),
+        userCookie.getValue());
     log.info(" ========================= addUserCookie =======================");
     response.addCookie(userCookie);
   }
-  public boolean validateToken(String refreshToken){
-    try{
-      Jwts.parserBuilder().setSigningKey(getSigningKey(refreshSecretKey)).build().parseClaimsJws(refreshToken);
+
+  public boolean validateToken(String refreshToken) {
+    try {
+      Jwts.parserBuilder().setSigningKey(getSigningKey(refreshSecretKey)).build()
+          .parseClaimsJws(refreshToken);
       return true;
-    }catch (Exception e){
+    } catch (Exception e) {
       return false;
     }
   }
 
-  public void removeToken(HttpServletResponse response, HttpServletRequest request){
+  public void removeToken(HttpServletResponse response, HttpServletRequest request) {
     Cookie[] cookies = request.getCookies();
-    if(cookies != null){
+    if (cookies != null) {
       for (Cookie cookie : cookies) {
-        if("refreshToken".equals(cookie.getName()) || "accessToken".equals(cookie.getName()) || "userCookie".equals(cookie.getName())){
+        if ("refreshToken".equals(cookie.getName()) || "accessToken".equals(cookie.getName())
+            || "userCookie".equals(cookie.getName())) {
           cookie.setValue("");
           cookie.setPath("/");
           cookie.setMaxAge(0);
@@ -153,21 +161,23 @@ public class JwtTokenizer {
       }
     }
   }
-  public void removeTokenFromDB(HttpServletRequest request){
+
+  public void removeTokenFromDB(HttpServletRequest request) {
     Cookie[] cookies = request.getCookies();
-    if(cookies != null){
+    if (cookies != null) {
       for (Cookie cookie : cookies) {
-        if("accessToken".equals(cookie.getName())){}
-        Claims claims = parseAccessToken(cookie.getValue());
-        String userEmail = claims.getSubject();
-        refreshTokenService.removeRefreshTokenDB(userService.getUserByEmail(userEmail));
+        if ("accessToken".equals(cookie.getName())) {
+          Claims claims = parseAccessToken(cookie.getValue());
+          String userEmail = claims.getSubject();
+          refreshTokenService.removeRefreshTokenDB(userService.getUserByEmail(userEmail));
+        }
       }
     }
-
-
-
   }
-
-
-
 }
+
+
+
+
+
+
