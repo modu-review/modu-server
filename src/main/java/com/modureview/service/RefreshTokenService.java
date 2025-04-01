@@ -24,11 +24,14 @@ public class RefreshTokenService {
     getRefreshTokenByUserId(Id).ifPresent(refreshTokenRepository::delete);
   }
 
-  public void removeRefreshTokenDB(User user){
-    refreshTokenRepository.findByUserId(user.getId()).ifPresent(refreshTokenRepository::delete);
+  public void removeRefreshTokenDB(User user) {
+    refreshTokenRepository.findByUserId(user.getId())
+        .ifPresent(refreshToken -> {
+          refreshTokenRepository.delete(refreshToken);
+          refreshTokenRepository.flush(); // 즉시 반영
+        });
+
   }
-
-
 
 
 }

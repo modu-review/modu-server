@@ -37,7 +37,6 @@ public class OAuth2UserController {
   @PostMapping("/api/user/logout")
   public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request){
     log.info("--------------logout------------------");
-    jwtTokenizer.removeTokenFromDB(request);
     jwtTokenizer.removeToken(response,request);
     log.info("--------------logout------------------");
     return ResponseEntity.status(HttpStatus.OK).body(null);
