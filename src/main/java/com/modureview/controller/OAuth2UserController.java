@@ -6,6 +6,7 @@ import com.modureview.service.UserService;
 import com.modureview.service.utill.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,9 +37,7 @@ public class OAuth2UserController {
   }
   @PostMapping("/api/user/logout")
   public ResponseEntity<?> logout(HttpServletResponse response, HttpServletRequest request){
-    log.info("--------------logout------------------");
     jwtTokenizer.removeToken(response,request);
-    log.info("--------------logout------------------");
     return ResponseEntity.status(HttpStatus.OK).body(null);
   }
 }

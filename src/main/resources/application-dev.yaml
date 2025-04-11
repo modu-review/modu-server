@@ -4,18 +4,19 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mydb
-    username: root
-    password: yesh@25164
+    url: jdbc:mysql://localhost:3306/modu-review
+    username: myuser
+    password: mypassword
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 20
       transaction-isolation: 8
 
   thymeleaf:
-    prefix : classpath:/templates/
-    suffix : .html
-    enabled : true
+    prefix: classpath:/templates/
+    suffix: .html
+    enabled: true
+
 
   security:
     oauth2:
@@ -29,6 +30,7 @@ spring:
             authorization-grant-type: authorization_code
             client-name: Kakao
             client-authentication-method: client_secret_post
+
 
         provider:
           kakao:
@@ -46,14 +48,16 @@ spring:
     properties:
       hibernate:
         hibernate:
-        "[format_sql]": true            #SQL ?? ?? ??
-        "[user_sql_comments]": true     #SQL ??? ?? ??
-        "[highlight_sql]": true         #SQL ??
+        "[format_sql]": true
+        "[user_sql_comments]": true
+        "[highlight_sql]": true
         "[hbm2ddl.auto]": update
     open-in-view: true
     show-sql: true
 
 
+
+  #default 1MB
   servlet:
     multipart:
       max-file-size: 10MB

@@ -6,6 +6,7 @@ import com.modureview.service.utill.JwtTokenizer;
 import com.modureview.service.utill.CustomAuthenticationEntryPoint;
 import com.modureview.exception.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,34 +29,48 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
   private final JwtTokenizer jwtTokenizer;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getRequestURI();
-    return path.startsWith("/user/oauth2") || path.startsWith("/api/token/refresh") || path.startsWith("/api/user/logout");
+    return path.startsWith("/user/oauth2") || path.startsWith("/token/refresh")
+        || path.startsWith("/api/user/logout") || path.startsWith("/reviews/best")
+        || path.startsWith("/reviews");
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain)
       throws ServletException, IOException {
-    String token = getJwtFromRequest(request);
+    String accessToken = getAccessToken(request);
     log.info("===============doFilterInternal=============");
     log.info("UserRequest url ::{}", request.getRequestURI());
 
     try {
-      if (StringUtils.hasText(token)) {
-        Claims claims = jwtTokenizer.parseAccessToken(token);
+      if (StringUtils.hasText(accessToken)) {
+        log.info("I have a AccessToken : {}", accessToken);
+        Claims claims = jwtTokenizer.parseAccessToken(accessToken);
+        log.info("after claims : {}", claims);
         setAuthenticationToContext(claims);
         log.info("claims :: {}", claims);
       } else {
-        throw new JwtAuthenticationException("Access token is missing");
+        throw new JwtAuthenticationException("Access token is missing from access token");
       }
+    } catch (ExpiredJwtException ex) {
+      log.info("expired Token Exception");
+      SecurityContextHolder.clearContext();
+      authenticationEntryPoint.commence(request, response,
+          new AuthenticationException(ex.getMessage(), ex) {
+          });
+      return;
     } catch (AuthenticationException ex) {
+      log.info("Authentication Exception");
       SecurityContextHolder.clearContext();
       authenticationEntryPoint.commence(request, response, ex);
-      return; // 필터 체인 중단
+      return;
     }
 
     filterChain.doFilter(request, response);
@@ -63,18 +79,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   //TODO:
   private void setAuthenticationToContext(Claims claims) {
-    //UUID uuid = UUID.fromString(claims.getSubject());
     String userEmail = claims.getSubject();
 
     //Role role = Role.valueOf(claims.get("roles", String.class));
-    List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(userEmail));
+    List<GrantedAuthority> authorities = Collections.singletonList(
+        new SimpleGrantedAuthority(userEmail));
 
     CustomUserDetails userDetails = new CustomUserDetails(userEmail);
-    Authentication authentication = new JwtAuthenticationToken(authorities, userDetails, null);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(
+        userDetails, null, authorities
+    );
     SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 
-  private String getJwtFromRequest(HttpServletRequest request) {
+  private String getAccessToken(HttpServletRequest request) {
     if (request.getCookies() != null) {
       for (Cookie cookie : request.getCookies()) {
         if ("accessToken".equals(cookie.getName())) {

@@ -26,32 +26,30 @@ public class SecurityConfig {
 
   private final JwtTokenizer jwtTokenizer;
   private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-  // OAuth2 설정
+
   private final CustomOAuth2UserService customOAuth2UserService;
   private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
   private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
-  // 허용 URL 등...
-  String [] allAllowPage = new String[]{};
+  String[] allAllowPage = new String[]{};
   String[] userAllowPage = new String[]{};
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/v0/user/checkEmail", "/user/oauth2/**", "/api/token/refresh","/api/user/logout").permitAll()
+            .requestMatchers("/api/v0/user/checkEmail", "/user/oauth2/**", "/token/refresh",
+                "/api/user/logout").permitAll()
             .anyRequest().authenticated()
         )
-        .cors(Customizer.withDefaults())
-        .csrf(csrf -> csrf.disable())
         .httpBasic(auth -> auth.disable())
         .formLogin(auth -> auth.disable())
         .logout(auth -> auth.disable())
         .sessionManagement(auth -> auth.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        // JwtAuthenticationFilter 생성 시 CustomAuthenticationEntryPoint도 주입
-        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer,customAuthenticationEntryPoint),
+        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer, customAuthenticationEntryPoint),
             UsernamePasswordAuthenticationFilter.class)
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
+        .exceptionHandling(
+            exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
         .oauth2Login(oauth2 -> oauth2
             .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorize"))
             .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/**"))
@@ -63,7 +61,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public BCryptPasswordEncoder bCryptPasswordEncoder(){
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
   }
 }

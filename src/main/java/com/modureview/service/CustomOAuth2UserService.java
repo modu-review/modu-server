@@ -47,7 +47,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
     log.info("Kakao 사용자 정보 - providerId: {}, email: {}, nickname: {}", providerId, email, nickname);
 
-    // 기존 사용자가 있는지 확인하거나 신규 사용자 생성
     User user = getUser(email);
 
     Set<GrantedAuthority> authorities = new HashSet<>();
@@ -56,7 +55,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         authorities,
         attributes,
         userNameAttributeName,
-        user.getEmail()  // 저장된 사용자의 이메일을 사용
+        user.getEmail()
     );
   }
 

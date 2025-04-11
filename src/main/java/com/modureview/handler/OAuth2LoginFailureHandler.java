@@ -17,11 +17,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
+
   @Value("${app.cors.allowed-origins}")
   private String frontendUrl;
 
   @Override
-  public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+  public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+      AuthenticationException exception) throws IOException, ServletException {
     log.info("OAuth2 Login 실패");
     String errorMessage;
     if (exception instanceof OAuth2AuthenticationException) {
@@ -30,7 +32,8 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
       if (errorCode.equals("duplicate_social_account")) {
         errorMessage = URLEncoder.encode("해당 이메일로 가입된 계정이 존재합니다.", StandardCharsets.UTF_8);
       } else {
-        errorMessage = URLEncoder.encode(oauth2Exception.getError().getDescription(), StandardCharsets.UTF_8);
+        errorMessage = URLEncoder.encode(oauth2Exception.getError().getDescription(),
+            StandardCharsets.UTF_8);
       }
     } else {
       errorMessage = URLEncoder.encode("소셜 로그인 중 오류가 발생했습니다.", StandardCharsets.UTF_8);

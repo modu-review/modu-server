@@ -20,21 +20,21 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RefreshToken {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long Id;
 
   @ManyToOne
-  @JoinColumn(name = "user_Id",nullable = false)
+  @JoinColumn(name = "user_Id", nullable = false)
   private User user;
 
-  @Column(name = "value",length = 500)
+  @Column(name = "value", length = 500)
   private String value;
 
-  public void setMappingUser(User user){
+  public void setMappingUser(User user) {
     this.user = user;
     user.getRefreshTokens().add(this);
   }
-
 
 }

@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -26,10 +26,9 @@ public class JwtTokenizer {
   private final UserService userService;
   private final byte[] accessSecretKey;
   private final byte[] refreshSecretKey;
-
-  public static Long ACCESS_TOKEN_EXPIRATION_TIME = (Long) (2 * 30 * 10 * 1000L);
-  public static Long REFRESH_TOKEN_EXPIRATION_TIME = (Long) (2 * 60 * 60 * 1000L);
-
+  public static final long ACCESS_TOKEN_EXPIRATION_TIME = 60 * 60L;
+  public static final long REFRESH_TOKEN_EXPIRATION_TIME = 30 * 24 * 60 * 60L;
+  private final String domain = "localhost";
 
   public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecretKey,
       @Value("${jwt.refreshKey}") String refreshSecretKey, RefreshTokenService refreshTokenService,
@@ -40,13 +39,12 @@ public class JwtTokenizer {
     this.userService = userService;
   }
 
-
   public String createToken(String email, Long expire, byte[] secretKey) {
     Claims claims = Jwts.claims().setSubject(email);
     return Jwts.builder()
         .setClaims(claims)
         .setIssuedAt(new Date())
-        .setExpiration(new Date(new Date().getTime() + expire))
+        .setExpiration(new Date(new Date().getTime() + expire * 1000))
         .signWith(getSigningKey(secretKey))
         .compact();
   }
@@ -83,7 +81,6 @@ public class JwtTokenizer {
   public void reissueTokenPair(HttpServletResponse response, User user) {
     String accessToken = createAccessToken(user);
     String refreshToken = createRefreshToken(user);
-
     RefreshToken refreshTokenObj = refreshTokenService.getRefreshTokenByUserId(user.getId())
         .orElseGet(() -> {
           RefreshToken newRefreshToken = new RefreshToken();
@@ -92,49 +89,62 @@ public class JwtTokenizer {
         });
     refreshTokenObj.setValue(refreshToken);
     refreshTokenService.saveRefreshToken(refreshTokenObj);
+
     addAccessToken(response, accessToken, ACCESS_TOKEN_EXPIRATION_TIME);
     addRefreshToken(response, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME);
     addUserCookie(response, user, ACCESS_TOKEN_EXPIRATION_TIME);
-
 
   }
 
   private void addRefreshToken(HttpServletResponse response, String tokenValue,
       Long expirationTime) {
-    Cookie refreshToken = new Cookie("refreshToken", tokenValue);
-    refreshToken.setHttpOnly(true);
-    refreshToken.setPath("/");
-    refreshToken.setMaxAge(Math.toIntExact(expirationTime));
-    refreshToken.setSecure(true);
-    refreshToken.setAttribute("SameSite", "Lax");
-    log.info("Setting Cookie - Name : {} , Value : {}", refreshToken.getName(), refreshToken);
-    response.addCookie(refreshToken);
+    ResponseCookie refreshToken = ResponseCookie.from("refreshToken", tokenValue)
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
+        .path("/")
+        .maxAge(expirationTime)
+        .domain(".modu-review.com")
+        .build();
+
+    log.info("Setting Cookie - Name : {} , Value : {}", refreshToken.getName(),
+        refreshToken.getValue());
+
+    response.addHeader("Set-Cookie", refreshToken.toString());
+
   }
 
-  private void addAccessToken(HttpServletResponse response, String tokenValue,
+  public void addAccessToken(HttpServletResponse response, String tokenValue,
       Long expirationTime) {
-    Cookie accessToken = new Cookie("accessToken", tokenValue);
-    accessToken.setHttpOnly(true);
-    accessToken.setPath("/");
-    accessToken.setMaxAge(Math.toIntExact(expirationTime));
-    accessToken.setSecure(true);
-    accessToken.setAttribute("SameSite", "Lax");
-    log.info("Setting Cookie - Name : {} , Value : {}", accessToken.getName(), accessToken);
-    response.addCookie(accessToken);
+    ResponseCookie accessToken = ResponseCookie.from("accessToken", tokenValue)
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
+        .path("/")
+        .maxAge(expirationTime)
+        .domain(".modu-review.com")
+        .build();
+
+    log.info("Setting Cookie - Name : {} , Value : {}", accessToken.getName(),
+        accessToken);
+
+    response.addHeader("Set-Cookie", accessToken.toString());
   }
 
-  private void addUserCookie(HttpServletResponse response, User user, Long expirationTime) {
-    Cookie userCookie = new Cookie("UserEmail", user.getEmail());
-    userCookie.setHttpOnly(false);
-    userCookie.setPath("/");
-    userCookie.setMaxAge(Math.toIntExact(expirationTime));
-    userCookie.setSecure(false);
-    userCookie.setAttribute("SameSite", "Lax");
-    log.info(" ========================= addUserCookie =======================");
-    log.info("Setting Cookie - Name : {}m Value : {} ", userCookie.getName(),
-        userCookie.getValue());
-    log.info(" ========================= addUserCookie =======================");
-    response.addCookie(userCookie);
+  public void addUserCookie(HttpServletResponse response, User user, Long expirationTime) {
+    ResponseCookie userCookie = ResponseCookie.from("UserEmail", user.getEmail())
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
+        .path("/")
+        .maxAge(expirationTime)
+        .domain(".modu-review.com")
+        .build();
+
+    log.info("Setting Cookie - Name : {}, Value : {}", userCookie.getName(), userCookie.getValue());
+
+    response.addHeader("Set-Cookie", userCookie.toString());
+
   }
 
   public boolean validateToken(String refreshToken) {

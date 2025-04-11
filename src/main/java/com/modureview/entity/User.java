@@ -19,7 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User extends Auditable{
+public class User extends Auditable {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -27,8 +28,7 @@ public class User extends Auditable{
   private String email;
 
   @Builder.Default
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   public List<RefreshToken> refreshTokens = new ArrayList<>();
-
 
 }
