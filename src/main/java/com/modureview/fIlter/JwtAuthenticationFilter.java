@@ -1,9 +1,8 @@
 package com.modureview.fIlter;
 
-import com.modureview.service.utill.CustomUserDetails;
-import com.modureview.service.utill.JwtAuthenticationToken;
-import com.modureview.service.utill.JwtTokenizer;
-import com.modureview.service.utill.CustomAuthenticationEntryPoint;
+import com.modureview.service.loginUtil.CustomUserDetails;
+import com.modureview.service.loginUtil.JwtTokenizer;
+import com.modureview.service.loginUtil.CustomAuthenticationEntryPoint;
 import com.modureview.exception.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

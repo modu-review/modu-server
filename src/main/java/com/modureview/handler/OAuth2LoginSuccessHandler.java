@@ -1,7 +1,7 @@
 package com.modureview.handler;
 
 
-import com.modureview.service.utill.CustomOAuth2User;
+import com.modureview.service.loginUtil.CustomOAuth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

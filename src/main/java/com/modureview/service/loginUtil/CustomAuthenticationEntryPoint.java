@@ -1,4 +1,4 @@
-package com.modureview.service.utill;
+package com.modureview.service.loginUtil;
 
 import com.nimbusds.jose.shaded.gson.Gson;
 import io.jsonwebtoken.ExpiredJwtException;

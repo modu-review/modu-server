@@ -1,4 +1,4 @@
-package com.modureview.service.utill;
+package com.modureview.service.loginUtil;
 
 import java.util.Collection;
 import java.util.Map;

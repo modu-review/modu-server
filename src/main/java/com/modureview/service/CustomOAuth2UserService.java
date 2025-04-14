@@ -2,7 +2,7 @@ package com.modureview.service;
 
 import com.modureview.entity.User;
 import com.modureview.repository.UserRepository;
-import com.modureview.service.utill.CustomOAuth2User;
+import com.modureview.service.loginUtil.CustomOAuth2User;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

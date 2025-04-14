@@ -2,7 +2,7 @@ package com.modureview.controller;
 
 import com.modureview.entity.User;
 import com.modureview.repository.UserRepository;
-import com.modureview.service.utill.JwtTokenizer;
+import com.modureview.service.loginUtil.JwtTokenizer;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

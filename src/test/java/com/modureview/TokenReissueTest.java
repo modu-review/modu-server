@@ -6,8 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.modureview.entity.User;
 import com.modureview.repository.UserRepository;
-import com.modureview.service.utill.JwtTokenizer;
-import com.nimbusds.jwt.JWT;
+import com.modureview.service.loginUtil.JwtTokenizer;
 import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;

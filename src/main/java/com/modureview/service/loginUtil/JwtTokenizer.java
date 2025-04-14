@@ -1,4 +1,4 @@
-package com.modureview.service.utill;
+package com.modureview.service.loginUtil;
 
 import com.modureview.entity.RefreshToken;
 import com.modureview.entity.User;
