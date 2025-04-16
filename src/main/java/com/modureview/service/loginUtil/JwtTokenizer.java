@@ -92,7 +92,7 @@ public class JwtTokenizer {
 
     addAccessToken(response, accessToken, ACCESS_TOKEN_EXPIRATION_TIME);
     addRefreshToken(response, refreshToken, REFRESH_TOKEN_EXPIRATION_TIME);
-    addUserCookie(response, user, ACCESS_TOKEN_EXPIRATION_TIME);
+    addUserCookie(response, user, REFRESH_TOKEN_EXPIRATION_TIME);
 
   }
 
