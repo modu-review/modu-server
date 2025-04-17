@@ -37,10 +37,6 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
-
-
-
-
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     properties:
@@ -52,7 +48,6 @@ spring:
         "[hbm2ddl.auto]": update
     open-in-view: true
     show-sql: true
-
 
   servlet:
     multipart:
@@ -69,7 +64,6 @@ project:
 app:
   cors:
     allowed-origins: "https://dev.modu-review.com:3000"
-
 
 logging:
   level:
