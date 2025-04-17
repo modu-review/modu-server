@@ -46,9 +46,9 @@ spring:
     properties:
       hibernate:
         hibernate:
-        "[format_sql]": true            #SQL ?? ?? ??
-        "[user_sql_comments]": true     #SQL ??? ?? ??
-        "[highlight_sql]": true         #SQL ??
+        "[format_sql]": true
+        "[user_sql_comments]": true
+        "[highlight_sql]": true
         "[hbm2ddl.auto]": update
     open-in-view: true
     show-sql: true
