@@ -5,42 +5,40 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "board")
-@Getter
+@Table(name = "bookmarks")
 @NoArgsConstructor
-public class Board {
+@AllArgsConstructor
+@Getter
+public class Bookmarks {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "category_id", nullable = false)
-  private Long categoryId;
+  @Column(name = "board_id", nullable = false)
+  private Long boardId;
 
-  @Column(name = "user_id")
+  @Column(name = "user_id", nullable = false)
   private Long userId;
-
-  @Column(nullable = false)
-  private String title;
-
-  @Column(columnDefinition = "TEXT")
-  private String content;
-
-  @Column(name = "view_count")
-  private Long viewCount;
 
   @Column(name = "created_date")
   private LocalDateTime createdDate;
 
-  @Column(name = "modified_date")
-  private LocalDateTime modifiedDate;
+  @PrePersist
+  public void prePersist() {
+    this.createdDate = LocalDateTime.now();
+  }
 
-  private Integer stars;
-
+  public Bookmarks(Long userId, Long boardId) {
+    this.userId = userId;
+    this.boardId = boardId;
+  }
 }
