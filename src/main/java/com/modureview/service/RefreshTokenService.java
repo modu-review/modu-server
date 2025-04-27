@@ -29,7 +29,6 @@ public class RefreshTokenService {
     refreshTokenRepository.findByUserId(user.getId())
         .ifPresent(refreshToken -> {
           refreshTokenRepository.delete(refreshToken);
-          refreshTokenRepository.flush(); // 즉시 반영
         });
 
   }

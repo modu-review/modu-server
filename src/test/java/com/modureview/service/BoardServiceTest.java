@@ -71,13 +71,13 @@ class BoardServiceTest {
   @Test
   @DisplayName("잘못된 BoardID 가져오기")
   void Error_getBoardByIdTest() {
-    // 1) User 저장
+
     User user = User.builder()
         .email("test@test.com")
         .build();
     User savedUser = userRepository.save(user);
 
-    // 2) Board 저장
+
     Board board = Board.builder()
         .title("test title")
         .content("본문")
@@ -88,16 +88,16 @@ class BoardServiceTest {
         .build();
     Board savedBoard = boardRepository.save(board);
 
-    // 3) 존재하지 않는 ID
+
     long invalidId = savedBoard.getId() + 10L;
 
-    // when & then: ResponseStatusException 을 던지는지 검증
+
     ResponseStatusException ex = assertThrows(
         ResponseStatusException.class,
         () -> boardService.boardDetail(invalidId)
     );
 
-    // then: 404 상태 코드와 메시지 검증
+
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     assertEquals(
         "게시글(id=" + invalidId + ")을 찾을 수 없습니다.",
@@ -109,13 +109,13 @@ class BoardServiceTest {
   @Test
   @DisplayName("잘못된 UserID 가져오기")
   void Error_getBoardById_userEmail() {
-    // 1) User 먼저 저장
+
     User user = User.builder()
         .email("test@test.com")
         .build();
     User savedUser = userRepository.save(user);
 
-    // 2) Board는 유효한 userId 로 저장
+
     Board board = Board.builder()
         .title("test title")
         .content("본문")
@@ -126,16 +126,16 @@ class BoardServiceTest {
         .build();
     Board savedBoard = boardRepository.save(board);
 
-    // 3) 이제 그 User를 삭제해서, service 호출 시 ResponseStatusException 발생
+
     userRepository.deleteById(savedUser.getId());
 
-    // when & then: ResponseStatusException을 던지는지 검증
+
     ResponseStatusException ex = assertThrows(
         ResponseStatusException.class,
         () -> boardService.boardDetail(savedBoard.getId())
     );
 
-// 잘못된 getStatus() 대신 getStatusCode() 사용
+
     assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
     assertEquals(
         "유저아이디(id=" + savedUser.getId() + ")가 존재하지 않습니다.",

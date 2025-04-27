@@ -31,7 +31,7 @@ class BoardControllerTest {
 
   @Test
   void getBoardDetail_success() throws Exception {
-    // given: User와 Board를 저장 (viewCount 초기값 100)
+    
     User user = userRepository.save(
         User.builder()
             .email("test@example.com")
@@ -50,7 +50,7 @@ class BoardControllerTest {
     );
     Long targetId = board.getId();
 
-    // when & then: Service에서 조회 시 viewCount가 +1 되어 101이 나와야 한다
+
     mockMvc.perform(get("/board/" + targetId)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class BoardControllerTest {
         .andExpect(jsonPath("$.content").value("테스트 내용"))
         .andExpect(jsonPath("$.user").value("test@example.com"))
         .andExpect(jsonPath("$.category").value("General"))
-        .andExpect(jsonPath("$.viewCount").value(101))   // ← 증가 적용
+        .andExpect(jsonPath("$.viewCount").value(101))
         .andExpect(jsonPath("$.stars").value(5))
         .andExpect(jsonPath("$.createdAt").exists())
         .andDo(result ->
@@ -69,13 +69,13 @@ class BoardControllerTest {
 
   @Test
   void getBoardDetail_notFound() throws Exception {
-    // given: DB에 아무 것도 없는 상태에서
+
     long nonExistingId = 9999L;
 
-    // when & then: 5xx 에러 발생
+
     mockMvc.perform(get("/board/" + nonExistingId)
             .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound())  // ← 404 Not Found 검증
+        .andExpect(status().isNotFound())
         .andDo(result ->
             System.out.println("실패 응답 바디: "
                 + result.getResponse().getContentAsString())
