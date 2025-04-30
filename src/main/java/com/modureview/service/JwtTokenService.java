@@ -15,7 +15,7 @@ public class JwtTokenService {
   private final Long accessTokenExpire = 60 * 60L;
   private final Long refreshTokenExpire = 30 * 24 * 60 * 60L;
 
-  List<ResponseCookie> loginTokenIssue(String userEmail) {
+  public List<ResponseCookie> loginTokenIssue(String userEmail) {
     return List.of(
         createAccessToken(userEmail),
         createRefreshToken(userEmail),
@@ -36,7 +36,6 @@ public class JwtTokenService {
   public ResponseCookie createUserEmailCookie(String userEmail) {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
   }
-
 
   private String createJwtToken(String subject, Long expireSeconds, String key) {
     return Jwts.builder()
