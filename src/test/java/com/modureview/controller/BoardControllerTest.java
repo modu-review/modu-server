@@ -8,6 +8,7 @@ import com.modureview.entity.Board;
 import com.modureview.entity.User;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.UserRepository;
+import com.modureview.service.BoardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,9 +30,12 @@ class BoardControllerTest {
   @Autowired
   private BoardRepository boardRepository;
 
+  @Autowired
+  private BoardService boardService;
+
   @Test
   void getBoardDetail_success() throws Exception {
-    
+
     User user = userRepository.save(
         User.builder()
             .email("test@example.com")
@@ -41,7 +45,7 @@ class BoardControllerTest {
     Board board = boardRepository.save(
         Board.builder()
             .category("General")
-            .userId(user.getId())
+            .email(user.getEmail())
             .title("테스트 제목")
             .content("테스트 내용")
             .viewCount(100L)
@@ -65,6 +69,7 @@ class BoardControllerTest {
             System.out.println("성공 응답 바디: " +
                 result.getResponse().getContentAsString())
         );
+    System.out.println(boardService.boardDetail(targetId));
   }
 
   @Test

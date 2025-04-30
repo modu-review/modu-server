@@ -1,8 +1,6 @@
 package com.modureview.entity;
 
 
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,11 +24,11 @@ public class Board extends Auditable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "category_id",nullable = false)
   private String category;
 
   @Column(name = "user_id")
-  private Long userId;
+  private String email;
+
 
   @Column(nullable = false)
   private String title;
@@ -44,11 +42,9 @@ public class Board extends Auditable {
 
   private Integer stars;
 
-  public void upViewCount(){this.viewCount++;}
-
-
-
-
+  public void upViewCount() {
+    this.viewCount++;
+  }
 
 
 }
