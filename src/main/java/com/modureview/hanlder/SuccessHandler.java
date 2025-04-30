@@ -7,14 +7,18 @@ import com.modureview.service.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SuccessHandler implements AuthenticationSuccessHandler {
 
   private final JwtTokenService jwtTokenService;
@@ -27,9 +31,10 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
       HttpServletResponse response,
       Authentication authentication) throws IOException {
 
-    User oAuth2User = (User) authentication.getPrincipal();
+    OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+    Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
+    String email = (String) kakaoAccount.get("email");
 
-    String email = oAuth2User.getEmail();
 
     User user = userRepository.findByEmail(email)
         .orElseGet(() -> userRepository.save(User.builder().email(email).build()));
@@ -37,6 +42,10 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     jwtTokenService.loginTokenIssue(user.getEmail())
         .forEach(cookie -> response.addHeader("Set-Cookie", cookie.toString()));
 
-    String redirectUrl = frontURL + "/oauth2/redirect?user_email=" + oAuth2User.getEmail();
+    String redirectUrl = frontURL + "/oauth2/redirect?user_email=" + email;
+
+    log.info("login info {}",email);
+
+    response.sendRedirect(redirectUrl);
   }
 }
