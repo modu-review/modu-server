@@ -35,15 +35,10 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
     String email = (String) kakaoAccount.get("email");
 
-
     User user = userRepository.findByEmail(email)
         .orElseGet(() -> userRepository.save(User.builder().email(email).build()));
 
-    jwtTokenService.loginTokenIssue(user.getEmail())
-        .forEach(cookie -> response.addHeader("Set-Cookie", cookie.toString()));
-
     String redirectUrl = frontURL + "/oauth2/redirect?user_email=" + email;
-
     log.info("login info {}",email);
 
     response.sendRedirect(redirectUrl);
