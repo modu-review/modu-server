@@ -1,10 +1,8 @@
 package com.modureview.config;
 
 import com.modureview.hanlder.SuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,14 +18,13 @@ public class SecurityConfig {
     this.successHandler = successHandler;
     this.authenticationEntryPoint = authenticationEntryPoint;
   }
-
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best").permitAll()
-            .requestMatchers(HttpMethod.POST, "/hello").authenticated()
+            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best", "favicon.io")
+            .permitAll()
             .anyRequest().authenticated()
         )
         .exceptionHandling(ex -> ex
