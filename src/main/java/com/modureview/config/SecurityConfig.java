@@ -19,7 +19,8 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best").permitAll()
+            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best", "favicon.io")
+            .permitAll()
             .anyRequest().authenticated()
         )
         .oauth2Login(oauth2 -> oauth2
