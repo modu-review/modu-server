@@ -1,17 +1,20 @@
 package com.modureview.service;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtTokenService {
 
-  private final String secretKey = "r8FkOq5W9XzRb7K1uDwYlH3gTjLmP2Na";
+  @Value("${jwt.secret}")
+  private String secretKey;
   private final Long accessTokenExpire = 60 * 60L;
   private final Long refreshTokenExpire = 30 * 24 * 60 * 60L;
 
@@ -35,6 +38,18 @@ public class JwtTokenService {
 
   public ResponseCookie createUserEmailCookie(String userEmail) {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
+  }
+
+  public boolean validateToken(String token) {
+    try {
+      Jwts.parserBuilder()
+          .setSigningKey(secretKey)
+          .build()
+          .parseClaimsJws(token);
+      return true;
+    } catch (JwtException | IllegalArgumentException e) {
+      return false;
+    }
   }
 
   private String createJwtToken(String subject, Long expireSeconds, String key) {
