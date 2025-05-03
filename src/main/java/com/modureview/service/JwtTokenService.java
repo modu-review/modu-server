@@ -54,6 +54,10 @@ public class JwtTokenService {
     parseAndThrow(token);
   }
 
+  public ResponseCookie reIssueAccessToken(String token){
+    return createAccessToken(token);
+  }
+
   private void parseAndThrow(String token) {
     try {
       Jwts.parserBuilder()
