@@ -1,11 +1,21 @@
 package com.modureview.service;
 
-import io.jsonwebtoken.JwtException;
+import com.modureview.enums.JwtErrorCode;
+import com.modureview.exception.jwtError.InvalidTokenException;
+import com.modureview.exception.jwtError.TokenExpiredException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
@@ -40,18 +50,24 @@ public class JwtTokenService {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
   }
 
-  public boolean validateToken(String token) {
+  public void validateToken(String token) {
+    parseAndThrow(token);
+  }
+
+  private void parseAndThrow(String token) {
     try {
       Jwts.parserBuilder()
           .setSigningKey(secretKey)
           .build()
           .parseClaimsJws(token);
-      return true;
-    } catch (JwtException | IllegalArgumentException e) {
-      return false;
+    } catch (ExpiredJwtException e) {
+      throw new TokenExpiredException(JwtErrorCode.UNAUTHORIZED);
+    } catch (UnsupportedJwtException | MalformedJwtException | SignatureException e) {
+      throw new InvalidTokenException(JwtErrorCode.FORBIDDEN);
+    } catch (IllegalArgumentException e) {
+      throw new InvalidTokenException(JwtErrorCode.UNAUTHORIZED);
     }
   }
-
   private String createJwtToken(String subject, Long expireSeconds, String key) {
     return Jwts.builder()
         .setSubject(subject)
@@ -71,4 +87,15 @@ public class JwtTokenService {
         .domain(".modu-review.com")
         .build();
   }
+
+  public Optional<String> extractCookie(HttpServletRequest request, String cookieName) {
+    if (request.getCookies() == null) {
+      return Optional.empty();
+    }
+    return Arrays.stream(request.getCookies())
+        .filter(cookie -> cookie.getName().equals(cookieName))
+        .map(Cookie::getValue)
+        .findFirst();
+  }
+
 }
