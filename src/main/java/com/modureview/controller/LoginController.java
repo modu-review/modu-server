@@ -24,7 +24,7 @@ public class LoginController {
     responseCookies.stream()
         .forEach(cookie -> response.addHeader("Set-Cookie", cookie.toString()));
 
-    return ResponseEntity.ok("토큰이 발행 완료 : " + email);
+    return ResponseEntity.ok("토큰 발행 완료 : " + email);
 
   }
 }
