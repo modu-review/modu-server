@@ -64,4 +64,4 @@ frontend:
   url: https://dev.modu-review.com:3000
 
 jwt:
-  secret=r8FkOq5W9XzRb7K1uDwYlH3gTjLmP2Na
+  secret: r8FkOq5W9XzRb7K1uDwYlH3gTjLmP2Na
