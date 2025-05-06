@@ -6,6 +6,7 @@ import com.modureview.exception.jwtError.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -16,15 +17,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import javax.crypto.SecretKey;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class JwtTokenService {
 
   @Value("${jwt.secret}")
-  private String secretKey;
+  private String jwtSecret;
+
+  private SecretKey getSecretKey() {
+    return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+  }
   private final Long accessTokenExpire = 60 * 60L;
   private final Long refreshTokenExpire = 30 * 24 * 60 * 60L;
 
@@ -37,12 +45,12 @@ public class JwtTokenService {
   }
 
   public ResponseCookie createAccessToken(String userEmail) {
-    String accessToken = createJwtToken(userEmail, accessTokenExpire, secretKey);
+    String accessToken = createJwtToken(userEmail, accessTokenExpire);
     return createCookie("accessToken", accessToken, accessTokenExpire, true);
   }
 
   public ResponseCookie createRefreshToken(String userEmail) {
-    String refreshToken = createJwtToken(userEmail, refreshTokenExpire, secretKey);
+    String refreshToken = createJwtToken(userEmail, refreshTokenExpire);
     return createCookie("refreshToken", refreshToken, refreshTokenExpire, true);
   }
 
@@ -61,9 +69,10 @@ public class JwtTokenService {
   private void parseAndThrow(String token) {
     try {
       Jwts.parserBuilder()
-          .setSigningKey(secretKey)
+          .setSigningKey(getSecretKey())
           .build()
           .parseClaimsJws(token);
+      log.info("parseEnd");
     } catch (ExpiredJwtException e) {
       throw new TokenExpiredException(JwtErrorCode.UNAUTHORIZED);
     } catch (UnsupportedJwtException | MalformedJwtException | SignatureException e) {
@@ -72,12 +81,13 @@ public class JwtTokenService {
       throw new InvalidTokenException(JwtErrorCode.UNAUTHORIZED);
     }
   }
-  private String createJwtToken(String subject, Long expireSeconds, String key) {
+
+  private String createJwtToken(String subject, Long expireSeconds) {
     return Jwts.builder()
         .setSubject(subject)
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expireSeconds * 1000))
-        .signWith(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)))
+        .signWith(getSecretKey())
         .compact();
   }
 
@@ -102,4 +112,13 @@ public class JwtTokenService {
         .findFirst();
   }
 
+  public String extractSubject(String token) {
+    return Jwts.parserBuilder()
+        .setSigningKey(getSecretKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .getSubject();
+  }
 }
+

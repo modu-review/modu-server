@@ -26,17 +26,13 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
     Optional<String> accessTokenOpt = jwtTokenService.extractCookie(request, "accessToken");
     Optional<String> refreshTokenOpt = jwtTokenService.extractCookie(request, "refreshToken");
 
-    return accessTokenOpt
-        .map(token -> {
-          jwtTokenService.validateToken(token);
-          return Boolean.TRUE;
-        })
-        .or(() -> refreshTokenOpt.map(refreshToken -> {
-          jwtTokenService.validateToken(refreshToken);
-          throw new InvalidTokenException(JwtErrorCode.UNAUTHORIZED);
-        }))
-        .orElseThrow(() -> new InvalidTokenException(JwtErrorCode.UNAUTHORIZED));
-  }
+    if (accessTokenOpt.isPresent()) {
+      String accessToken = accessTokenOpt.get();
+      jwtTokenService.validateToken(accessToken);
+      return true;
+    }
 
+    throw new InvalidTokenException(JwtErrorCode.UNAUTHORIZED);
+  }
 
 }
