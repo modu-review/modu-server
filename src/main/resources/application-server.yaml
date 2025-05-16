@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: modu-review-server
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/modu_review
+    username: myuser
+    password: mypassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        hbm2ddl.auto: update
+    open-in-view: true
+    show-sql: true
+    jdbc:
+      time_zone: Asia/Seoul
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: "8d8b112f9b151d0a13c2c66ea8e64aa0"
+            client-secret: "vnkc65v4zjcdQOvbXenlc7DrfHPwDfcL"
+            redirect-uri: "https://api.modu-review.com/login/oauth2/code/kakao"
+            scope: account_email
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            client-authentication-method: client_secret_post
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        web.filter.CommonsRequestLoggingFilter: DEBUG
+      hibernate:
+        type.descriptor.sql: TRACE
+    org.springframework.data.jpa.repository: DEBUG
+    com:
+      modureview: DEBUG
+    root: INFO
+
+frontend:
+  url: https://modu-review.com
