@@ -6,7 +6,6 @@ import com.modureview.enums.BoardErrorCode;
 import com.modureview.exception.BoardCustomException;
 import com.modureview.repository.BoardRepository;
 import jakarta.transaction.Transactional;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +17,13 @@ public class BoardService {
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
-        () -> new BoardCustomException(BoardErrorCode.NOT_FOUND_BOARD)
+        () -> new BoardCustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
     );
     BoardDetailResponse response = BoardDetailResponse.builder()
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .author(findBoard.getAuthor())
+        .author(findBoard.getAuthorEmail())
         .create_At(findBoard.getCreatedAt())
         .content(findBoard.getContent())
         .comment_count(findBoard.getCommentsCount())
