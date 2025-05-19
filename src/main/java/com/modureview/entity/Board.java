@@ -32,7 +32,7 @@ public class Board {
 
   private String title;
 
-  private String author;
+  private String authorEmail;
 
   @Enumerated(EnumType.STRING)
   private Category category;
@@ -64,9 +64,9 @@ public class Board {
   }
 
   @Builder
-  public Board(String title, String author, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
+  public Board(String title, String authorEmail, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
     this.title = title;
-    this.author = author;
+    this.authorEmail = authorEmail;
     this.category = category;
     this.content = content;
     this.commentsCount = commentsCount;
