@@ -1,6 +1,6 @@
 package com.modureview.interceptor;
 
-import com.modureview.enums.JwtErrorCode;
+import com.modureview.enums.errors.JwtErrorCode;
 import com.modureview.exception.jwtError.InvalidTokenException;
 import com.modureview.service.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;

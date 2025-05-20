@@ -1,7 +1,6 @@
 package com.modureview.exception;
 
 import com.modureview.enums.ErrorCode;
-import com.modureview.enums.JwtErrorCode;
 
 public class CustomException extends RuntimeException {
   private final ErrorCode errorCode;

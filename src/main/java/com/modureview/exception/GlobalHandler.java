@@ -2,7 +2,6 @@ package com.modureview.exception;
 
 import com.modureview.dto.response.ErrorResponse;
 import com.modureview.enums.ErrorCode;
-import com.modureview.enums.JwtErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

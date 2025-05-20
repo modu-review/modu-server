@@ -1,6 +1,6 @@
 package com.modureview.service;
 
-import com.modureview.enums.JwtErrorCode;
+import com.modureview.enums.errors.JwtErrorCode;
 import com.modureview.exception.jwtError.InvalidTokenException;
 import com.modureview.exception.jwtError.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;

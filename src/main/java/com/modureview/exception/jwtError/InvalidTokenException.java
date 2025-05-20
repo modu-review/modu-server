@@ -1,6 +1,6 @@
 package com.modureview.exception.jwtError;
 
-import com.modureview.enums.JwtErrorCode;
+import com.modureview.enums.errors.JwtErrorCode;
 import com.modureview.exception.CustomException;
 
 public class InvalidTokenException extends CustomException {
