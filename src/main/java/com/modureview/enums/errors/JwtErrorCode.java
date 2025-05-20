@@ -1,5 +1,6 @@
-package com.modureview.enums;
+package com.modureview.enums.errors;
 
+import com.modureview.enums.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum JwtErrorCode implements ErrorCode {
