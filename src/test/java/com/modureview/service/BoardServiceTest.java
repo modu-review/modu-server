@@ -1,42 +1,50 @@
 package com.modureview.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.modureview.dto.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.exception.CustomException;
 import com.modureview.repository.BoardRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
-
-
-
-import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
 class BoardServiceTest {
   @Autowired
   private BoardService boardService;
+
   @Autowired
   private BoardRepository boardRepository;
+
   @Autowired
-  ObjectMapper objectMapper;
+  private ObjectMapper objectMapper;
 
-
+  @Autowired
+  private MockMvc mockMvc;
 
   @AfterEach
-  void cleanUp(){
+  void cleanUp() {
     boardRepository.deleteAll();
   }
 
@@ -118,5 +126,19 @@ class BoardServiceTest {
         .writeValueAsString(Map.of("error",ex.getClass().getSimpleName(),
             "message",ex.getMessage()));
     log.info("errorJson == {}", errorJson);
+  }
+
+  @DisplayName("S3 Presigned URL 생성 성공 테스트")
+  @Test
+  void createPresignedUrl_success() throws Exception {
+    // given
+    String keyJson = objectMapper.writeValueAsString(Map.of("fileType", "png"));
+
+    // when & then
+    mockMvc.perform(post("/presign")
+            .content(keyJson)
+            .contentType("application/json"))
+        .andExpect(status().isOk())
+        .andDo(print());
   }
 }

@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -26,6 +27,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
@@ -86,6 +88,7 @@ public class BoardService {
       }
 
     } catch (Exception e) {
+      log.info("presigned생성중 에러 : {}", e);
       throw new CreatPresignedUrlError(ImageSaveErrorCode.CAN_NOT_CREATE_PRESIGNED_URL);
     }
   }
