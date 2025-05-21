@@ -1,9 +1,9 @@
 spring:
   application:
-    name: modu-review-server
+    name: modu-review-dev
 
   datasource:
-    url: jdbc:mysql://mysql:3306/modu_review
+    url: jdbc:mysql://127.0.0.1:3306/modu_review
     username: root
     password: root123
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -58,5 +58,9 @@ logging:
       modureview: DEBUG
     root: INFO
 
+#Consts
 frontend:
-  url: https://modu-review.com
+  url: https://dev.modu-review.com:3000
+
+jwt:
+  secret: eE5Z9q2Tr9vQnFc6sB8gD7xH0LpKm1NsUaXrYwZcGbHtJvMwQrAsXyZnVpCtEfGk

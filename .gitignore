@@ -13,6 +13,7 @@ build/
 .settings
 .springBeans
 .sts4-cache
+.DS_Store
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
@@ -32,5 +33,9 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+#Spring
+/org/springframework
+
 
 
