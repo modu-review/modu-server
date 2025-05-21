@@ -106,7 +106,7 @@ class BoardSearchServiceTest {
         .sort("recent")
         .build();
     long startTime = System.nanoTime();
-    CustomPageResponse<BoardSearchResponse> rep = boardSearchService.boardSearch(request);
+    Page<Board> rep = boardSearchService.boardSearch(request);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
@@ -126,7 +126,7 @@ class BoardSearchServiceTest {
         .sort("recent")
         .build();
     long startTime = System.nanoTime();
-    CustomPageResponse<BoardSearchResponse> rep = boardSearchService.boardSearch(request);
+    Page<Board> rep = boardSearchService.boardSearch(request);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
