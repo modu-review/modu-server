@@ -65,3 +65,10 @@ frontend:
 
 jwt:
   secret: eE5Z9q2Tr9vQnFc6sB8gD7xH0LpKm1NsUaXrYwZcGbHtJvMwQrAsXyZnVpCtEfGk
+
+aws:
+  region: ap-northeast-2
+  bucket: modus3
+  credentials:
+    access-key: ${ACCESS_KEY}
+    secret-key: ${SECRET_KEY}
