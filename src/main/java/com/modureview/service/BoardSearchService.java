@@ -2,6 +2,7 @@ package com.modureview.service;
 
 
 
+import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSearchRequest;
 import com.modureview.dto.response.BoardSearchResponse;
 import com.modureview.dto.response.CustomPageResponse;
@@ -27,7 +28,7 @@ import org.springframework.util.StringUtils;
 public class BoardSearchService {
   private final BoardSearchRepository boardSearchRepository;
 
-  public CustomPageResponse<BoardSearchResponse> boardSearch(BoardSearchRequest req) {
+  public Page<Board> boardSearch(BoardSearchRequest req) {
     Sort sortCriteria;
 
     switch (req.sort().toLowerCase()) {
@@ -39,16 +40,7 @@ public class BoardSearchService {
 
     Pageable pageable = PageRequest.of(req.page(), 9, sortCriteria);
     if (StringUtils.hasText(req.keyword())) {
-      Page<Board> boardPage = boardSearchRepository.findByKeyword(req.keyword(), pageable);
-      List<BoardSearchResponse> List_SearchBoard = boardPage.getContent().stream()
-          .map(BoardSearchResponse::fromEntity)
-          .toList();
-      return new CustomPageResponse<>(
-          List_SearchBoard,
-          boardPage.getNumber() + 1,
-          boardPage.getTotalPages()
-
-      );
+      return boardSearchRepository.findByKeyword(req.keyword(), pageable);
     } else {
       throw new CustomException(BoardErrorCode.BOARD_SEARCH_KEYWORD_NOTFOUND);
     }
