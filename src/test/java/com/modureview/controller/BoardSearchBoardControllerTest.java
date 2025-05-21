@@ -109,6 +109,7 @@ class BoardSearchBoardControllerTest {
   @Test
   @DisplayName("GET /reviews -keyword:테스트 page:0 sort:recent 성공시 201")
   void Search_Success_reviews_recent() throws Exception{
+    long startTime = System.nanoTime();
     BoardSearchRequest request = BoardSearchRequest.builder()
         .keyword("테스트")
         .page(0)
@@ -120,6 +121,10 @@ class BoardSearchBoardControllerTest {
         .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andReturn();
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("BoardSearchBoardControllerTest.Search_Success_reviews_recent() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
 
@@ -134,6 +139,7 @@ class BoardSearchBoardControllerTest {
   @Test
   @DisplayName("GET /reviews -keyword:테스트 page:2 sort:hotcomment 성공시 201")
   void Search_Success_reviews_hotcomment() throws Exception{
+    long startTime = System.nanoTime();
     BoardSearchRequest request = BoardSearchRequest.builder()
         .keyword("테스트")
         .page(2)
@@ -146,6 +152,11 @@ class BoardSearchBoardControllerTest {
         .andExpect(status().isOk())
         .andReturn();
 
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("BoardSearchBoardControllerTest.Search_Success_reviews_hotcomment() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
+
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
 
     Object jsonObject = objectMapper.readValue(responseBody, Object.class);
@@ -157,6 +168,7 @@ class BoardSearchBoardControllerTest {
   @Test
   @DisplayName("GET /reviews -keyword:테스트 page:2 sort:hotbookmark 성공시 201")
   void Search_Success_reviews_hotbookmark() throws Exception{
+    long startTime = System.nanoTime();
     BoardSearchRequest request = BoardSearchRequest.builder()
         .keyword("테스트")
         .page(2)
@@ -168,6 +180,10 @@ class BoardSearchBoardControllerTest {
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andReturn();
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("BoardSearchBoardControllerTest.Search_Success_reviews_hotbookmark() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
 
@@ -180,6 +196,7 @@ class BoardSearchBoardControllerTest {
   @Test
   @DisplayName("GET /reviews -keyword:테스트 page:2 sort:hotbookmark 성공시 201")
   void Search_Content_reviews_recent() throws Exception{
+    long startTime = System.nanoTime();
     BoardSearchRequest request = BoardSearchRequest.builder()
         .keyword("장충동왕족발보쌈")
         .page(2)
@@ -191,6 +208,11 @@ class BoardSearchBoardControllerTest {
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
         .andReturn();
+
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("BoardSearchBoardControllerTest.Search_Content_reviews_recent() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
 
