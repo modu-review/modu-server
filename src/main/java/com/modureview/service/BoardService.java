@@ -5,8 +5,10 @@ import com.modureview.config.AwsS3Config;
 import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
+import com.modureview.entity.Category;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
+import com.modureview.exception.BoardError.BoardSaveError;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
@@ -19,6 +21,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.owasp.html.PolicyFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -105,6 +108,20 @@ public class BoardService {
     } catch (Exception e) {
       log.info("xss white list 통과 실패 : {}", e);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
+    }
+
+    Board board = Board.builder()
+        .title(request.title())
+        .content(request.content())
+        .authorEmail(request.authorEmail())
+        .category(Category.valueOf(request.category()))
+        .build();
+
+    try {
+      boardRepository.save(board);
+    } catch (DataAccessException e) {
+      log.error("Board 저장 중 DB 접근 에러 발생", e);
+      throw new BoardSaveError(BoardErrorCode.BOARD_SAVE_ERROR);
     }
 
   }
