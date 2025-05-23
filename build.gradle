@@ -47,9 +47,6 @@ dependencies {
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 
-    implementation platform('software.amazon.awssdk:bom:2.25.3')
-    implementation 'software.amazon.awssdk:s3'
-    implementation 'software.amazon.awssdk:auth'
 }
 
 tasks.named('test') {
