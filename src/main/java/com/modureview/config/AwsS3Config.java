@@ -13,10 +13,10 @@ public class AwsS3Config {
 
   private String bucket;
   private String region;
-  private Credentials credentials = new Credentials();  // ⬅️ null 방지 기본값
+  private Credentials credentials = new Credentials();
 
   @Getter
-  @Setter               // ⬅️  내부 클래스에도 Setter 추가
+  @Setter
   public static class Credentials {
     private String accessKey;
     private String secretKey;
