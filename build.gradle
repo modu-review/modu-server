@@ -47,9 +47,14 @@ dependencies {
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    //aws s3
     implementation platform('software.amazon.awssdk:bom:2.25.3')
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:auth'
+
+    // https://mvnrepository.com/artifact/com.googlecode.owasp-java-html-sanitizer/owasp-java-html-sanitizer
+    implementation("com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1")
+
 }
 
 tasks.named('test') {
