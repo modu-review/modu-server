@@ -101,8 +101,7 @@ public class BoardService {
     }
   }
 
-  @Transactional
-  public void saveBoard(BoardSaveRequest request) {
+  public void htmlSanitizer(BoardSaveRequest request) {
     try {
       sanitizer.sanitize(request.content());
     } catch (Exception e) {
@@ -110,6 +109,10 @@ public class BoardService {
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
 
+  }
+
+  @Transactional
+  public void saveBoard(BoardSaveRequest request) {
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
