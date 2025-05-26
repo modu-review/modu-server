@@ -25,7 +25,7 @@ public class BoardSearchBoardController {
 
   //TODO : ResponseEntity 설정
   @GetMapping("/reviews")
-  public CustomPageResponse<BoardSearchResponse> getBoardSearch(
+  public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getBoardSearch(
       @RequestBody BoardSearchRequest request
   ) {
     Page<Board> boardPage = boardSearchService.boardSearch(request);
