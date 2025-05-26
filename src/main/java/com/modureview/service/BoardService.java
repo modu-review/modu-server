@@ -149,7 +149,8 @@ public class BoardService {
 
       if (src != null && !src.isBlank()) {
         String uuid = extractUuidFromUrl(src);
-        log.info("추출된 uuid {}", uuid);
+        //TODO
+        //추출한 uuid를 기반으로 board테이블에 cascade기반 업로드
       }
     }
   }
