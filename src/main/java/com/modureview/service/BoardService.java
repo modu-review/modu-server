@@ -9,6 +9,7 @@ import com.modureview.entity.Category;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
 import com.modureview.exception.BoardError.BoardSaveError;
+import com.modureview.exception.BoardError.ImageSrcExtractError;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
@@ -20,7 +21,12 @@ import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.owasp.html.PolicyFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -39,6 +45,9 @@ public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
   private final PolicyFactory sanitizer = HtmlSanitizerPolicy.POLICY;
+
+  @Value("${custom.message.image.extract-fail}")
+  private String imageExtractFailMessage;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -127,6 +136,32 @@ public class BoardService {
       throw new BoardSaveError(BoardErrorCode.BOARD_SAVE_ERROR);
     }
 
+  }
+
+  public void extractImageInfo(BoardSaveRequest request) {
+    String html = sanitizer.sanitize(request.content());
+
+    Document doc = Jsoup.parse(html);
+    Elements imgTags = doc.select("img");
+
+    for (Element img : imgTags) {
+      String src = img.attr("src");
+
+      if (src != null && !src.isBlank()) {
+        String uuid = extractUuidFromUrl(src);
+        log.info("추출된 uuid {}", uuid);
+      }
+    }
+  }
+
+  private String extractUuidFromUrl(String url) {
+    try {
+      String[] parts = url.split("/");
+      return parts[parts.length - 1];
+    } catch (ImageSrcExtractError e) {
+      log.info("image 주소 추출중 오류 발생 = {}", e.getMessage());
+      return imageExtractFailMessage;
+    }
   }
 
 }

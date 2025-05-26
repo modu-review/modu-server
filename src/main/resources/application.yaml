@@ -72,3 +72,8 @@ aws:
   credentials:
     access-key: ${ACCESS_KEY}
     secret-key: ${SECRET_KEY}
+
+custom:
+  message:
+    image:
+      extract-fail: "no: image: can't extract image"
