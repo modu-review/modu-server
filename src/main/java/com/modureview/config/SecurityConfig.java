@@ -23,7 +23,8 @@ public class SecurityConfig {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best","/reviews", "favicon.io")
+            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best",
+                "/search", "favicon.io")
             .permitAll()
             .anyRequest().authenticated()
         )
