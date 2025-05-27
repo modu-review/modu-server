@@ -9,9 +9,9 @@ public class HtmlSanitizerPolicy {
       .allowElements("p", "ul", "ol", "li", "br", "strong", "em", "blockquote", "code", "pre")
       .allowElements("a").allowAttributes("href").onElements("a")
       .allowUrlProtocols("http", "https", "mailto")
-      .allowElements("img")
-      .allowElements("png")
-      .allowAttributes("src", "alt").onElements("img")
+      .allowElements("img").allowAttributes("src", "alt").onElements("img")
       .allowUrlProtocols("http", "https", "data")
+      .allowElements("div", "h1", "h2", "h3", "h4", "h5", "h6")
       .toFactory();
+
 }

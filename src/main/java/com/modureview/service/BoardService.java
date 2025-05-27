@@ -46,9 +46,6 @@ public class BoardService {
   private final AwsS3Config awsS3Config;
   private final PolicyFactory sanitizer = HtmlSanitizerPolicy.POLICY;
 
-  @Value("${custom.message.image.extract-fail}")
-  private String imageExtractFailMessage;
-
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
@@ -111,13 +108,21 @@ public class BoardService {
   }
 
   public void htmlSanitizer(BoardSaveRequest request) {
-    try {
-      sanitizer.sanitize(request.content());
-    } catch (Exception e) {
-      log.info("xss white list 통과 실패 : {}", e);
+    String content = request.content().toLowerCase();
+
+    if (content.contains("<script") || content.contains("onerror=") || content.contains("javascript:")) {
+      log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
 
+    String sanitized = sanitizer.sanitize(request.content());
+    String originalNoSpace = request.content().replaceAll("\\s+", "");
+    String sanitizedNoSpace = sanitized.replaceAll("\\s+", "");
+
+    if (!originalNoSpace.equals(sanitizedNoSpace)) {
+      log.warn("정화 후 내용이 변경됨. 원본: {}, 정화결과: {}", request.content(), sanitized);
+      throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
+    }
   }
 
   @Transactional
@@ -161,7 +166,7 @@ public class BoardService {
       return parts[parts.length - 1];
     } catch (ImageSrcExtractError e) {
       log.info("image 주소 추출중 오류 발생 = {}", e.getMessage());
-      return imageExtractFailMessage;
+      throw new ImageSrcExtractError(BoardErrorCode.IMG_SRC_EXTRACT_ERROR);
     }
   }
 
