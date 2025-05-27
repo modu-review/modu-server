@@ -152,14 +152,33 @@ class BoardServiceTest {
   void xssCheckSuccess() {
     // given: 정상적인 HTML
     String safeHtml = """  
-            <div>        <h2>서울 근처 주말 여행지 추천</h2>
-              <p>요즘 날씨가 좋아서 주말마다 짧은 여행을 다녀오고 있어요! 이번 주에는 <strong>남산서울타워</strong>를 다녀왔습니다.</p>
-              <p>걷는 길도 잘 되어 있고, <a href="https://www.seoultower.co.kr">공식 웹사이트</a>에서 미리 정보를 확인하고 가시면 편해요.</p>
-              <ul>          <li>대중교통 이용 가능</li>
-              <li>야경이 정말 예쁨</li>
-              <li>근처 맛집도 많음 (특히 닭갈비!)</li>
-              </ul>        <p>사진은 아래에 첨부할게요. 혹시 다른 추천 여행지가 있다면 댓글로 알려주세요 :)</p>        <img src="https://example.com/seoul-tower.jpg" alt="서울타워 사진" />
-              </div>      
+        <h2>서울 근처 주말 여행지 추천</h2>
+        
+        <p>요즘 날씨가 좋아서 주말마다 짧은 여행을 다녀오고 있어요! 이번 주에는 <strong>남산서울타워</strong>를 다녀왔습니다.</p>
+        
+        <p>걷는 길도 잘 되어 있고, <a href="https://www.seoultower.co.kr">공식 웹사이트</a>에서 미리 정보를 확인하고 가시면 편해요.</p>
+        
+        <ul>
+          <li>대중교통 이용 가능</li>
+          <li>야경이 정말 예쁨</li>
+          <li>근처 맛집도 많음 (특히 닭갈비!)</li>
+        </ul>
+        
+        <blockquote>
+          <p>“도시에서 가까우면서도 힐링할 수 있는 곳이에요!”</p>
+        </blockquote>
+        
+        <p>사진은 아래에 첨부할게요. 혹시 다른 추천 여행지가 있다면 댓글로 알려주세요 :)</p>
+        
+        <img src="https://example.com/seoul-tower.jpg" alt="서울타워 사진">
+        
+        <hr>
+        
+        <pre><code>추천 일정:
+        - 오전: 남산 산책
+        - 오후: 전망대 관람
+        </code></pre>
+        
         """;
     BoardSaveRequest request = new BoardSaveRequest("Title", safeHtml, "user@example.com", "food");
 
