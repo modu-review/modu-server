@@ -1,6 +1,8 @@
 package com.modureview.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -9,8 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.modureview.dto.BoardDetailResponse;
+import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
+import com.modureview.enums.errors.BoardErrorCode;
+import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
 import com.modureview.repository.BoardRepository;
 import java.util.Map;
@@ -141,4 +146,50 @@ class BoardServiceTest {
         .andExpect(status().isOk())
         .andDo(print());
   }
+
+  @Test
+  @DisplayName("xss가 없는 html코드")
+  void xssCheckSuccess() {
+    // given: 정상적인 HTML
+    String safeHtml = """  
+            <div>        <h2>서울 근처 주말 여행지 추천</h2>
+              <p>요즘 날씨가 좋아서 주말마다 짧은 여행을 다녀오고 있어요! 이번 주에는 <strong>남산서울타워</strong>를 다녀왔습니다.</p>
+              <p>걷는 길도 잘 되어 있고, <a href="https://www.seoultower.co.kr">공식 웹사이트</a>에서 미리 정보를 확인하고 가시면 편해요.</p>
+              <ul>          <li>대중교통 이용 가능</li>
+              <li>야경이 정말 예쁨</li>
+              <li>근처 맛집도 많음 (특히 닭갈비!)</li>
+              </ul>        <p>사진은 아래에 첨부할게요. 혹시 다른 추천 여행지가 있다면 댓글로 알려주세요 :)</p>        <img src="https://example.com/seoul-tower.jpg" alt="서울타워 사진" />
+              </div>      
+        """;
+    BoardSaveRequest request = new BoardSaveRequest("Title", safeHtml, "user@example.com", "food");
+
+    // when & then
+    assertDoesNotThrow(() -> boardService.htmlSanitizer(request));
+  }
+
+  @Test
+  @DisplayName("xss가 주입된 공격 코드")
+  void xssCheckFailure() {
+    // given: XSS 포함 HTML
+    String maliciousHtml = """
+        <div>        <h2>서울 근처 주말 여행지 추천</h2>
+        <p>요즘 날씨가 좋아서 주말마다 짧은 여행을 다녀오고 있어요! 이번 주에는 <strong>남산서울타워</strong>를 다녀왔습니다.</p>
+        <p>걷는 길도 잘 되어 있고, <a href="https://www.seoultower.co.kr">공식 웹사이트</a>에서 미리 정보를 확인하고 가시면 편해요.</p>
+        <ul>          <li>대중교통 이용 가능</li>
+        <li>야경이 정말 예쁨</li>
+        <li>근처 맛집도 많음 (특히 닭갈비!)</li>
+        </ul>        <p>사진은 아래에 첨부할게요. 혹시 다른 추천 여행지가 있다면 댓글로 알려주세요 :)</p>        <script>alert('XSS 공격입니다. 쿠키 탈취 시도!');</script>
+        <img src="https://example.com/seoul-tower.jpg" alt="서울타워 사진" />
+        </div>      """;
+    BoardSaveRequest request = new BoardSaveRequest("Title", maliciousHtml, "user@example.com",
+        "food");
+
+    // when & then
+    NotAllowedHtmlError ex = assertThrows(NotAllowedHtmlError.class, () ->
+        boardService.htmlSanitizer(request));
+
+    assertEquals(BoardErrorCode.NOT_ALLOWED_HTML_ERROR, ex.getErrorCode());
+  }
+
+
 }
