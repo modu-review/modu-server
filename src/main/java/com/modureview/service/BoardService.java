@@ -140,6 +140,7 @@ public class BoardService {
 
       if (src != null && !src.isBlank()) {
         String uuid = extractUuidFromUrl(src);
+        log.info("user uuid = {}", uuid);
         //TODO
         //추출한 uuid를 기반으로 board테이블에 cascade기반 업로드
       }
@@ -149,9 +150,16 @@ public class BoardService {
   private String extractUuidFromUrl(String url) {
     try {
       String[] parts = url.split("/");
-      return parts[parts.length - 1];
-    } catch (ImageSrcExtractError e) {
-      log.info("image 주소 추출중 오류 발생 = {}", e.getMessage());
+      String filename = parts[parts.length - 1];
+
+      int dotIndex = filename.indexOf(".");
+      if (dotIndex != -1) {
+        filename = filename.substring(0);
+      }
+
+      return filename;
+    } catch (Exception e) {
+      log.info("image 주소 추출 중 오류 발생 = {}", e.getMessage());
       throw new ImageSrcExtractError(BoardErrorCode.IMG_SRC_EXTRACT_ERROR);
     }
   }
