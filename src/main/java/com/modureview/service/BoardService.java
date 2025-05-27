@@ -15,7 +15,6 @@ import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
-import com.modureview.service.utils.HtmlSanitizerPolicy;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.UUID;
@@ -26,7 +25,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.owasp.html.PolicyFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -44,7 +42,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
-  private final PolicyFactory sanitizer = HtmlSanitizerPolicy.POLICY;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -114,15 +111,6 @@ public class BoardService {
       log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
-
-    String sanitized = sanitizer.sanitize(request.content());
-    String originalNoSpace = request.content().replaceAll("\\s+", "");
-    String sanitizedNoSpace = sanitized.replaceAll("\\s+", "");
-
-    if (!originalNoSpace.equals(sanitizedNoSpace)) {
-      log.warn("정화 후 내용이 변경됨. 원본: {}, 정화결과: {}", request.content(), sanitized);
-      throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
-    }
   }
 
   @Transactional
@@ -144,9 +132,8 @@ public class BoardService {
   }
 
   public void extractImageInfo(BoardSaveRequest request) {
-    String html = sanitizer.sanitize(request.content());
 
-    Document doc = Jsoup.parse(html);
+    Document doc = Jsoup.parse(request.content());
     Elements imgTags = doc.select("img");
 
     for (Element img : imgTags) {
