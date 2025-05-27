@@ -26,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 @Transactional
 @ActiveProfiles("test")
 class BoardSearchServiceTest {
+
   @Autowired
   private BoardSearchService boardSearchService;
   @Autowired
@@ -34,7 +35,7 @@ class BoardSearchServiceTest {
   private ObjectMapper objectMapper;
 
   @BeforeEach
-  void setUp(){
+  void setUp() {
     List<Board> boards = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
       boards.add(
@@ -50,14 +51,14 @@ class BoardSearchServiceTest {
       boards.add(
           Board.builder()
               .title("target_1")
-      .authorEmail("target_1")
+              .authorEmail("target_1")
               .category(Category.car)
               .content("<p> target_1 <p/>")
               .commentsCount(24)
               .bookmarksCount(46)
               .build()
       );
-      for (int j = 10; j<20 ; j++){
+      for (int j = 10; j < 20; j++) {
         boards.add(
             Board.builder()
                 .title("테스트" + i)
@@ -92,25 +93,26 @@ class BoardSearchServiceTest {
     }
     boardSearchRepository.saveAll(boards);
   }
+
   @AfterEach
-  void cleanUp(){
+  void cleanUp() {
     boardSearchRepository.deleteAll();
   }
+
   @Test
   @DisplayName("Search 성공")
-  void Search_Success_recent() throws Exception{
+  void Search_Success_recent() throws Exception {
 
-    BoardSearchRequest request  = BoardSearchRequest.builder()
-        .keyword("target")
-        .page(1)
-        .sort("recent")
-        .build();
+    String keyword = "target";
+    int page = 1;
+    String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(request);
+    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
-    log.info("boardSearchServiceTest.Search_Success_recent() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
+    log.info("boardSearchServiceTest.Search_Success_recent() 실행 시간: {} ns ({} ms)", duration,
+        String.format("%.3f", durationMs));
     String realJson = objectMapper.
         enable(SerializationFeature.INDENT_OUTPUT)
         .writeValueAsString(rep);
@@ -119,18 +121,17 @@ class BoardSearchServiceTest {
 
   @Test
   @DisplayName("조회개수가 0개")
-  void Search_fail_recent() throws Exception{
-    BoardSearchRequest request  = BoardSearchRequest.builder()
-        .keyword("장충동왕족발보쌈")
-        .page(1)
-        .sort("recent")
-        .build();
+  void Search_fail_recent() throws Exception {
+    String keyword = "장충동왕족발보쌈";
+    int page = 1;
+    String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(request);
+    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
-    log.info("boardSearchServiceTest.Search_fail_recent() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
+    log.info("boardSearchServiceTest.Search_fail_recent() 실행 시간: {} ns ({} ms)", duration,
+        String.format("%.3f", durationMs));
     String realJson = objectMapper.
         enable(SerializationFeature.INDENT_OUTPUT)
         .writeValueAsString(rep);
