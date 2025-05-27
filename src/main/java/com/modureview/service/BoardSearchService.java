@@ -28,19 +28,19 @@ import org.springframework.util.StringUtils;
 public class BoardSearchService {
   private final BoardSearchRepository boardSearchRepository;
 
-  public Page<Board> boardSearch(BoardSearchRequest req) {
+  public Page<Board> boardSearch(String keyword, int page, String sort) {
     Sort sortCriteria;
 
-    switch (req.sort().toLowerCase()) {
+    switch (sort.toLowerCase()) {
       case "hotbookmarks" -> sortCriteria = Sort.by(Direction.DESC, "bookmarksCount");
       case "hotcomments" -> sortCriteria = Sort.by(Direction.DESC, "commentsCount");
       case "recent" -> sortCriteria = Sort.by(Direction.DESC, "createdAt");
       default -> sortCriteria = Sort.by(Direction.DESC, "createdAt");
     }
 
-    Pageable pageable = PageRequest.of(req.page(), 9, sortCriteria);
-    if (StringUtils.hasText(req.keyword())) {
-      return boardSearchRepository.findByKeyword(req.keyword(), pageable);
+    Pageable pageable = PageRequest.of(page, 6, sortCriteria);
+    if (StringUtils.hasText(keyword)) {
+      return boardSearchRepository.findByKeyword(keyword, pageable);
     } else {
       throw new CustomException(BoardErrorCode.BOARD_SEARCH_KEYWORD_NOTFOUND);
     }

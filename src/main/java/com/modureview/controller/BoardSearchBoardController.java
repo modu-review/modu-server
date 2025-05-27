@@ -14,7 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,22 +23,24 @@ public class BoardSearchBoardController {
 
   private final BoardSearchService boardSearchService;
 
-  //TODO : ResponseEntity 설정
-  @GetMapping("/reviews")
+
+  @GetMapping("/search")
   public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getBoardSearch(
-      @RequestBody BoardSearchRequest request
+      @RequestParam(name = "keyword") String keyword,
+      @RequestParam(name = "page", defaultValue = "0") int page,
+      @RequestParam(name = "sort", defaultValue = "recent") String sort
   ) {
-    Page<Board> boardPage = boardSearchService.boardSearch(request);
+    Page<Board> boardPage = boardSearchService.boardSearch(keyword, page, sort);
     List<BoardSearchResponse> listSearchBoard = boardPage.getContent().stream()
         .map(BoardSearchResponse::fromEntity)
         .toList();
-    CustomPageResponse<BoardSearchResponse> page = new CustomPageResponse<>(
+    CustomPageResponse<BoardSearchResponse> SearchPage = new CustomPageResponse<>(
         listSearchBoard,
         boardPage.getNumber() + 1,
         boardPage.getTotalPages()
     );
 
-    return ResponseEntity.ok().body(page);
+    return ResponseEntity.ok().body(SearchPage);
   }
 
 }
