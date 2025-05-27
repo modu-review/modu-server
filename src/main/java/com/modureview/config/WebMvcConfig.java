@@ -23,6 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/error/**",
             "/login/result",
             "/reviews/best",
+            "/reviews",
             "/search",
             "favicon.io"
         );

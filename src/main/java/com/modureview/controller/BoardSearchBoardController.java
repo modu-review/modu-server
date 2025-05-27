@@ -1,11 +1,10 @@
 package com.modureview.controller;
 
-import com.modureview.dto.request.BoardCategoryRequest;
-import com.modureview.dto.request.BoardSearchRequest;
 import com.modureview.dto.response.BoardSearchResponse;
 import com.modureview.dto.response.CustomPageResponse;
 import com.modureview.dto.response.CustomSlicePageResponse;
 import com.modureview.entity.Board;
+import com.modureview.entity.Category;
 import com.modureview.service.BoardSearchService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,5 +41,35 @@ public class BoardSearchBoardController {
 
     return ResponseEntity.ok().body(SearchPage);
   }
+
+
+  @GetMapping("/reviews")
+  public ResponseEntity<CustomSlicePageResponse<BoardSearchResponse>> getBoardsByCategory(
+      @RequestParam(name = "category") Category category,
+      @RequestParam(name = "cursorId", defaultValue = "0") Long cursorId,
+      @RequestParam(name = "recent", defaultValue = "recent") String sort) {
+    Slice<Board> boardSlice = boardSearchService.getCategoryBoard(category, cursorId, sort);
+    List<BoardSearchResponse> dtoList = boardSlice.getContent().stream()
+        .map(BoardSearchResponse::fromEntity)
+        .collect(Collectors.toList());
+
+    Long nextCursorValue = null;
+    if (boardSlice.hasNext() && !boardSlice.getContent().isEmpty()) {
+      Board lastBoardInSlice = boardSlice.getContent().get(boardSlice.getContent().size() - 1);
+      nextCursorValue = lastBoardInSlice.getId();
+    }
+
+    CustomSlicePageResponse<BoardSearchResponse> customResponse = new CustomSlicePageResponse<>(
+        dtoList,
+        nextCursorValue,
+        boardSlice.hasNext(),
+        boardSlice.getNumberOfElements(),
+        boardSlice.getSize(),
+        boardSlice.isFirst()
+    );
+
+    return ResponseEntity.ok(customResponse);
+  }
+
 
 }
