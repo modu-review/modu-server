@@ -5,6 +5,7 @@ import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.dto.request.PresignRequest;
 import com.modureview.service.BoardService;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,9 +43,11 @@ public class BoardController {
   }
 
   @PostMapping("/review")
-  public ResponseEntity<Map<String,String>> saveBoard(BoardSaveRequest boardSaveRequest) {
+  public ResponseEntity<Map<String, String>> saveBoard(
+      @RequestBody BoardSaveRequest boardSaveRequest) {
     boardService.htmlSanitizer(boardSaveRequest);
-    boardService.extractImageInfo(boardSaveRequest);
+    List<String> imageUuids = boardService.extractImageInfo(boardSaveRequest);
+    boardService.saveBoard(boardSaveRequest, imageUuids);
 
     Map<String, String> response = Map.of("message", "게시글이 성공적으로 등록되었습니다.");
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
