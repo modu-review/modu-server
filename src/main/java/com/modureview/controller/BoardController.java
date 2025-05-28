@@ -42,7 +42,6 @@ public class BoardController {
   @PostMapping("/review")
   public ResponseEntity<Map<String,String>> saveBoard(BoardSaveRequest boardSaveRequest) {
     boardService.htmlSanitizer(boardSaveRequest);
-    boardService.saveBoard(boardSaveRequest);
     boardService.extractImageInfo(boardSaveRequest);
 
     Map<String, String> response = Map.of("message", "게시글이 성공적으로 등록되었습니다.");

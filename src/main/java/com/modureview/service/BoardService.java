@@ -15,7 +15,6 @@ import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
-import com.modureview.service.utils.HtmlSanitizerPolicy;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.UUID;
@@ -25,8 +24,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.owasp.html.PolicyFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -44,10 +41,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
-  private final PolicyFactory sanitizer = HtmlSanitizerPolicy.POLICY;
-
-  @Value("${custom.message.image.extract-fail}")
-  private String imageExtractFailMessage;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -111,13 +104,12 @@ public class BoardService {
   }
 
   public void htmlSanitizer(BoardSaveRequest request) {
-    try {
-      sanitizer.sanitize(request.content());
-    } catch (Exception e) {
-      log.info("xss white list 통과 실패 : {}", e);
+    String content = request.content().toLowerCase();
+
+    if (content.contains("<script") || content.contains("onerror=") || content.contains("javascript:")) {
+      log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
-
   }
 
   @Transactional
@@ -139,9 +131,8 @@ public class BoardService {
   }
 
   public void extractImageInfo(BoardSaveRequest request) {
-    String html = sanitizer.sanitize(request.content());
 
-    Document doc = Jsoup.parse(html);
+    Document doc = Jsoup.parse(request.content());
     Elements imgTags = doc.select("img");
 
     for (Element img : imgTags) {
@@ -149,6 +140,7 @@ public class BoardService {
 
       if (src != null && !src.isBlank()) {
         String uuid = extractUuidFromUrl(src);
+        log.info("user uuid = {}", uuid);
         //TODO
         //추출한 uuid를 기반으로 board테이블에 cascade기반 업로드
       }
@@ -158,10 +150,17 @@ public class BoardService {
   private String extractUuidFromUrl(String url) {
     try {
       String[] parts = url.split("/");
-      return parts[parts.length - 1];
-    } catch (ImageSrcExtractError e) {
-      log.info("image 주소 추출중 오류 발생 = {}", e.getMessage());
-      return imageExtractFailMessage;
+      String filename = parts[parts.length - 1];
+
+      int dotIndex = filename.indexOf(".");
+      if (dotIndex != -1) {
+        filename = filename.substring(0);
+      }
+
+      return filename;
+    } catch (Exception e) {
+      log.info("image 주소 추출 중 오류 발생 = {}", e.getMessage());
+      throw new ImageSrcExtractError(BoardErrorCode.IMG_SRC_EXTRACT_ERROR);
     }
   }
 
