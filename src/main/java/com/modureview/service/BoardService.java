@@ -5,6 +5,7 @@ import com.modureview.config.AwsS3Config;
 import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
+import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
@@ -17,6 +18,8 @@ import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -113,13 +116,18 @@ public class BoardService {
   }
 
   @Transactional
-  public void saveBoard(BoardSaveRequest request) {
+  public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
         .authorEmail(request.authorEmail())
         .category(Category.valueOf(request.category()))
         .build();
+
+    for (String uuid : imageUuids) {
+      BoardImage image = BoardImage.of(uuid);
+      board.addImage(image);
+    }
 
     try {
       boardRepository.save(board);
@@ -130,8 +138,8 @@ public class BoardService {
 
   }
 
-  public void extractImageInfo(BoardSaveRequest request) {
-
+  public List<String> extractImageInfo(BoardSaveRequest request) {
+    List<String> extractedImages = new ArrayList<>();
     Document doc = Jsoup.parse(request.content());
     Elements imgTags = doc.select("img");
 
@@ -140,11 +148,10 @@ public class BoardService {
 
       if (src != null && !src.isBlank()) {
         String uuid = extractUuidFromUrl(src);
-        log.info("user uuid = {}", uuid);
-        //TODO
-        //추출한 uuid를 기반으로 board테이블에 cascade기반 업로드
+        extractedImages.add(uuid);
       }
     }
+    return extractedImages;
   }
 
   private String extractUuidFromUrl(String url) {
@@ -163,5 +170,4 @@ public class BoardService {
       throw new ImageSrcExtractError(BoardErrorCode.IMG_SRC_EXTRACT_ERROR);
     }
   }
-
 }
