@@ -7,6 +7,7 @@ import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
+import com.modureview.entity.User;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
 import com.modureview.exception.BoardError.BoardSaveError;
@@ -16,6 +17,7 @@ import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
+import com.modureview.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -44,6 +47,13 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
+  private final UserRepository userRepository;
+
+  @Value("${custom.default.image.url}")
+  private String defaultImageUrl;
+
+  @Value("${custom.image}")
+  private String cndUrl;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -117,10 +127,16 @@ public class BoardService {
 
   @Transactional
   public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
+    User user = userRepository.findByEmail(request.authorEmail()).get();
+
+    String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
+    if (imageUuids.isEmpty()) { }
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
+        .user(user)
         .authorEmail(request.authorEmail())
+        .thumbnail(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
 
@@ -150,6 +166,7 @@ public class BoardService {
         String uuid = extractUuidFromUrl(src);
         extractedImages.add(uuid);
       }
+
     }
     return extractedImages;
   }

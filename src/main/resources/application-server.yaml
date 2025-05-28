@@ -72,3 +72,10 @@ aws:
   credentials:
     access-key: ${ACCESS_KEY}
     secret-key: ${SECRET_KEY}
+
+custom:
+  default:
+    image:
+      url: https://d1izijuzr22yly.cloudfront.net/no-image
+  image:
+    url:https://d1izijuzr22yly.cloudfront.net/
