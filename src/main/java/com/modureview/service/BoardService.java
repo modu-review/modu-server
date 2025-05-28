@@ -7,6 +7,7 @@ import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
+import com.modureview.entity.User;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
 import com.modureview.exception.BoardError.BoardSaveError;
@@ -16,6 +17,7 @@ import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
+import com.modureview.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
+  private final UserRepository userRepository;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -117,9 +120,12 @@ public class BoardService {
 
   @Transactional
   public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
+    User user = userRepository.findByEmail(request.authorEmail()).get();
+
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
+        .user(user)
         .authorEmail(request.authorEmail())
         .category(Category.valueOf(request.category()))
         .build();
