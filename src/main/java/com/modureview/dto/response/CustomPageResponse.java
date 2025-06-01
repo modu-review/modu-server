@@ -5,13 +5,12 @@ import java.util.List;
 
 
 public record CustomPageResponse<T>(
-    List<T> content,
+    List<T> results,
     @JsonProperty("current_page")
     int currentPage,
     @JsonProperty("total_pages")
     int totalPages
 ) {
-
 
 
 }
