@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface BoardSearchRepository extends JpaRepository<Board, Long> {
+
   @Query("SELECT b FROM Board b WHERE " +
       "(LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
       " b.content      LIKE CONCAT('%', :keyword, '%')        OR " +
@@ -62,6 +63,70 @@ public interface BoardSearchRepository extends JpaRepository<Board, Long> {
       "ORDER BY b.bookmarksCount DESC, b.id DESC")
   Slice<Board> findByCategoryOrderByBookmarksCount(
       @Param("category") Category category,
+      @Param("bookmarksCount") Integer bookmarksCount,
+      @Param("boardId") Long boardId,
+      Pageable pageable
+  );
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "ORDER BY b.createdAt DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByCreatedAtFirst(Pageable pageable);
+
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "WHERE (b.createdAt < :createAt OR (b.createdAt = :createAt AND b.id < :boardId)) " +
+          "ORDER BY b.createdAt DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByCreatedAt(
+      @Param("createAt") LocalDateTime createAt,
+      @Param("boardId") Long boardId,
+      Pageable pageable
+  );
+
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "ORDER BY b.commentsCount DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByCommentsCountFirst(Pageable pageable);
+
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "WHERE (b.commentsCount < :commentCount OR (b.commentsCount = :commentCount AND b.id < :boardId)) "
+          +
+          "ORDER BY b.commentsCount DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByCommentsCount(
+      @Param("commentCount") Integer commentCount,
+      @Param("boardId") Long boardId,
+      Pageable pageable
+  );
+
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "ORDER BY b.bookmarksCount DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByBookmarksCountFirst(Pageable pageable);
+
+
+  @Query(
+      "SELECT b " +
+          "FROM Board b " +
+          "WHERE (b.bookmarksCount < :bookmarksCount OR (b.bookmarksCount = :bookmarksCount AND b.id < :boardId)) "
+          +
+          "ORDER BY b.bookmarksCount DESC, b.id DESC"
+  )
+  Slice<Board> findAllOrderByBookmarksCount(
       @Param("bookmarksCount") Integer bookmarksCount,
       @Param("boardId") Long boardId,
       Pageable pageable
