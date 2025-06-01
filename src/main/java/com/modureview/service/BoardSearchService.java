@@ -9,6 +9,7 @@ import com.modureview.repository.BoardRepository;
 import com.modureview.repository.BoardSearchRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -47,32 +48,64 @@ public class BoardSearchService {
 
   public Slice<Board> getCategoryBoard(Category category, Long cursor, String sort) {
     Pageable pageable = PageRequest.of(0, 6);
+    log.info("category == {}", category);
+    log.info("sort == {}", sort);
     switch (sort) {
       case "recent":
         if (cursor == 0) {
-          return boardSearchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
+          if (category == Category.all) {
+            return boardSearchRepository.findAllOrderByCreatedAtFirst(pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
+          }
         } else {
           Board board = foundBoard(cursor);
-          return boardSearchRepository.findByCategoryOrderByCreatedAt(category,
-              board.getCreatedAt(), board.getId(), pageable);
+          if (category == Category.all) {
+            return boardSearchRepository.findAllOrderByCreatedAt(board.getCreatedAt(),
+                board.getId(), pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByCreatedAt(category,
+                board.getCreatedAt(), board.getId(), pageable);
+          }
+
         }
       case "hotbookmarks":
         if (cursor == 0) {
-          return boardSearchRepository.findByCategoryOrderByBookmarksCountFirst(category,
-              pageable);
+          if (category == Category.all) {
+            return boardSearchRepository.findAllOrderByBookmarksCountFirst(pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByBookmarksCountFirst(category,
+                pageable);
+          }
         } else {
           Board board = foundBoard(cursor);
-          return boardSearchRepository.findByCategoryOrderByBookmarksCount(category,
-              board.getBookmarksCount(), board.getId(), pageable);
+          if (category == Category.all) {
+            return boardSearchRepository.findAllOrderByBookmarksCount(board.getBookmarksCount(),
+                board.getId(), pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByBookmarksCount(category,
+                board.getBookmarksCount(), board.getId(), pageable);
+          }
         }
       case "hotcomments":
         if (cursor == 0) {
-          return boardSearchRepository.findByCategoryOrderByCommentsCountFirst(category,
-              pageable);
+          if (category == Category.all) {
+            return boardSearchRepository.findAllOrderByCommentsCountFirst(pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByCommentsCountFirst(category,
+                pageable);
+          }
+
         } else {
           Board board = foundBoard(cursor);
-          return boardSearchRepository.findByCategoryOrderByCommentsCount(category,
-              board.getCommentsCount(), board.getId(), pageable);
+          if (category == Category.all) {
+            boardSearchRepository.findAllOrderByCommentsCount(board.getCommentsCount(),
+                board.getId(), pageable);
+          } else {
+            return boardSearchRepository.findByCategoryOrderByCommentsCount(category,
+                board.getCommentsCount(), board.getId(), pageable);
+          }
+
         }
       default:
         return boardSearchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
