@@ -14,9 +14,10 @@ public record BoardSearchResponse(
     String author,
     LocalDateTime create_At,
     String content,
-    Integer comment_count,
-    Integer bookmark_count
+    Integer comments_count,
+    Integer bookmarks
 ) {
+
   public static BoardSearchResponse fromEntity(Board board) {
     return BoardSearchResponse.builder()
         .board_id(board.getId())
@@ -25,8 +26,8 @@ public record BoardSearchResponse(
         .author(board.getAuthorEmail())
         .create_At(board.getCreatedAt())
         .content(board.getContent())
-        .comment_count(board.getCommentsCount())
-        .bookmark_count(board.getBookmarksCount())
+        .comments_count(board.getCommentsCount())
+        .bookmarks(board.getBookmarksCount())
         .build();
   }
 
