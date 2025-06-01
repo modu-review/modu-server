@@ -198,7 +198,6 @@ public class BoardService {
     if (key.endsWith(".png")) {
       return "image/png";
     }
-    // todo: 허용되지 않은 형식 에러 리턴 예정
-    return null;
+    throw new ImageSrcExtractError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
   }
 }

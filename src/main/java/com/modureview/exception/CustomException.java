@@ -7,7 +7,7 @@ public class CustomException extends RuntimeException {
 
 
   public CustomException(ErrorCode errorCode) {
-    super(errorCode.getMessage()); // 부모 생성자에 메시지 전달
+    super(errorCode.getMessage());
     this.errorCode = errorCode;
   }
 

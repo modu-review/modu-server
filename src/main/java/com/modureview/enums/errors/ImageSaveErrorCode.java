@@ -8,7 +8,10 @@ public enum ImageSaveErrorCode implements ErrorCode {
       "S3 PresignedURL을 생성할 수 없습니다."),
 
   CAN_NOT_CREATE_UUID(HttpStatus.INTERNAL_SERVER_ERROR,
-      "이미지 uuid를 생성할 수 없습니다.");
+      "이미지 uuid를 생성할 수 없습니다."),
+
+  NOT_ALLOWED_FILE_TYPE(HttpStatus.INTERNAL_SERVER_ERROR,
+      "지정된 파일 형식이 아닙니다.");
 
   private final HttpStatus httpStatus;
   private final String message;
