@@ -90,11 +90,14 @@ public class BoardService {
           awsS3Config.getCredentials().getSecretKey()
       );
 
+      String contentType = resolveContentTypeByKey(key); // 아래 함수 정의 참조
+
       PutObjectRequest objectRequest = PutObjectRequest.builder()
           .bucket(awsS3Config.getBucket())
           .key(key)
-          .contentType("image/png")
+          .contentType(contentType)
           .build();
+
 
       PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
           .signatureDuration(Duration.ofMinutes(10))
@@ -186,5 +189,16 @@ public class BoardService {
       log.info("image 주소 추출 중 오류 발생 = {}", e.getMessage());
       throw new ImageSrcExtractError(BoardErrorCode.IMG_SRC_EXTRACT_ERROR);
     }
+  }
+
+  private String resolveContentTypeByKey(String key) {
+    if (key.endsWith(".jpg") || key.endsWith(".jpeg")) {
+      return "image/jpeg";
+    }
+    if (key.endsWith(".png")) {
+      return "image/png";
+    }
+    // todo: 허용되지 않은 형식 에러 리턴 예정
+    return null;
   }
 }
