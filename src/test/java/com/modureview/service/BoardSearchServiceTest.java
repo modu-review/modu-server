@@ -2,9 +2,6 @@ package com.modureview.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.modureview.dto.request.BoardSearchRequest;
-import com.modureview.dto.response.BoardSearchResponse;
-import com.modureview.dto.response.CustomPageResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.repository.BoardSearchRepository;
@@ -24,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 @Slf4j
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 class BoardSearchServiceTest {
 
   @Autowired

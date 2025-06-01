@@ -28,9 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 @AutoConfigureMockMvc
 class BoardServiceTest {
+
   @Autowired
   private BoardService boardService;
 
@@ -72,8 +73,8 @@ class BoardServiceTest {
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
 
-    log.info("boardService.boardDetail() 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
-
+    log.info("boardService.boardDetail() 실행 시간: {} ns ({} ms)", duration,
+        String.format("%.3f", durationMs));
 
     assertThat(findBoard).isNotNull();
     assertThat(findBoard.author()).isEqualTo(board.getAuthorEmail());
@@ -116,15 +117,15 @@ class BoardServiceTest {
     long duration = (endTime - startTime);
     double durationMs = duration / 1_000_000.0;
 
-    log.info("boardService.boardDetail() (에러 발생) 실행 시간: {} ns ({} ms)", duration, String.format("%.3f", durationMs));
-
+    log.info("boardService.boardDetail() (에러 발생) 실행 시간: {} ns ({} ms)", duration,
+        String.format("%.3f", durationMs));
 
     assertThat(ex.getMessage()).isEqualTo("게시글을 찾을 수 없습니다.");
 
     String errorJson = objectMapper
         .writerWithDefaultPrettyPrinter()
-        .writeValueAsString(Map.of("error",ex.getClass().getSimpleName(),
-            "message",ex.getMessage()));
+        .writeValueAsString(Map.of("error", ex.getClass().getSimpleName(),
+            "message", ex.getMessage()));
     log.info("errorJson == {}", errorJson);
   }
 
