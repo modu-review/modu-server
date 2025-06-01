@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 class BoardCategoryBoardControllerTest {
 
   @Autowired
