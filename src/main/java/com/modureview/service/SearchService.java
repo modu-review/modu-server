@@ -6,7 +6,7 @@ import com.modureview.entity.Category;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.exception.CustomException;
 import com.modureview.repository.BoardRepository;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +23,9 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class BoardSearchService {
+public class SearchService {
 
-  private final BoardSearchRepository boardSearchRepository;
+  private final SearchRepository searchRepository;
   private final BoardRepository boardRepository;
 
   public Page<Board> boardSearch(String keyword, int page, String sort) {
@@ -40,7 +40,7 @@ public class BoardSearchService {
 
     Pageable pageable = PageRequest.of(page, 6, sortCriteria);
     if (StringUtils.hasText(keyword)) {
-      return boardSearchRepository.findByKeyword(keyword, pageable);
+      return searchRepository.findByKeyword(keyword, pageable);
     } else {
       throw new CustomException(BoardErrorCode.BOARD_SEARCH_KEYWORD_NOTFOUND);
     }
@@ -54,17 +54,17 @@ public class BoardSearchService {
       case "recent":
         if (cursor == 0) {
           if (category == Category.all) {
-            return boardSearchRepository.findAllOrderByCreatedAtFirst(pageable);
+            return searchRepository.findAllOrderByCreatedAtFirst(pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
+            return searchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
           }
         } else {
           Board board = foundBoard(cursor);
           if (category == Category.all) {
-            return boardSearchRepository.findAllOrderByCreatedAt(board.getCreatedAt(),
+            return searchRepository.findAllOrderByCreatedAt(board.getCreatedAt(),
                 board.getId(), pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByCreatedAt(category,
+            return searchRepository.findByCategoryOrderByCreatedAt(category,
                 board.getCreatedAt(), board.getId(), pageable);
           }
 
@@ -72,43 +72,43 @@ public class BoardSearchService {
       case "hotbookmarks":
         if (cursor == 0) {
           if (category == Category.all) {
-            return boardSearchRepository.findAllOrderByBookmarksCountFirst(pageable);
+            return searchRepository.findAllOrderByBookmarksCountFirst(pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByBookmarksCountFirst(category,
+            return searchRepository.findByCategoryOrderByBookmarksCountFirst(category,
                 pageable);
           }
         } else {
           Board board = foundBoard(cursor);
           if (category == Category.all) {
-            return boardSearchRepository.findAllOrderByBookmarksCount(board.getBookmarksCount(),
+            return searchRepository.findAllOrderByBookmarksCount(board.getBookmarksCount(),
                 board.getId(), pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByBookmarksCount(category,
+            return searchRepository.findByCategoryOrderByBookmarksCount(category,
                 board.getBookmarksCount(), board.getId(), pageable);
           }
         }
       case "hotcomments":
         if (cursor == 0) {
           if (category == Category.all) {
-            return boardSearchRepository.findAllOrderByCommentsCountFirst(pageable);
+            return searchRepository.findAllOrderByCommentsCountFirst(pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByCommentsCountFirst(category,
+            return searchRepository.findByCategoryOrderByCommentsCountFirst(category,
                 pageable);
           }
 
         } else {
           Board board = foundBoard(cursor);
           if (category == Category.all) {
-            boardSearchRepository.findAllOrderByCommentsCount(board.getCommentsCount(),
+            searchRepository.findAllOrderByCommentsCount(board.getCommentsCount(),
                 board.getId(), pageable);
           } else {
-            return boardSearchRepository.findByCategoryOrderByCommentsCount(category,
+            return searchRepository.findByCategoryOrderByCommentsCount(category,
                 board.getCommentsCount(), board.getId(), pageable);
           }
 
         }
       default:
-        return boardSearchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
+        return searchRepository.findByCategoryOrderByCreatedAtFirst(category, pageable);
     }
 
   }

@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface BoardSearchRepository extends JpaRepository<Board, Long> {
+public interface SearchRepository extends JpaRepository<Board, Long> {
 
   @Query("SELECT b FROM Board b WHERE " +
       "(LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
