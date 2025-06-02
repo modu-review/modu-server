@@ -12,10 +12,22 @@ import org.springframework.data.repository.query.Param;
 
 public interface SearchRepository extends JpaRepository<Board, Long> {
 
-  @Query("SELECT b FROM Board b WHERE " +
-      "(LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-      " b.content      LIKE CONCAT('%', :keyword, '%')        OR " +
-      "LOWER(b.authorEmail) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+  @Query(
+      value = """
+            SELECT b
+            FROM Board b
+            WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR b.content      LIKE CONCAT('%', :keyword, '%')
+               OR LOWER(b.authorEmail) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          """
+      ,
+      countQuery = """
+            SELECT COUNT(b)
+            FROM Board b
+            WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR b.content      LIKE CONCAT('%', :keyword, '%')
+               OR LOWER(b.authorEmail) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          """)
   Page<Board> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
   @Query("SELECT b FROM Board b WHERE b.category = :category"
@@ -76,19 +88,17 @@ public interface SearchRepository extends JpaRepository<Board, Long> {
   Slice<Board> findAllOrderByCreatedAtFirst(Pageable pageable);
 
 
-  @Query(
-      "SELECT b " +
-          "FROM Board b " +
-          "WHERE (b.createdAt < :createAt OR (b.createdAt = :createAt AND b.id < :boardId)) " +
-          "ORDER BY b.createdAt DESC, b.id DESC"
+  @Query("SELECT b " +
+      "FROM Board b " +
+      "WHERE (b.createdAt < :createAt OR (b.createdAt = :createAt AND b.id < :boardId)) " +
+      "ORDER BY b.createdAt DESC, b.id DESC"
   )
   Slice<Board> findAllOrderByCreatedAt(
       @Param("createAt") LocalDateTime createAt,
       @Param("boardId") Long boardId,
       Pageable pageable
   );
-
-
+  
   @Query(
       "SELECT b " +
           "FROM Board b " +

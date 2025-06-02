@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ class BoardCategoryServiceTest {
   private SearchService searchService;
 
   @Autowired
-  private BoardSearchRepository boardSearchRepository;
+  private SearchRepository boardSearchRepository;
 
   @Autowired
   private ObjectMapper objectMapper;

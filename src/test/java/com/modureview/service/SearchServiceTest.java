@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,13 @@ import org.springframework.test.context.ActiveProfiles;
 @Slf4j
 @SpringBootTest
 @Transactional
-@ActiveProfiles("test")
+@ActiveProfiles("h2")
 class SearchServiceTest {
 
   @Autowired
   private SearchService searchService;
   @Autowired
-  private BoardSearchRepository boardSearchRepository;
+  private SearchRepository searchRepository;
   @Autowired
   private ObjectMapper objectMapper;
 
@@ -88,12 +88,12 @@ class SearchServiceTest {
         );
       }
     }
-    boardSearchRepository.saveAll(boards);
+    searchRepository.saveAll(boards);
   }
 
   @AfterEach
   void cleanUp() {
-    boardSearchRepository.deleteAll();
+    searchRepository.deleteAll();
   }
 
   @Test

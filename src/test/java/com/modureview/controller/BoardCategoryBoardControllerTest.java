@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import com.modureview.service.SearchService;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ class BoardCategoryBoardControllerTest {
   private SearchService searchService;
 
   @Autowired
-  private BoardSearchRepository boardSearchRepository;
+  private SearchRepository boardSearchRepository;
 
   @BeforeEach
   void setUp() {

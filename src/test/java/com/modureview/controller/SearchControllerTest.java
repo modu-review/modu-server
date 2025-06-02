@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import com.modureview.service.SearchService;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,8 +28,8 @@ import org.springframework.test.web.servlet.MvcResult;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-class BoardSearchBoardControllerTest {
+@ActiveProfiles("h2")
+class SearchControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -38,7 +38,7 @@ class BoardSearchBoardControllerTest {
   @Autowired
   private SearchService searchService;
   @Autowired
-  private BoardSearchRepository boardSearchRepository;
+  private SearchRepository searchRepository;
 
   @BeforeEach
   void setUp() {
@@ -97,12 +97,12 @@ class BoardSearchBoardControllerTest {
         );
       }
     }
-    boardSearchRepository.saveAll(boards);
+    searchRepository.saveAll(boards);
   }
 
   @AfterEach
   void cleanUp() {
-    boardSearchRepository.deleteAll();
+    searchRepository.deleteAll();
   }
 
   @Test
@@ -112,7 +112,7 @@ class BoardSearchBoardControllerTest {
     MvcResult mvcResult = mockMvc.perform(
             get("/search")
                 .param("keyword", "테스트")
-                .param("page", "0")
+                .param("page", "1")
                 .param("sort", "recent")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -120,7 +120,7 @@ class BoardSearchBoardControllerTest {
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
-    log.info("BoardSearchBoardControllerTest.Search_Success_reviews_recent() 실행 시간: {} ns ({} ms)",
+    log.info("SearchControllerTest.Search_Success_reviews_recent() 실행 시간: {} ns ({} ms)",
         duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -140,7 +140,7 @@ class BoardSearchBoardControllerTest {
     MvcResult mvcResult = mockMvc.perform(
             get("/search")
                 .param("keyword", "테스트")
-                .param("page", "0")
+                .param("page", "1")
                 .param("sort", "hotcomment")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -150,7 +150,7 @@ class BoardSearchBoardControllerTest {
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
     log.info(
-        "BoardSearchBoardControllerTest.Search_Success_reviews_hotcomment() 실행 시간: {} ns ({} ms)",
+        "SearchControllerTest.Search_Success_reviews_hotcomment() 실행 시간: {} ns ({} ms)",
         duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -180,7 +180,7 @@ class BoardSearchBoardControllerTest {
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
     log.info(
-        "BoardSearchBoardControllerTest.Search_Success_reviews_hotbookmark() 실행 시간: {} ns ({} ms)",
+        "SearchControllerTest.Search_Success_reviews_hotbookmark() 실행 시간: {} ns ({} ms)",
         duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -209,7 +209,7 @@ class BoardSearchBoardControllerTest {
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
-    log.info("BoardSearchBoardControllerTest.Search_Content_reviews_recent() 실행 시간: {} ns ({} ms)",
+    log.info("SearchControllerTest.Search_Content_reviews_recent() 실행 시간: {} ns ({} ms)",
         duration, String.format("%.3f", durationMs));
 
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
