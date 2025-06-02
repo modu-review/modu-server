@@ -4,7 +4,9 @@ import com.modureview.enums.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum BoardErrorCode implements ErrorCode {
-  BOARD_ID_NOTFOUND(HttpStatus.NOT_FOUND,"게시글을 찾을 수 없습니다.");
+
+  BOARD_ID_NOTFOUND(HttpStatus.NOT_FOUND,"게시글을 찾을 수 없습니다."),
+  BOARD_SEARCH_KEYWORD_NOTFOUND( HttpStatus.NOT_FOUND, "키워드를 찾을 수 없습니다." );
 
   private final HttpStatus httpStatus;
   private final String message;

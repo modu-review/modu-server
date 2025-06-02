@@ -14,16 +14,19 @@ public class SecurityConfig {
   private SuccessHandler successHandler;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-  public SecurityConfig(CustomAuthenticationEntryPoint authenticationEntryPoint, SuccessHandler successHandler) {
+  public SecurityConfig(CustomAuthenticationEntryPoint authenticationEntryPoint,
+      SuccessHandler successHandler) {
     this.successHandler = successHandler;
     this.authenticationEntryPoint = authenticationEntryPoint;
   }
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best", "favicon.io")
+            .requestMatchers("/user/oauth2/**", "/token/refresh", "/reviews/best", "/reviews",
+                "/search", "favicon.io")
             .permitAll()
             .anyRequest().authenticated()
         )

@@ -1,5 +1,13 @@
 package com.modureview.entity;
 
 public enum Category {
-  food,car,chicken
+  all,
+  food,
+  car,
+  cosmetic,
+  clothes,
+  company,
+  device,
+  book,
+  sports
 }

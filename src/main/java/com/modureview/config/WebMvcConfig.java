@@ -22,7 +22,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/token/refresh",
             "/error/**",
             "/login/result",
-            "/reviews/best"
+            "/reviews/best",
+            "/reviews",
+            "/search",
+            "favicon.io"
         );
   }
 }

@@ -1,0 +1,226 @@
+package com.modureview.controller;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modureview.entity.Board;
+import com.modureview.entity.Category;
+import com.modureview.repository.SearchRepository;
+import com.modureview.service.SearchService;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+
+@Slf4j
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
+@ActiveProfiles("h2")
+class SearchControllerTest {
+
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private ObjectMapper objectMapper;
+  @Autowired
+  private SearchService searchService;
+  @Autowired
+  private SearchRepository searchRepository;
+
+  @BeforeEach
+  void setUp() {
+    List<Board> boards = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+      boards.add(
+          Board.builder()
+              .title("테스트" + i)
+              .authorEmail("작성자" + i)
+              .category(Category.car)
+              .content("<p>내용 예시 " + i + "<p/>")
+              .commentsCount(i + i)
+              .bookmarksCount(i + i + i)
+              .build()
+      );
+      boards.add(
+          Board.builder()
+              .title("target_1")
+              .authorEmail("target_1")
+              .category(Category.car)
+              .content("<p> target_1 <p/>")
+              .commentsCount(24)
+              .bookmarksCount(46)
+              .build()
+      );
+      for (int j = 10; j < 20; j++) {
+        boards.add(
+            Board.builder()
+                .title("테스트" + i)
+                .authorEmail("작성자" + i)
+                .category(Category.car)
+                .content("<p>내용 예시 " + i + "<p/>")
+                .commentsCount(i + i)
+                .bookmarksCount(i + i + i)
+                .build()
+        );
+        boards.add(
+            Board.builder()
+                .title("target_2")
+                .authorEmail("target_2")
+                .category(Category.car)
+                .content("<p> target_2 <p/>")
+                .commentsCount(22)
+                .bookmarksCount(22)
+                .build()
+        );
+        boards.add(
+            Board.builder()
+                .title("target_3")
+                .authorEmail("target_4")
+                .category(Category.car)
+                .content("<p> Target_5 <p/>")
+                .commentsCount(22)
+                .bookmarksCount(22)
+                .build()
+        );
+      }
+    }
+    searchRepository.saveAll(boards);
+  }
+
+  @AfterEach
+  void cleanUp() {
+    searchRepository.deleteAll();
+  }
+
+  @Test
+  @DisplayName("GET /reviews -keyword:테스트 page:0 sort:recent 성공시 201")
+  void Search_Success_reviews_recent() throws Exception {
+    long startTime = System.nanoTime();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/search")
+                .param("keyword", "테스트")
+                .param("page", "1")
+                .param("sort", "recent")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("SearchControllerTest.Search_Success_reviews_recent() 실행 시간: {} ns ({} ms)",
+        duration, String.format("%.3f", durationMs));
+
+    String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    Object jsonObject = objectMapper.readValue(responseBody, Object.class);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
+
+    log.info("Formatted JSON Response:");
+    log.info("prettyJson == {}", prettyJson);
+  }
+
+  @Test
+  @DisplayName("GET /search -keyword:테스트 page:2 sort:hotcomment 성공시 201")
+  void Search_Success_reviews_hotcomment() throws Exception {
+    long startTime = System.nanoTime();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/search")
+                .param("keyword", "테스트")
+                .param("page", "1")
+                .param("sort", "hotcomment")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
+
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info(
+        "SearchControllerTest.Search_Success_reviews_hotcomment() 실행 시간: {} ns ({} ms)",
+        duration, String.format("%.3f", durationMs));
+
+    String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    Object jsonObject = objectMapper.readValue(responseBody, Object.class);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
+
+    log.info("Formatted JSON Response:");
+    log.info("prettyJson == {}", prettyJson);
+  }
+
+  @Test
+  @DisplayName("GET /search -keyword:테스트 page:2 sort:hotbookmark 성공시 201")
+  void Search_Success_reviews_hotbookmark() throws Exception {
+    long startTime = System.nanoTime();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/search")
+                .param("keyword", "테스트")
+                .param("page", "2")
+                .param("sort", "hotbookmark")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
+
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info(
+        "SearchControllerTest.Search_Success_reviews_hotbookmark() 실행 시간: {} ns ({} ms)",
+        duration, String.format("%.3f", durationMs));
+
+    String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    Object jsonObject = objectMapper.readValue(responseBody, Object.class);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
+
+    log.info("Formatted JSON Response:");
+    log.info("prettyJson == {}", prettyJson);
+  }
+
+  @Test
+  @DisplayName("GET /search -keyword:테스트 page:2 sort:hotbookmark 성공시 201")
+  void Search_Content_reviews_recent() throws Exception {
+    long startTime = System.nanoTime();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/search")
+                .param("keyword", "장충동왕족발보쌈")
+                .param("page", "2")
+                .param("sort", "hotbookmark")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
+
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime); // 나노초 단위
+    double durationMs = duration / 1_000_000.0; // 밀리초 단위
+    log.info("SearchControllerTest.Search_Content_reviews_recent() 실행 시간: {} ns ({} ms)",
+        duration, String.format("%.3f", durationMs));
+
+    String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    Object jsonObject = objectMapper.readValue(responseBody, Object.class);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
+
+    log.info("Formatted JSON Response");
+    log.info("prettyJson == {}", prettyJson);
+  }
+
+}
+
