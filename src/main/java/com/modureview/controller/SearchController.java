@@ -3,7 +3,7 @@ package com.modureview.controller;
 import com.modureview.dto.response.BoardSearchResponse;
 import com.modureview.dto.response.CustomPageResponse;
 import com.modureview.entity.Board;
-import com.modureview.service.BoardSearchService;
+import com.modureview.service.SearchService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class BoardSearchBoardController {
+public class SearchController {
 
-  private final BoardSearchService boardSearchService;
+  private final SearchService searchService;
 
 
   @GetMapping("/search")
@@ -29,12 +29,8 @@ public class BoardSearchBoardController {
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "sort", defaultValue = "recent") String sort
   ) throws UnsupportedEncodingException {
-
-    log.info("keyword == {}", keyword);
     String decodeKeyword = URLDecoder.decode(keyword, "UTF-8");
-    log.info("decodeKeyword == {}", decodeKeyword);
-    log.info("sort == {}", sort);
-    Page<Board> boardPage = boardSearchService.boardSearch(decodeKeyword, page, sort);
+    Page<Board> boardPage = searchService.boardSearch(decodeKeyword, page, sort);
     List<BoardSearchResponse> listSearchBoard = boardPage.getContent().stream()
         .map(BoardSearchResponse::fromEntity)
         .toList();

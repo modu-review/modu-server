@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +22,12 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("h2")
-class BoardSearchServiceTest {
+class SearchServiceTest {
 
   @Autowired
-  private BoardSearchService boardSearchService;
+  private SearchService searchService;
   @Autowired
-  private BoardSearchRepository boardSearchRepository;
+  private SearchRepository searchRepository;
   @Autowired
   private ObjectMapper objectMapper;
 
@@ -88,12 +88,12 @@ class BoardSearchServiceTest {
         );
       }
     }
-    boardSearchRepository.saveAll(boards);
+    searchRepository.saveAll(boards);
   }
 
   @AfterEach
   void cleanUp() {
-    boardSearchRepository.deleteAll();
+    searchRepository.deleteAll();
   }
 
   @Test
@@ -104,7 +104,7 @@ class BoardSearchServiceTest {
     int page = 1;
     String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
+    Page<Board> rep = searchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
@@ -123,7 +123,7 @@ class BoardSearchServiceTest {
     int page = 1;
     String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
+    Page<Board> rep = searchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위

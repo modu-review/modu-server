@@ -4,8 +4,7 @@ package com.modureview.service;
 import com.modureview.entity.Board;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.exception.CustomException;
-import com.modureview.repository.BoardRepository;
-import com.modureview.repository.BoardSearchRepository;
+import com.modureview.repository.SearchRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +20,12 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class BoardSearchService {
+public class SearchService {
 
-  private final BoardSearchRepository boardSearchRepository;
-  private final BoardRepository boardRepository;
+  private final SearchRepository searchRepository;
 
   public Page<Board> boardSearch(String keyword, int page, String sort) {
     Sort sortCriteria;
-    log.info("boarsSearch========");
-    log.info("sort.toLowerCase() == {}", sort.toLowerCase());
-
     switch (sort.toLowerCase()) {
       case "hotbookmarks" -> sortCriteria = Sort.by(Direction.DESC, "bookmarksCount");
       case "hotcomments" -> sortCriteria = Sort.by(Direction.DESC, "commentsCount");
@@ -40,7 +35,7 @@ public class BoardSearchService {
 
     Pageable pageable = PageRequest.of(page - 1, 6, sortCriteria);
     if (StringUtils.hasText(keyword)) {
-      return boardSearchRepository.findByKeyword(keyword, pageable);
+      return searchRepository.findByKeyword(keyword, pageable);
     } else {
       throw new CustomException(BoardErrorCode.BOARD_SEARCH_KEYWORD_NOTFOUND);
     }
