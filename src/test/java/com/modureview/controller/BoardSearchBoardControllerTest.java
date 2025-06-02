@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.repository.BoardSearchRepository;
-import com.modureview.service.BoardSearchService;
+import com.modureview.service.SearchService;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ class BoardSearchBoardControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
   @Autowired
-  private BoardSearchService boardSearchService;
+  private SearchService searchService;
   @Autowired
   private BoardSearchRepository boardSearchRepository;
 

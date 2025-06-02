@@ -25,7 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 class BoardCategoryServiceTest {
 
   @Autowired
-  private BoardSearchService boardSearchService;
+  private SearchService searchService;
 
   @Autowired
   private BoardSearchRepository boardSearchRepository;
@@ -119,7 +119,7 @@ class BoardCategoryServiceTest {
     String sort = "recent";
 
     long startTime = System.nanoTime();
-    Slice<Board> rep = boardSearchService.getCategoryBoard(category, cursor, sort);
+    Slice<Board> rep = searchService.getCategoryBoard(category, cursor, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime);
     double durationMs = duration / 1000000.0;

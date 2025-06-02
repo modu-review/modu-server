@@ -2,9 +2,6 @@ package com.modureview.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.modureview.dto.request.BoardSearchRequest;
-import com.modureview.dto.response.BoardSearchResponse;
-import com.modureview.dto.response.CustomPageResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.repository.BoardSearchRepository;
@@ -25,10 +22,10 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-class BoardSearchServiceTest {
+class SearchServiceTest {
 
   @Autowired
-  private BoardSearchService boardSearchService;
+  private SearchService searchService;
   @Autowired
   private BoardSearchRepository boardSearchRepository;
   @Autowired
@@ -107,7 +104,7 @@ class BoardSearchServiceTest {
     int page = 1;
     String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
+    Page<Board> rep = searchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
@@ -126,7 +123,7 @@ class BoardSearchServiceTest {
     int page = 1;
     String sort = "recent";
     long startTime = System.nanoTime();
-    Page<Board> rep = boardSearchService.boardSearch(keyword, page, sort);
+    Page<Board> rep = searchService.boardSearch(keyword, page, sort);
     long endTime = System.nanoTime();
     long duration = (endTime - startTime); // 나노초 단위
     double durationMs = duration / 1_000_000.0; // 밀리초 단위
