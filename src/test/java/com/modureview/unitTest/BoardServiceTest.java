@@ -2,6 +2,8 @@ package com.modureview.unitTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,18 +19,21 @@ import com.modureview.service.BoardService;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 public class BoardServiceTest {
 
+  @Spy
   @InjectMocks
   private BoardService boardService;
 
@@ -40,6 +45,16 @@ public class BoardServiceTest {
 
   @Mock
   private AwsS3Config awsS3Config;
+  @Mock
+  private AwsS3Config.Credentials credentials;
+
+  @BeforeEach
+  void setUp() {
+    lenient().when(awsS3Config.getBucket()).thenReturn("mock-bucket");
+    lenient().when(awsS3Config.getCredentials()).thenReturn(credentials);
+    lenient().when(credentials.getAccessKey()).thenReturn("mock-access");
+    lenient().when(credentials.getSecretKey()).thenReturn("mock-secret");
+  }
 
   @Test
   @DisplayName("HTML에서 이미지 src로부터 UUID 리스트 추출")
@@ -105,6 +120,27 @@ public class BoardServiceTest {
     List<String> savedImages = images.stream().map(BoardImage::getUuid).toList();
     assertTrue(savedImages.contains("uuid1-1111.jpg"));
     assertTrue(savedImages.contains("uuid2-2222.png"));
+  }
+
+  @Test
+  @DisplayName("Presigned URL is generated for PNG image")
+  void testPresignedUrlForPngImage() {
+    // given
+    String key = "sample.jpg";
+    String fakePresignedUrl = "https://fake-url.com/sample.jpeg";
+
+    doReturn(fakePresignedUrl)
+        .when(boardService)
+        .createPresignedURL(key);
+
+    // when
+    String result = boardService.createPresignedURL(key);
+
+    // print the result
+    log.info("📦 Presigned URL: " + result);
+
+    // then
+    assertEquals(fakePresignedUrl, result);
   }
 
 }
