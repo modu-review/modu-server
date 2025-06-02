@@ -90,7 +90,7 @@ public class BoardService {
           awsS3Config.getCredentials().getSecretKey()
       );
 
-      String contentType = resolveContentTypeByKey(key); // 아래 함수 정의 참조
+      String contentType = resolveContentTypeByKey(key);
 
       PutObjectRequest objectRequest = PutObjectRequest.builder()
           .bucket(awsS3Config.getBucket())
