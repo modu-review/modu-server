@@ -41,17 +41,17 @@ public class Board {
   @Column(columnDefinition = "TEXT")
   private String content;
 
-  private Integer commentsCount;
+  @Builder.Default
+  private Integer commentsCount = 0;
 
-  private Integer bookmarksCount;
+  @Builder.Default
+  private Integer bookmarksCount = 0;
 
   @Column( name = "created_at")
   private LocalDateTime createdAt;
 
   @Column( name = "modified_at")
   private LocalDateTime modifiedAt;
-
-
 
   @PrePersist
   protected void onCreate(){

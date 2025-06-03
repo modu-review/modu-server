@@ -54,6 +54,9 @@ dependencies {
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:auth'
 
+    //jsoup이미지 링크 저장
+    implementation 'org.jsoup:jsoup:1.17.2'
+
 }
 
 tasks.named('test') {
