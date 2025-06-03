@@ -1,17 +1,24 @@
 package com.modureview.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +39,10 @@ public class Board {
 
   private String title;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
+
   private String authorEmail;
 
   @Enumerated(EnumType.STRING)
@@ -40,6 +51,8 @@ public class Board {
   @Lob
   @Column(columnDefinition = "TEXT")
   private String content;
+
+  private String thumbnail;
 
   @Builder.Default
   private Integer commentsCount = 0;
@@ -63,8 +76,17 @@ public class Board {
     this.modifiedAt = LocalDateTime.now();
   }
 
+  @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<BoardImage> images = new ArrayList<>();
+
+  public void addImage(BoardImage image) {
+    images.add(image);
+    image.setBoard(this);
+  }
+
   @Builder
-  public Board(String title, String authorEmail, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
+  public Board(String title ,String authorEmail, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
     this.title = title;
     this.authorEmail = authorEmail;
     this.category = category;

@@ -18,25 +18,23 @@ import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
 import com.modureview.repository.BoardRepository;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @SpringBootTest
-@Transactional
-@ActiveProfiles("h2")
 @AutoConfigureMockMvc
 class BoardServiceTest {
-
   @Autowired
   private BoardService boardService;
 
@@ -48,11 +46,6 @@ class BoardServiceTest {
 
   @Autowired
   private MockMvc mockMvc;
-
-  @AfterEach
-  void cleanUp() {
-    boardRepository.deleteAll();
-  }
 
   @Test
   void getBoardDetail_Success() throws Exception {
@@ -80,6 +73,7 @@ class BoardServiceTest {
 
     log.info("boardService.boardDetail() 실행 시간: {} ns ({} ms)", duration,
         String.format("%.3f", durationMs));
+
 
     assertThat(findBoard).isNotNull();
     assertThat(findBoard.author()).isEqualTo(board.getAuthorEmail());
@@ -209,6 +203,29 @@ class BoardServiceTest {
         boardService.htmlSanitizer(request));
 
     assertEquals(BoardErrorCode.NOT_ALLOWED_HTML_ERROR, ex.getErrorCode());
+  }
+
+  @Test
+  @DisplayName("게시글 저장 통합 테스트 - 이미지 포함")
+  void saveBoardWithImages() {
+    // given
+    String html = """
+            <p>본문입니다</p>
+            <img src="https://cdn.example.com/uuid1-aaaa.jpg" />
+            <img src="https://cdn.example.com/uuid2-bbbb.png" />
+        """;
+
+    BoardSaveRequest request = new BoardSaveRequest(
+        "통합 테스트 제목",
+        html,
+        "food", // enum이 대문자여야 from() 매칭됨
+        "author@test.com"
+    );
+
+    List<String> uuids = boardService.extractImageInfo(request);
+
+    // when
+    boardService.saveBoard(request, uuids);
   }
 
 

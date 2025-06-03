@@ -5,7 +5,9 @@ import com.modureview.config.AwsS3Config;
 import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
+import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
+import com.modureview.entity.User;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.ImageSaveErrorCode;
 import com.modureview.exception.BoardError.BoardSaveError;
@@ -15,8 +17,11 @@ import com.modureview.exception.CustomException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
+import com.modureview.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +29,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -41,6 +47,13 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class BoardService {
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
+  private final UserRepository userRepository;
+
+  @Value("${custom.default.image.url}")
+  private String defaultImageUrl;
+
+  @Value("${custom.image}")
+  private String cndUrl;
 
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
@@ -77,11 +90,14 @@ public class BoardService {
           awsS3Config.getCredentials().getSecretKey()
       );
 
+      String contentType = resolveContentTypeByKey(key); // 아래 함수 정의 참조
+
       PutObjectRequest objectRequest = PutObjectRequest.builder()
           .bucket(awsS3Config.getBucket())
           .key(key)
-          .contentType("image/png")
+          .contentType(contentType)
           .build();
+
 
       PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
           .signatureDuration(Duration.ofMinutes(10))
@@ -113,13 +129,24 @@ public class BoardService {
   }
 
   @Transactional
-  public void saveBoard(BoardSaveRequest request) {
+  public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
+    User user = userRepository.findByEmail(request.authorEmail()).get();
+
+    String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
+    if (imageUuids.isEmpty()) { }
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
+        .user(user)
         .authorEmail(request.authorEmail())
+        .thumbnail(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
+
+    for (String uuid : imageUuids) {
+      BoardImage image = BoardImage.of(uuid);
+      board.addImage(image);
+    }
 
     try {
       boardRepository.save(board);
@@ -130,8 +157,8 @@ public class BoardService {
 
   }
 
-  public void extractImageInfo(BoardSaveRequest request) {
-
+  public List<String> extractImageInfo(BoardSaveRequest request) {
+    List<String> extractedImages = new ArrayList<>();
     Document doc = Jsoup.parse(request.content());
     Elements imgTags = doc.select("img");
 
@@ -140,11 +167,11 @@ public class BoardService {
 
       if (src != null && !src.isBlank()) {
         String uuid = extractUuidFromUrl(src);
-        log.info("user uuid = {}", uuid);
-        //TODO
-        //추출한 uuid를 기반으로 board테이블에 cascade기반 업로드
+        extractedImages.add(uuid);
       }
+
     }
+    return extractedImages;
   }
 
   private String extractUuidFromUrl(String url) {
@@ -164,4 +191,14 @@ public class BoardService {
     }
   }
 
+  private String resolveContentTypeByKey(String key) {
+    if (key.endsWith(".jpg") || key.endsWith(".jpeg")) {
+      return "image/jpeg";
+    }
+    if (key.endsWith(".png")) {
+      return "image/png";
+    }
+    // todo: 허용되지 않은 형식 에러 리턴 예정
+    return null;
+  }
 }
