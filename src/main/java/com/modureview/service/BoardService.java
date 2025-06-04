@@ -133,7 +133,6 @@ public class BoardService {
     User user = userRepository.findByEmail(request.authorEmail()).get();
 
     String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
-    if (imageUuids.isEmpty()) { }
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())

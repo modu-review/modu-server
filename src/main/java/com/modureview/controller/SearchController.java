@@ -34,13 +34,14 @@ public class SearchController {
       @RequestParam(name = "sort", defaultValue = "recent") String sort
   ) throws UnsupportedEncodingException {
     String decodeKeyword = URLDecoder.decode(keyword, "UTF-8");
+    log.info("Searching for " + decodeKeyword);
     Page<Board> boardPage = searchService.boardSearch(decodeKeyword, page, sort);
     List<BoardSearchResponse> listSearchBoard = boardPage.getContent().stream()
         .map(BoardSearchResponse::fromEntity)
         .toList();
     CustomPageResponse<BoardSearchResponse> SearchPage = new CustomPageResponse<>(
         listSearchBoard,
-        boardPage.getNumber() + 1,
+        boardPage.getNumber(),
         boardPage.getTotalPages()
     );
 
@@ -50,9 +51,9 @@ public class SearchController {
 
   @GetMapping("/reviews")
   public ResponseEntity<CustomSlicePageResponse<BoardSearchResponse>> getBoardsByCategory(
-      @RequestParam(name = "category") Category category,
-      @RequestParam(name = "cursorId", defaultValue = "0") Long cursorId,
-      @RequestParam(name = "recent", defaultValue = "recent") String sort) {
+      @RequestParam(name = "categoryId") Category category,
+      @RequestParam(name = "cursor", defaultValue = "0") Long cursorId,
+      @RequestParam(name = "sort", defaultValue = "recent") String sort) {
     Slice<Board> boardSlice = searchService.getCategoryBoard(category, cursorId, sort);
     List<BoardSearchResponse> dtoList = boardSlice.getContent().stream()
         .map(BoardSearchResponse::fromEntity)
