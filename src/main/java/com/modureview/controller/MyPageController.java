@@ -22,7 +22,7 @@ public class MyPageController {
   private final MyPageService myPageService;
 
   @GetMapping("/users/me/reviews")
-  public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getMyPageBoard(
+  public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getUserBoards(
       @CookieValue(name = "userEmail") String email,
       @RequestParam(name = "page", defaultValue = "0") int page
   ) {
