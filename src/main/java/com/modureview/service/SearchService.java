@@ -38,7 +38,7 @@ public class SearchService {
       default -> sortCriteria = Sort.by(Direction.DESC, "createdAt");
     }
 
-    Pageable pageable = PageRequest.of(page, 6, sortCriteria);
+    Pageable pageable = PageRequest.of(page - 1, 6, sortCriteria);
     if (StringUtils.hasText(keyword)) {
       return searchRepository.findByKeyword(keyword, pageable);
     } else {
