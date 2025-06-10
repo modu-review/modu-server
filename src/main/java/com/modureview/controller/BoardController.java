@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 ;
@@ -21,13 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
+
   private final BoardService boardService;
 
-  @GetMapping("/post")
+  @GetMapping("/reviews/{boardId}")
   public ResponseEntity<BoardDetailResponse> getBoardDetail(
-      @RequestParam Long board_id
-  ){
-    return ResponseEntity.ok().body(boardService.boardDetail(board_id));
+      @PathVariable Long boardId
+  ) {
+    return ResponseEntity.ok().body(boardService.boardDetail(boardId));
   }
 
   @PostMapping("/presign")

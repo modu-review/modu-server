@@ -10,9 +10,8 @@ public record BoardDetailResponse(
     String title,
     Category category,
     String author,
-    LocalDateTime create_At,
+    LocalDateTime created_at,
     String content,
-    Integer comment_count,
     Integer bookmarks
 ) {
 
