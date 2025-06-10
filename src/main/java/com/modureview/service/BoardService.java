@@ -18,6 +18,7 @@ import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.UserRepository;
+import com.modureview.service.utill.SummarizationService;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -45,9 +46,11 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Transactional
 @Slf4j
 public class BoardService {
+
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
   private final UserRepository userRepository;
+  private final SummarizationService summarizationService;
 
   @Value("${custom.default.image.url}")
   private String defaultImageUrl;
@@ -71,7 +74,7 @@ public class BoardService {
         .build();
 
     return response;
-    }
+  }
 
   public String createImageID() {
     try {
@@ -98,7 +101,6 @@ public class BoardService {
           .contentType(contentType)
           .build();
 
-
       PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
           .signatureDuration(Duration.ofMinutes(10))
           .putObjectRequest(objectRequest)
@@ -122,7 +124,8 @@ public class BoardService {
   public void htmlSanitizer(BoardSaveRequest request) {
     String content = request.content().toLowerCase();
 
-    if (content.contains("<script") || content.contains("onerror=") || content.contains("javascript:")) {
+    if (content.contains("<script") || content.contains("onerror=") || content.contains(
+        "javascript:")) {
       log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
@@ -131,12 +134,20 @@ public class BoardService {
   @Transactional
   public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
     User user = userRepository.findByEmail(request.authorEmail()).get();
-
-    String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
+    String plainText = Jsoup.parse(request.content()).text();
+    String preview;
+    try {
+      preview = summarizationService.summarize(request.title(), plainText);
+    } catch (Exception e) {
+      log.warn("Gemini 요약 실패 , 풀백 처리 : {}", e.getMessage());
+      preview = plainText.length() > 100 ? plainText.substring(0, 100) + "..." : plainText;
+    }
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
         .user(user)
+        .preview(preview)
         .authorEmail(request.authorEmail())
         .thumbnail(thumbnail)
         .category(Category.valueOf(request.category()))

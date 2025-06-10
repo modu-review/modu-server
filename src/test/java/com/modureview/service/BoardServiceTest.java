@@ -14,17 +14,17 @@ import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
+import com.modureview.entity.User;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
 import com.modureview.repository.BoardRepository;
+import com.modureview.repository.UserRepository;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +34,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("h2")
 class BoardServiceTest {
+
   @Autowired
   private BoardService boardService;
 
@@ -46,6 +48,10 @@ class BoardServiceTest {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @Autowired
+  private UserRepository userRepository;
+
 
   @Test
   void getBoardDetail_Success() throws Exception {
@@ -73,7 +79,6 @@ class BoardServiceTest {
 
     log.info("boardService.boardDetail() 실행 시간: {} ns ({} ms)", duration,
         String.format("%.3f", durationMs));
-
 
     assertThat(findBoard).isNotNull();
     assertThat(findBoard.author()).isEqualTo(board.getAuthorEmail());
@@ -225,7 +230,172 @@ class BoardServiceTest {
     List<String> uuids = boardService.extractImageInfo(request);
 
     // when
-    boardService.saveBoard(request, uuids);
+    Board newboard = boardService.saveBoard(request, uuids);
+    log.info("newboard.getPreview() == {}", newboard.getPreview());
+  }
+
+  @Test
+  @DisplayName("게시글 저장 통합 테스트 - 이미지 포함,Preview도 포함")
+  void saveBoardWithImagesWithPreview() {
+    // given
+    String html = """
+        작년 8월부터 공사하던
+        
+        점선 에스프레소바를 보면서
+        근처에 집과 회사가 있는 나는
+        
+        얼른 생기길 기다리고있었다 💨
+        
+        인스타로 간간히 소식을 훑어보던 중
+        
+        오픈한것같은 느낌이 들어 방문했더니
+        
+        드디어 가오픈을 한다고 했다 !!!!
+        
+        청주 강서동에 진짜 까눌레랑
+        
+        맛있는 마들렌 휘낭시에 파는 집이 없는데
+        
+        드디어 생겨서 행복했다
+        
+        갓 오픈했다고 엉성한게 아니라
+        
+        까눌레는 타지도 않고 겉바속촉에
+        
+        너무너무 행복한 맛이였다
+        
+        우리는 레몬 커스타드 마들렌, 까눌레,\s
+        
+        무화과 크림치즈 휘낭시에를 주문했다
+        
+        에스프레소도 3천원으로 생각보다 저렴했고
+        
+        원두가 산미없이 고소한게 있어서
+        
+        너무너무 좋았다
+        
+        !! 사장님 디카페인 원두도 추가해주세요 !!
+        
+        더 맨날갈게요 제발 ㅠㅠㅠㅠㅠㅠ
+        내부는 크지 않지만
+        
+        청주 에스프레소바 치고 자리도 ㄱㅊ고
+        
+        들어가기 편한 공간이였다
+        아치형 바테이블도 있는데
+        
+        여기서 핸드드리부구경하고싶다ㅜ,,,,
+        공간 하나하나 갬성 개쩔고
+        
+        가격도 비싸지 않아서
+        
+        자주자주 갈 예정이다 !!
+        
+        저 요시고 포토카드북 탐난다,,,,🤍
+        
+        스탠딩 테이블은 한개밖에 없어서
+        
+        한번 서서 마셔볼까? 하다가
+        
+        포기 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ
+        이런거 너무 좋아 ~~~❤️❤️❤️🤍🤍
+        
+        이 의자는 앉거나 디저트 올려놓거나
+        
+        만능으로 사용 가능하답니다 ㅋㅋ
+        
+        사진 너무 잘나와~~~~
+        
+        재방문 포스팅 조만간 갑니다
+        
+        진짜 3일에 1번씩 갈듯
+        이것도 짐이나 가방 놓는 용도로
+        
+        있으니깐 편하더라구요
+        좌식은 다 이런편 !
+        
+        생각보다 오래앉아있을수는 없는 구조,,, ㅎㅎㅎ
+        
+        방석 주세욥 !
+        생각보다 금방나온
+        
+        우리의 쇼콜라어쩌구!!!
+        인스타에서 다른 청주 에스프레소바 사진보면
+        
+        엄청 디럽게 나오던데
+        
+        점선에스프레소바는 비교적 깔끔하게 나와서
+        
+        좋았다 ㅋㅋ
+        응 갬성 개쩔어~
+        
+        우리는 피스타치오1 소콜라 2
+        이렇게 주문했다
+        이건 우리의 디저트
+        
+        맛평가는,,,,,,,!
+        내 픽 순위는 !!
+        1. 레몬커스타드마들렌
+        
+        촉촉하고 상큼하니 와,,, 내가 먹은 마들렌 원탑
+        
+        ​
+        
+        2. 까눌레
+        
+        겉은 바삭하지만 타지않고
+        
+        속이 촉촉하니 바닐라향 가득한
+        
+        잘 만들어진 까눌레
+        3. 무화과 크림치즈 휘낭시에
+        너무 맛있었지만 그 휘낭시에의 촉촉 쫀득한
+        맛보다는 오히려 마들렌같은 파사삭한 느낌 ..?
+        살짝 더 쫀쫀했으며누맛있을것같다
+        저 씨쏠트 초콜릿도 존맛 ㅋ
+        주문서가 이렇게 나왔다
+        귀엽고 갬성쩔어
+        이건 피스타치오 에스프레소 어쩌구
+        크림이 있는거라
+        엄청 달달한 피스타치오커피맛이였다
+        여기 점선 에스프레소바는 크레마 예술이다 진짜
+        다들 사진찍느라ㅜ바쁨 ㅋㅋㅋ
+        확대샷,,,,,
+        이건 무조건이지 ~
+        에스프레소바 오면 무조건 찍어야하는 국룰 ~~~
+        ㅋㅋㅋㅋㅋ참고로
+        내가 쌓음 v
+        
+        청주 에스프레소바 점선
+        
+        진짜 커피맛집 커피존맛 !!!!
+        
+        강서동에 있어서 청주터미널이랑도 매우 가깝고
+        
+        진짜 자주올 단골예약할 카페이다!!!
+        
+        별이 다섯개!!!
+        
+        """;
+
+    User user = User.builder()
+        .email("author@test.com")
+        .build();
+
+    User newUser = userRepository.save(user);
+
+    BoardSaveRequest request = new BoardSaveRequest(
+        "구움과자까지 존맛인 청주 에스프레소바 점선",
+        html,
+        "food", // enum이 대문자여야 from() 매칭됨
+        newUser.getEmail()
+    );
+
+    List<String> uuids = boardService.extractImageInfo(request);
+
+    // when
+    Board newboard = boardService.saveBoard(request, uuids);
+    log.info("newboard.getPreview() == {}", newboard.getPreview());
   }
 
 
