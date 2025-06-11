@@ -57,6 +57,9 @@ dependencies {
     //jsoup이미지 링크 저장
     implementation 'org.jsoup:jsoup:1.17.2'
 
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {
