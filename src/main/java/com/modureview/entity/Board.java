@@ -60,6 +60,9 @@ public class Board {
   @Builder.Default
   private Integer bookmarksCount = 0;
 
+  @Builder.Default
+  private Integer viewCount = 0;
+
   @Column( name = "created_at")
   private LocalDateTime createdAt;
 
