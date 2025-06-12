@@ -54,6 +54,8 @@ public class Board {
 
   private String thumbnail;
 
+  private String preview;
+
   @Builder.Default
   private Integer commentsCount = 0;
 

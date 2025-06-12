@@ -1,41 +1,20 @@
 package com.modureview.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import java.util.List;
 import lombok.Builder;
 
 public record BestReviewDto(
-    @JsonProperty("boardId")
+
     Long board_id,
-
-    @JsonProperty("title")
     String title,
-
-    @JsonProperty("author")
     String author,
-
-    @JsonProperty("category")
     String category,
-
-    @JsonProperty("thumbnail")
-    String thumbnail,
-
-    @JsonProperty("contents")
-    String contents,
-
-    @JsonProperty("commentsCount")
+    String preview,
     int comments_count,
-
-    @JsonProperty("bookmarks")
     int bookmarks,
-
-    @JsonProperty("image_url")
-    List<String> image_url,
-
-    @JsonProperty("view_count")
-    int viewCount
+    String thumbnail
 ) {
 
   @Builder
@@ -51,16 +30,10 @@ public record BestReviewDto(
         board.getTitle(),
         board.getUser().getEmail(),
         board.getCategory().name(),
-        board.getThumbnail(),
-        board.getContent(),
+        board.getPreview(),
         board.getCommentsCount(),
         board.getBookmarksCount(),
-        imageUrls,
-        board.getViewCount()
+        board.getThumbnail()
     );
-  }
-
-  public int getHotScore() {
-    return (this.bookmarks * 4) + this.viewCount + (this.comments_count * 2);
   }
 }
