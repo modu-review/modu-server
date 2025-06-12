@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @AllArgsConstructor
-public class BestReviewCategoryController {
+public class BestReviewController {
 
   private final BestReviewsService bestReviewsService;
 
