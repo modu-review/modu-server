@@ -62,19 +62,19 @@ class BestReviewsServiceTest {
 
     // 2. 실제 DTO 생성
     BestReviewDto dto101 = BestReviewDto.builder()
-        .boardId(101L)
+        .board_id(101L)
         .title("정말 맛있는 국밥집 후기")
         .author("김리뷰")
         .bookmarks(99)
-        .imageUrl("http://image.url/thumb1.jpg")
+        .image_url(List.of("/images/food/101_main.jpg", "/images/food/101_sub1.jpg"))
         .build();
 
     BestReviewDto dto102 = BestReviewDto.builder()
-        .boardId(102L)
+        .board_id(102L)
         .title("인생 파스타 맛집 찾았어요")
         .author("이테스트")
         .bookmarks(80)
-        .imageUrl("http://image.url/thumb2.jpg")
+        .image_url(List.of("/images/pasta/102_main.jpg"))
         .build();
 
     // 1. ZSet에서 boardId 목록을 가져오는 동작 Mocking
@@ -124,12 +124,10 @@ class BestReviewsServiceTest {
     when(zSetOperations.reverseRange(sortedSetKey, 0, 5)).thenReturn(boardIds);
     when(valueOperations.get("board:201")).thenReturn(malformedJson);
 
-    // objectMapper가 특정 JSON을 파싱할 때 예외를 던지도록 설정
     when(objectMapper.readValue(malformedJson, BestReviewDto.class))
         .thenThrow(new JsonParsingFromRedisException(BestReviewErrorCode.JSON_PROCESSING_ERROR)); // 또는 JsonProcessingException
 
     // when & then
-    // getBestReviews(category)를 실행했을 때, JsonParsingFromRedisException 예외가 발생하는지 검증
     assertThrows(JsonParsingFromRedisException.class, () -> {
       bestReviewsService.getBestReviews(category);
     });
