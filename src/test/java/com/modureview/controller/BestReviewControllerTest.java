@@ -20,7 +20,6 @@ class BestReviewControllerTest {
   public void testBestReviews() throws Exception {
 
     ResponseEntity<?> bestReviews = controller.getBestReviews();
-    log.info(bestReviews.getBody().toString());
 
   }
 }

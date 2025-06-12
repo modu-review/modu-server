@@ -66,7 +66,7 @@ class BestReviewsServiceTest {
         .title("정말 맛있는 국밥집 후기")
         .author("김리뷰")
         .bookmarks(99)
-        .image_url(List.of("/images/food/101_main.jpg", "/images/food/101_sub1.jpg"))
+        .thumbnail("/images/food/101_main.jpg")
         .build();
 
     BestReviewDto dto102 = BestReviewDto.builder()
@@ -74,7 +74,7 @@ class BestReviewsServiceTest {
         .title("인생 파스타 맛집 찾았어요")
         .author("이테스트")
         .bookmarks(80)
-        .image_url(List.of("/images/pasta/102_main.jpg"))
+        .thumbnail("/images/pasta/102_main.jpg")
         .build();
 
     // 1. ZSet에서 boardId 목록을 가져오는 동작 Mocking

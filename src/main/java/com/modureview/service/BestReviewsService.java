@@ -8,7 +8,6 @@ import com.modureview.exception.bestReviewException.JsonParsingFromRedisExceptio
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.SequencedCollection;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
