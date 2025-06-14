@@ -3,9 +3,9 @@ package com.modureview.exception.bestReviewException;
 import com.modureview.enums.ErrorCode;
 import com.modureview.exception.CustomException;
 
-public class JsonParsingFromRedisException extends CustomException {
+public class JsonParsingException extends CustomException {
 
-  public JsonParsingFromRedisException(ErrorCode errorCode) {
+  public JsonParsingException(ErrorCode errorCode) {
     super(errorCode);
   }
 
