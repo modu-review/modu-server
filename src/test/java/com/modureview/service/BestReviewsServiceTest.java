@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.BestReviewDto;
 import com.modureview.enums.errors.BestReviewErrorCode;
-import com.modureview.exception.bestReviewException.JsonParsingFromRedisException;
+import com.modureview.exception.bestReviewException.JsonParsingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -125,10 +125,10 @@ class BestReviewsServiceTest {
     when(valueOperations.get("board:201")).thenReturn(malformedJson);
 
     when(objectMapper.readValue(malformedJson, BestReviewDto.class))
-        .thenThrow(new JsonParsingFromRedisException(BestReviewErrorCode.JSON_PROCESSING_ERROR)); // 또는 JsonProcessingException
+        .thenThrow(new JsonParsingException(BestReviewErrorCode.JSON_PROCESSING_ERROR)); // 또는 JsonProcessingException
 
     // when & then
-    assertThrows(JsonParsingFromRedisException.class, () -> {
+    assertThrows(JsonParsingException.class, () -> {
       bestReviewsService.getBestReviews(category);
     });
   }
