@@ -54,11 +54,16 @@ public class Board {
 
   private String thumbnail;
 
+  private String preview;
+
   @Builder.Default
   private Integer commentsCount = 0;
 
   @Builder.Default
   private Integer bookmarksCount = 0;
+
+  @Builder.Default
+  private Integer viewCount = 0;
 
   @Column( name = "created_at")
   private LocalDateTime createdAt;
