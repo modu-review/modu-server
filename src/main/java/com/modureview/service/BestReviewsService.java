@@ -4,13 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.BestReviewDto;
 import com.modureview.entity.Board;
+import com.modureview.entity.Category;
 import com.modureview.enums.errors.BestReviewErrorCode;
 import com.modureview.exception.bestReviewException.JsonParsingFromRedisException;
 import com.modureview.repository.BoardRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -52,9 +55,18 @@ public class BestReviewsService {
 
   public void aggregate(){
     List<Board> topSix= boardRepository.findTop6BoardsPerCategory();
+
+    List<String> zsetKeysToDelete = Arrays.stream(Category.values())
+        .map(c -> "best_reviews:" + c.name())
+        .collect(Collectors.toList());
+
+    if (!zsetKeysToDelete.isEmpty()) {
+      redisTemplate.delete(zsetKeysToDelete);
+      log.info("베스트 리뷰 랭킹(ZSET) 키 {}개를 삭제했습니다.", zsetKeysToDelete.size());
+    }
+
     /*
     TODO:
-    - Redis데이터 삭제
     - Redis에 데이터 저장 및 로그 표시
     - 각 Board정보 Redis에 저장 및 로그 표시
     * */
