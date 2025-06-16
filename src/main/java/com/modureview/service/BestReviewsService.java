@@ -3,8 +3,10 @@ package com.modureview.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.BestReviewDto;
+import com.modureview.entity.Board;
 import com.modureview.enums.errors.BestReviewErrorCode;
 import com.modureview.exception.bestReviewException.JsonParsingFromRedisException;
+import com.modureview.repository.BoardRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,7 @@ public class BestReviewsService {
 
   private final RedisTemplate<String, String> redisTemplate;
   private final ObjectMapper objectMapper;
+  private final BoardRepository boardRepository;
 
   public List<BestReviewDto> getBestReviews(String category) {
     String sortedSetKey = "best_reviews:" + category;
@@ -45,5 +48,15 @@ public class BestReviewsService {
     }
     return Collections.unmodifiableList(bestReviews);
 
+  }
+
+  public void aggregate(){
+    List<Board> topSix= boardRepository.findTop6BoardsPerCategory();
+    /*
+    TODO:
+    - Redis데이터 삭제
+    - Redis에 데이터 저장 및 로그 표시
+    - 각 Board정보 Redis에 저장 및 로그 표시
+    * */
   }
 }
