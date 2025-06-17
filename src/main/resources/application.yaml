@@ -76,7 +76,7 @@ aws:
 custom:
   default:
     image:
-      url: https://d1izijuzr22yly.cloudfront.net/no-image
+      url: https://d1izijuzr22yly.cloudfront.net/no-thumbnail.png
   image:
     url:https://d1izijuzr22yly.cloudfront.net/
 
