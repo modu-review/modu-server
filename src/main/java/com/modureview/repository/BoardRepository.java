@@ -24,4 +24,24 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         """,
       nativeQuery = true)
   List<Board> findTop6BoardsPerCategory();
+
+  @Query(
+      value = """
+            WITH RankedBoards AS (
+                SELECT
+                    b.*,
+                    ROW_NUMBER() OVER (
+                        ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC
+                    ) AS rn
+                FROM
+                    board b
+            )
+            SELECT *
+            FROM RankedBoards
+            WHERE rn <= 6
+        """,
+      nativeQuery = true)
+  List<Board> findallCategory();
+
+
 }
