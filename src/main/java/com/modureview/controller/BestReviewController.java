@@ -23,7 +23,7 @@ public class BestReviewController {
   private final BestReviewsService bestReviewsService;
   private final ObjectMapper objectMapper;
 
-  @GetMapping("/best/reviews")
+  @GetMapping("/reviews/best")
   public ResponseEntity<Map<String, Map<String, Object>>> getBestReviews() {
     Map<String, Map<String, Object>> finalResponse =
         Arrays.stream(Category.values())
