@@ -13,6 +13,7 @@ import com.modureview.repository.UserRepository;
 import com.modureview.service.BookMarkService;
 import com.modureview.utill.TestUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@Transactional
 @ActiveProfiles("h2")
 class BookMarkControllerTest {
 
@@ -59,7 +61,7 @@ class BookMarkControllerTest {
   void setUp() {
     this.testUtil = new TestUtil();
     User user = userRepository.save(testUtil.newUser("test@test.com"));
-    User user1 = userRepository.save(testUtil.newUser("test1@test.com"));
+    userRepository.save(testUtil.newUser("test1@test.com"));
     Board board = boardRepository.save(testUtil.newBoard(user));
     List<BookMark> bookMarks = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
