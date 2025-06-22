@@ -45,6 +45,8 @@ public class Board {
 
   private String authorEmail;
 
+  private String authorNickname;
+
   @Enumerated(EnumType.STRING)
   private Category category;
 
@@ -60,19 +62,19 @@ public class Board {
   @Builder.Default
   private Integer bookmarksCount = 0;
 
-  @Column( name = "created_at")
+  @Column(name = "created_at")
   private LocalDateTime createdAt;
 
-  @Column( name = "modified_at")
+  @Column(name = "modified_at")
   private LocalDateTime modifiedAt;
 
   @PrePersist
-  protected void onCreate(){
+  protected void onCreate() {
     this.createdAt = LocalDateTime.now();
   }
 
   @PreUpdate
-  protected void onUpdate(){
+  protected void onUpdate() {
     this.modifiedAt = LocalDateTime.now();
   }
 
@@ -86,7 +88,8 @@ public class Board {
   }
 
   @Builder
-  public Board(String title ,String authorEmail, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
+  public Board(String title, String authorEmail, Category category, String content,
+      Integer commentsCount, Integer bookmarksCount) {
     this.title = title;
     this.authorEmail = authorEmail;
     this.category = category;
