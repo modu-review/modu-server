@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.enums.errors.BoardErrorCode;
@@ -21,10 +21,8 @@ import com.modureview.repository.BoardRepository;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +32,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @Slf4j
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("h2")
 class BoardServiceTest {
+
   @Autowired
   private BoardService boardService;
 
@@ -51,7 +51,8 @@ class BoardServiceTest {
   void getBoardDetail_Success() throws Exception {
     Board board = Board.builder()
         .title("Test제목")
-        .authorEmail("Test작성자")
+        .authorEmail("Test@test.com")
+        .authorNickname("Test")
         .category(Category.car)
         .content("<h1 style=\\\"text-align: left\\\">이건 제목 1인데요..</h1><p>...</p>") // 내용은 생략
         .commentsCount(13)
@@ -74,9 +75,9 @@ class BoardServiceTest {
     log.info("boardService.boardDetail() 실행 시간: {} ns ({} ms)", duration,
         String.format("%.3f", durationMs));
 
-
     assertThat(findBoard).isNotNull();
-    assertThat(findBoard.author()).isEqualTo(board.getAuthorEmail());
+    assertThat(findBoard.author_email()).isEqualTo(board.getAuthorEmail());
+    assertThat(findBoard.author_id()).isEqualTo(board.getAuthorNickname());
     assertThat(findBoard.category()).isEqualTo(board.getCategory());
     assertThat(findBoard.content()).isEqualTo(board.getContent());
     assertThat(findBoard.title()).isEqualTo(board.getTitle());
@@ -94,7 +95,8 @@ class BoardServiceTest {
   void getBoardDetail_Error() throws Exception {
     Board board = Board.builder()
         .title("Error제목")
-        .authorEmail("Error작성자")
+        .authorEmail("Error@error.com")
+        .authorNickname("Error")
         .category(Category.car)
         .content("<h1 style=\\\"text-align: left\\\">이건 제목 1인데요..</h1><p>...</p>") // 내용은 생략
         .commentsCount(13)
