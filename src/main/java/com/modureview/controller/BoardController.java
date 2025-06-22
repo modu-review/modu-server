@@ -1,8 +1,8 @@
 package com.modureview.controller;
 
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.dto.request.PresignRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.service.BoardService;
 import java.util.HashMap;
 import java.util.List;
@@ -21,12 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class BoardController {
+
   private final BoardService boardService;
 
   @GetMapping("/post")
   public ResponseEntity<BoardDetailResponse> getBoardDetail(
       @RequestParam Long board_id
-  ){
+  ) {
     return ResponseEntity.ok().body(boardService.boardDetail(board_id));
   }
 
