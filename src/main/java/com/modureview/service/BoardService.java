@@ -2,8 +2,8 @@ package com.modureview.service;
 
 
 import com.modureview.config.AwsS3Config;
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
@@ -45,6 +45,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Transactional
 @Slf4j
 public class BoardService {
+
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
   private final UserRepository userRepository;
@@ -59,19 +60,18 @@ public class BoardService {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
     );
-    BoardDetailResponse response = BoardDetailResponse.builder()
+    return BoardDetailResponse.builder()
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .author(findBoard.getAuthorEmail())
+        .author_email(findBoard.getAuthorEmail())
+        .author_nickname(findBoard.getAuthorNickname())
         .create_At(findBoard.getCreatedAt())
         .content(findBoard.getContent())
         .comment_count(findBoard.getCommentsCount())
         .bookmarks(findBoard.getBookmarksCount())
         .build();
-
-    return response;
-    }
+  }
 
   public String createImageID() {
     try {
@@ -98,7 +98,6 @@ public class BoardService {
           .contentType(contentType)
           .build();
 
-
       PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
           .signatureDuration(Duration.ofMinutes(10))
           .putObjectRequest(objectRequest)
@@ -122,7 +121,8 @@ public class BoardService {
   public void htmlSanitizer(BoardSaveRequest request) {
     String content = request.content().toLowerCase();
 
-    if (content.contains("<script") || content.contains("onerror=") || content.contains("javascript:")) {
+    if (content.contains("<script") || content.contains("onerror=") || content.contains(
+        "javascript:")) {
       log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
@@ -132,12 +132,13 @@ public class BoardService {
   public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
     User user = userRepository.findByEmail(request.authorEmail()).get();
 
-    String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
-        .user(user)
+        //.user(user)
         .authorEmail(request.authorEmail())
+        .authorNickname(request.authorEmail().split("@")[0])
         .thumbnail(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
