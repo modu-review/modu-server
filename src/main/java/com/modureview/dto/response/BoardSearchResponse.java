@@ -13,7 +13,7 @@ public record BoardSearchResponse(
     Category category,
     String author,
     LocalDateTime create_At,
-    String content,
+    String preview,
     Integer comments_count,
     Integer bookmarks
 ) {
@@ -25,7 +25,7 @@ public record BoardSearchResponse(
         .category(board.getCategory())
         .author(board.getAuthorEmail())
         .create_At(board.getCreatedAt())
-        .content(board.getContent())
+        .preview(board.getPreview())
         .comments_count(board.getCommentsCount())
         .bookmarks(board.getBookmarksCount())
         .build();
