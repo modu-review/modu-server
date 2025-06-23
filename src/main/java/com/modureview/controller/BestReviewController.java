@@ -1,8 +1,7 @@
 package com.modureview.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modureview.dto.BestReviewDto;
+import com.modureview.dto.response.BestReviewResponse;
 import com.modureview.entity.Category;
 import com.modureview.service.BestReviewsService;
 import java.util.Arrays;
@@ -30,21 +29,14 @@ public class BestReviewController {
             .collect(Collectors.toMap(
                 Category::name,
                 category -> {
-                  List<BestReviewDto> reviews = bestReviewsService.getBestReviews(category.name());
+                  // 수정한 서비스 메소드를 호출합니다.
+                  List<BestReviewResponse> reviews = bestReviewsService.getBestReviewsForCategory(category.name());
                   return Map.of(
                       "count", reviews.size(),
                       "reviews", reviews
                   );
                 }
             ));
-
-    try {
-      String prettyJsonResponse = objectMapper.writerWithDefaultPrettyPrinter()
-          .writeValueAsString(finalResponse);
-      log.info("최종 응답 데이터: \n{}", prettyJsonResponse);
-    } catch (JsonProcessingException e) {
-      log.error("최종 응답 객체 JSON 변환 실패", e);
-    }
     return ResponseEntity.ok(finalResponse);
   }
 }
