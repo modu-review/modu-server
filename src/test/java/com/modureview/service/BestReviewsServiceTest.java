@@ -1,15 +1,12 @@
 package com.modureview.service;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modureview.dto.BestReviewDto;
-import com.modureview.enums.errors.BestReviewErrorCode;
-import com.modureview.exception.bestReviewException.JsonParsingException;
+import com.modureview.dto.response.BestReviewResponse;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +23,6 @@ import org.springframework.data.redis.core.ZSetOperations;
 
 @ExtendWith(MockitoExtension.class)
 class BestReviewsServiceTest {
-
 
   @InjectMocks
   private BestReviewsService bestReviewsService;
@@ -45,56 +41,40 @@ class BestReviewsServiceTest {
   @BeforeEach
   void setUp() {
     when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
-    lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+    when(redisTemplate.opsForValue()).thenReturn(valueOperations);
   }
 
   @Test
   @DisplayName("베스트 리뷰 조회 성공")
   void getBestReviews_성공() throws JsonProcessingException {
-    // given
     String category = "food";
     String sortedSetKey = "best_reviews:" + category;
 
-    // Redis에서 가져올 가짜 데이터 설정
     Set<String> boardIds = Set.of("101", "102");
-    String boardJson101 = "{\"id\":101, \"title\":\"맛집 리뷰\"}";
-    String boardJson102 = "{\"id\":102, \"title\":\"두번째 맛집 리뷰\"}";
+    String boardJson101 = "{\"board_id\":101, \"title\":\"맛집 리뷰\"}";
+    String boardJson102 = "{\"board_id\":102, \"title\":\"두번째 맛집 리뷰\"}";
+    List<String> boardCacheKeys = List.of("board:101", "board:102");
+    List<String> dtoJSONs = List.of(boardJson101, boardJson102);
 
-    // 2. 실제 DTO 생성
-    BestReviewDto dto101 = BestReviewDto.builder()
-        .board_id(101L)
-        .title("정말 맛있는 국밥집 후기")
-        .author("김리뷰")
-        .bookmarks(99)
-        .thumbnail("/images/food/101_main.jpg")
+    BestReviewResponse dto101 = BestReviewResponse.builder().board_id(101L).title("맛집 리뷰").build();
+    BestReviewResponse dto102 = BestReviewResponse.builder().board_id(102L).title("두번째 맛집 리뷰")
         .build();
 
-    BestReviewDto dto102 = BestReviewDto.builder()
-        .board_id(102L)
-        .title("인생 파스타 맛집 찾았어요")
-        .author("이테스트")
-        .bookmarks(80)
-        .thumbnail("/images/pasta/102_main.jpg")
-        .build();
+    when(zSetOperations.reverseRange(sortedSetKey, 0L, -1L)).thenReturn(boardIds);
 
-    // 1. ZSet에서 boardId 목록을 가져오는 동작 Mocking
-    when(zSetOperations.reverseRange(sortedSetKey, 0, 5)).thenReturn(boardIds);
+    when(valueOperations.multiGet(anyList())).thenReturn(dtoJSONs);
 
-    // 2. 각 boardId로 JSON 데이터를 가져오는 동작 Mocking
-    when(valueOperations.get("board:101")).thenReturn(boardJson101);
-    when(valueOperations.get("board:102")).thenReturn(boardJson102);
-
-    // 3. JSON을 DTO로 변환하는 동작 Mocking
-    when(objectMapper.readValue(boardJson101, BestReviewDto.class)).thenReturn(dto101);
-    when(objectMapper.readValue(boardJson102, BestReviewDto.class)).thenReturn(dto102);
+    when(objectMapper.readValue(boardJson101, BestReviewResponse.class)).thenReturn(dto101);
+    when(objectMapper.readValue(boardJson102, BestReviewResponse.class)).thenReturn(dto102);
 
     // when
-    List<BestReviewDto> result = bestReviewsService.getBestReviews(category);
+    List<BestReviewResponse> result = bestReviewsService.getBestReviewsForCategory(category);
 
     // then
     assertThat(result).isNotNull();
     assertThat(result).hasSize(2);
-    assertThat(result).containsExactlyInAnyOrder(dto101, dto102);
+    assertThat(result.get(0).board_id()).isEqualTo(101L);
+    assertThat(result.get(1).board_id()).isEqualTo(102L);
   }
 
   @Test
@@ -103,35 +83,40 @@ class BestReviewsServiceTest {
     // given
     String category = "sports";
     String sortedSetKey = "best_reviews:" + category;
-    when(zSetOperations.reverseRange(sortedSetKey, 0, 5)).thenReturn(Collections.emptySet());
+
+    when(zSetOperations.reverseRange(sortedSetKey, 0L, -1L)).thenReturn(Collections.emptySet());
 
     // when
-    List<BestReviewDto> result = bestReviewsService.getBestReviews(category);
+    List<BestReviewResponse> result = bestReviewsService.getBestReviewsForCategory(category);
 
     // then
     assertThat(result).isNotNull();
     assertThat(result).isEmpty();
   }
+
   @Test
-  @DisplayName("Redis의 JSON 데이터 파싱 실패 시 예외 발생")
-  void getBestReviews_JSON파싱실패() throws JsonProcessingException, JsonProcessingException {
+  @DisplayName("Redis의 JSON 데이터 파싱 실패 시 해당 건은 제외하고 반환")
+  void getBestReviews_JSON파싱실패() throws JsonProcessingException {
     // given
     String category = "car";
     String sortedSetKey = "best_reviews:" + category;
     Set<String> boardIds = Set.of("201");
     String malformedJson = "{\"id\":201, \"title\":\"잘못된 JSON 형식"; // 닫는 괄호 없음
+    List<String> dtoJSONs = List.of(malformedJson);
 
-    when(zSetOperations.reverseRange(sortedSetKey, 0, 5)).thenReturn(boardIds);
-    when(valueOperations.get("board:201")).thenReturn(malformedJson);
+    when(zSetOperations.reverseRange(sortedSetKey, 0L, -1L)).thenReturn(boardIds);
 
-    when(objectMapper.readValue(malformedJson, BestReviewDto.class))
-        .thenThrow(new JsonParsingException(BestReviewErrorCode.JSON_PROCESSING_ERROR)); // 또는 JsonProcessingException
+    when(valueOperations.multiGet(anyList())).thenReturn(dtoJSONs);
 
-    // when & then
-    assertThrows(JsonParsingException.class, () -> {
-      bestReviewsService.getBestReviews(category);
-    });
+    when(objectMapper.readValue(malformedJson, BestReviewResponse.class))
+        .thenThrow(new JsonProcessingException("파싱 실패") {
+        });
+
+    // when
+    List<BestReviewResponse> result = bestReviewsService.getBestReviewsForCategory(category);
+
+    // then
+    assertThat(result).isNotNull();
+    assertThat(result).isEmpty();
   }
-
-
 }
