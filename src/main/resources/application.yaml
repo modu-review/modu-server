@@ -8,6 +8,10 @@ spring:
     password: root123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
+
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     properties:

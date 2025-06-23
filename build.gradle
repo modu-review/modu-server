@@ -31,6 +31,9 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.34'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    //Spring batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
