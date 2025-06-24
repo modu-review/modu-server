@@ -2,6 +2,7 @@ package com.modureview.service;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,7 +42,7 @@ class BestReviewsServiceTest {
   @BeforeEach
   void setUp() {
     when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
-    when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+    lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
   }
 
   @Test
