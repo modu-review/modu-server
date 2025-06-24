@@ -29,7 +29,6 @@ public class BestReviewController {
             .collect(Collectors.toMap(
                 Category::name,
                 category -> {
-                  // 수정한 서비스 메소드를 호출합니다.
                   List<BestReviewResponse> reviews = bestReviewsService.getBestReviewsForCategory(category.name());
                   return Map.of(
                       "count", reviews.size(),
