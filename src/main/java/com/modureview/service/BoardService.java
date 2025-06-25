@@ -67,9 +67,8 @@ public class BoardService {
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
         .author(findBoard.getAuthorEmail())
-        .create_At(findBoard.getCreatedAt())
+        .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
-        .comment_count(findBoard.getCommentsCount())
         .bookmarks(findBoard.getBookmarksCount())
         .build();
 
