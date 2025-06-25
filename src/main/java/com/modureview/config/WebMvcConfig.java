@@ -24,6 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/login/result",
             "/reviews/best",
             "/reviews",
+            "/reviews/**",
             "/search",
             "favicon.io"
         );
