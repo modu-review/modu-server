@@ -18,7 +18,7 @@ public class BookmarkController {
   public void updateBookmark(BookmarkRequest bookmarkRequest) {
       boardService.findBoard(bookmarkRequest.boardId());
 
-//      bookmarkService.updateBookmark(bookmarkRequest.boardId());
+      bookmarkService.redisUpdate(bookmarkRequest.boardId());
 
   }
 
