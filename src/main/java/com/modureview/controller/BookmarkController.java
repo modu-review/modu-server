@@ -19,7 +19,7 @@ public class BookmarkController {
       boardService.findBoard(bookmarkRequest.boardId());
 
       bookmarkService.redisUpdate(bookmarkRequest.boardId());
-
+      bookmarkService.saveBookmark(bookmarkRequest);
   }
 
 }
