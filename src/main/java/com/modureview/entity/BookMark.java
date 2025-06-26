@@ -23,6 +23,5 @@ public class BookMark {
   private String email;
 
   private Long boardId;
-
-  private boolean isBookmarked;
+  
 }
