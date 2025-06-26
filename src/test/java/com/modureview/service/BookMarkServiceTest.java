@@ -53,7 +53,7 @@ class BookMarkServiceTest {
     //Mock 객체의 행동 정의
     when(boardRepository.findById(reviewId)).thenReturn(java.util.Optional.of(mockBoard));
     when(userRepository.findByEmail(email)).thenReturn(java.util.Optional.of(mockUser));
-    when(bookMarkRepository.findIsBookmarkedByBoardIdAndEmail(reviewId, email)).thenReturn(
+    when(bookMarkRepository.existsByBoardIdAndEmail(reviewId, email)).thenReturn(
         Optional.of(true));
 
     //when
@@ -66,7 +66,7 @@ class BookMarkServiceTest {
     //Mock 객체의 메소드가 의도대로 호출되었는지 검증
     verify(boardRepository, times(1)).findById(reviewId);
     verify(userRepository, times(1)).findByEmail(email);
-    verify(bookMarkRepository, times(1)).findIsBookmarkedByBoardIdAndEmail(reviewId, email);
+    verify(bookMarkRepository, times(1)).existsByBoardIdAndEmail(reviewId, email);
   }
 
   @Test
@@ -88,7 +88,7 @@ class BookMarkServiceTest {
 
     //비 로그인시 user,bookmark repository는 호출되지 말아야함.
     verify(userRepository, never()).findByEmail(anyString());
-    verify(bookMarkRepository, never()).findIsBookmarkedByBoardIdAndEmail(anyLong(), anyString());
+    verify(bookMarkRepository, never()).existsByBoardIdAndEmail(anyLong(), anyString());
   }
 
   @Test

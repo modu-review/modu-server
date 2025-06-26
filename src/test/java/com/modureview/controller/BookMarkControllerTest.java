@@ -69,7 +69,6 @@ class BookMarkControllerTest {
           BookMark.builder()
               .email("test" + i + "@test.com")
               .boardId(board.getId())
-              .isBookmarked(true)
               .build()
       );
     }
