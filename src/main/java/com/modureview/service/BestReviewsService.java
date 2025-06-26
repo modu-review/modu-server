@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.BestReviewDto;
 import com.modureview.enums.errors.BestReviewErrorCode;
-import com.modureview.exception.bestReviewException.JsonParsingFromRedisException;
+import com.modureview.exception.bestReviewException.JsonParsingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +39,7 @@ public class BestReviewsService {
           bestReviews.add(dto);
         } catch (JsonProcessingException e) {
           log.error("BestReview Board정보 json파싱 실패: {}. JSON data: {}", boardId, boardJson, e);
-          throw new JsonParsingFromRedisException(BestReviewErrorCode.JSON_PROCESSING_ERROR);
+          throw new JsonParsingException(BestReviewErrorCode.JSON_PROCESSING_ERROR);
         }
       }
     }
