@@ -17,7 +17,7 @@ public class AggregationScheduler {
   private final JobLauncher jobLauncher;
   private final Job reviewAggregationJob;
 
-  @Scheduled(cron = "*/10 * * * * *") // "30초 간격으로 계속 실행"
+  @Scheduled(cron = "* * */3 * * *")
   public void runAggregationJob() {
     try {
       log.info("리뷰 집계 스케줄러를 시작합니다.");
