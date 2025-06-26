@@ -45,8 +45,6 @@ public class Board {
 
   private String authorEmail;
 
-  private String authorNickname;
-
   @Enumerated(EnumType.STRING)
   private Category category;
 
