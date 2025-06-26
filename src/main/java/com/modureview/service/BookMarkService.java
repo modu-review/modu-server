@@ -34,9 +34,9 @@ public class BookMarkService {
       userRepository.findByEmail(email).orElseThrow(
           () -> new CustomException(JwtErrorCode.FORBIDDEN)
       );
-      boolean targetBookmark = bookMarkRepository.findIsBookmarkedByBoardIdAndEmail(reviewId, email)
+      bookMarkRepository.existsByBoardIdAndEmail(reviewId, email)
           .orElse(false);
-      return BookMarkDetailResponse.fromEntity(targetBookmark, targetBoard.getBookmarksCount());
+      return BookMarkDetailResponse.fromEntity(true, targetBoard.getBookmarksCount());
     } else {
       return BookMarkDetailResponse.fromEntity(false, targetBoard.getBookmarksCount());
     }
