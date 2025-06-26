@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.entity.User;
@@ -57,7 +57,8 @@ class BoardServiceTest {
   void getBoardDetail_Success() throws Exception {
     Board board = Board.builder()
         .title("Test제목")
-        .authorEmail("Test작성자")
+        .authorEmail("Test@test.com")
+        .authorNickname("Test")
         .category(Category.car)
         .content("<h1 style=\\\"text-align: left\\\">이건 제목 1인데요..</h1><p>...</p>") // 내용은 생략
         .commentsCount(13)
@@ -81,7 +82,8 @@ class BoardServiceTest {
         String.format("%.3f", durationMs));
 
     assertThat(findBoard).isNotNull();
-    assertThat(findBoard.author()).isEqualTo(board.getAuthorEmail());
+    assertThat(findBoard.author_email()).isEqualTo(board.getAuthorEmail());
+    assertThat(findBoard.author_id()).isEqualTo(board.getAuthorNickname());
     assertThat(findBoard.category()).isEqualTo(board.getCategory());
     assertThat(findBoard.content()).isEqualTo(board.getContent());
     assertThat(findBoard.title()).isEqualTo(board.getTitle());
@@ -99,7 +101,8 @@ class BoardServiceTest {
   void getBoardDetail_Error() throws Exception {
     Board board = Board.builder()
         .title("Error제목")
-        .authorEmail("Error작성자")
+        .authorEmail("Error@error.com")
+        .authorNickname("Error")
         .category(Category.car)
         .content("<h1 style=\\\"text-align: left\\\">이건 제목 1인데요..</h1><p>...</p>") // 내용은 생략
         .commentsCount(13)
