@@ -1,8 +1,8 @@
 package com.modureview.repository;
 
-import com.modureview.entity.Bookmark;
+import com.modureview.entity.Bookmarks;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
+public interface BookmarkRepository extends JpaRepository<Bookmarks, Long> {
 
 }

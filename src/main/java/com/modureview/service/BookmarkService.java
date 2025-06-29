@@ -1,7 +1,6 @@
 package com.modureview.service;
 
-import com.modureview.dto.request.BookmarkRequest;
-import com.modureview.entity.Bookmark;
+import com.modureview.entity.Bookmarks;
 import com.modureview.repository.BookmarkRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -16,20 +15,15 @@ public class BookmarkService {
 
   private final StringRedisTemplate stringRedisTemplate;
 
-  public void redisUpdate(Long boardId) {
-    String redisKey = "board:" + boardId;
-    if (stringRedisTemplate.hasKey(redisKey)){
-      stringRedisTemplate.opsForValue().increment(redisKey, 4);
-    }
-  }
-
   @Transactional
-  public void saveBookmark(BookmarkRequest bookmarkRequest) {
-    Bookmark bookmark = Bookmark.builder()
-        .boardId(bookmarkRequest.boardId())
-        .userId(bookmarkRequest.userId())
+  public void saveBookmark(Long boardId,Long userId, String email) {
+    Bookmarks bookmark = Bookmarks.builder()
+        .boardId(boardId)
+        .userId(userId)
+        .userEmail(email)
         .build();
 
     bookmarkRepository.save(bookmark);
+
   }
 }

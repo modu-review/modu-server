@@ -1,5 +1,5 @@
 package com.modureview.dto.request;
 
-public record BookmarkRequest(Long userId, Long boardId) {
+public record BookmarkRequest(String userEmail) {
 
 }
