@@ -38,5 +38,20 @@ public class MyPageController {
     return ResponseEntity.ok(myPage);
   }
 
-
+  @GetMapping("/users/me/bookmarks")
+  public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getBookMarkBoards(
+      @CookieValue(name = "userEmail") String email,
+      @RequestParam(name = "page", defaultValue = "0") int page
+  ) {
+    Page<Board> boardMyPage = myPageService.myPageBookmark(email, page);
+    List<BoardSearchResponse> listMyPage = boardMyPage.getContent().stream()
+        .map(BoardSearchResponse::fromEntity)
+        .toList();
+    CustomPageResponse<BoardSearchResponse> myPage = new CustomPageResponse<>(
+        listMyPage,
+        boardMyPage.getNumber() + 1,
+        boardMyPage.getTotalPages()
+    );
+    return ResponseEntity.ok(myPage);
+  }
 }
