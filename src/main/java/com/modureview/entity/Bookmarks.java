@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Bookmark {
+public class Bookmarks {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +26,8 @@ public class Bookmark {
   private Long boardId;
 
   private Long userId;
+
+  private String userEmail;
 
   private LocalDateTime createdAt;
 
