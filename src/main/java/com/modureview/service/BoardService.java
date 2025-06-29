@@ -2,8 +2,8 @@ package com.modureview.service;
 
 
 import com.modureview.config.AwsS3Config;
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
@@ -62,17 +62,17 @@ public class BoardService {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
     );
-    BoardDetailResponse response = BoardDetailResponse.builder()
+    return BoardDetailResponse.builder()
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .author(findBoard.getAuthorEmail())
-        .created_at(findBoard.getCreatedAt())
+        .author_email(findBoard.getAuthorEmail())
+        .author_id(findBoard.getAuthorEmail().split("@")[0])
+        .create_At(findBoard.getCreatedAt())
         .content(findBoard.getContent())
+        .comment_count(findBoard.getCommentsCount())
         .bookmarks(findBoard.getBookmarksCount())
         .build();
-
-    return response;
   }
 
   public String createImageID() {
