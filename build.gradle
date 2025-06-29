@@ -63,6 +63,7 @@ dependencies {
     //Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    implementation 'com.google.genai:google-genai:1.6.0'
 }
 
 tasks.named('test') {
