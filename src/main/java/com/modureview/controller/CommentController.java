@@ -1,12 +1,13 @@
 package com.modureview.controller;
 
+import com.modureview.dto.request.CommentDeleteRequest;
 import com.modureview.dto.request.CommentSaveRequest;
-import com.modureview.service.BoardService;
 import com.modureview.service.CommentService;
 import com.modureview.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,4 +27,11 @@ public class CommentController {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
+  @DeleteMapping("/reviews/{reviewId}/comments")
+  public ResponseEntity<?> deleteComment(@PathVariable Long reviewId,
+      CommentDeleteRequest commentDeleteRequest) {
+
+    commentService.deleteComment(commentDeleteRequest.commentId());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }
