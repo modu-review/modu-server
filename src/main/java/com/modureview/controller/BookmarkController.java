@@ -8,9 +8,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @AllArgsConstructor
@@ -30,4 +30,12 @@ public class BookmarkController {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
+  @DeleteMapping("reviews/{reviewId}/bookmark")
+  public ResponseEntity<?> deleteBookmark(@PathVariable Long reviewId,
+      BookmarkRequest bookmarkRequest) {
+    String userEmail = bookmarkRequest.userEmail();
+    bookmarkService.deleteBookmark(reviewId, userEmail);
+
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }
