@@ -10,6 +10,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +62,13 @@ public class BoardController {
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> images = boardService.extractImageInfo(boardSaveRequest);
     boardService.updateBoard(boardSaveRequest, images,boardId);
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @DeleteMapping("/reviews/{boardId}")
+  public ResponseEntity<?> deleteBoard(@PathVariable Long boardId) {
+    boardService.deleteBoard(boardId);
 
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

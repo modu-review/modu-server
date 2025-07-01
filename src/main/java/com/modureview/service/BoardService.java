@@ -242,4 +242,10 @@ public class BoardService {
 
     boardRepository.save(foundBoard);
   }
+
+  @Transactional
+  public void deleteBoard(Long boardId) {
+    Board foundBoard = boardRepository.findById(boardId).get();
+    boardRepository.delete(foundBoard);
+  }
 }
