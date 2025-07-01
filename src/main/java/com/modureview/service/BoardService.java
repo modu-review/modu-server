@@ -217,4 +217,29 @@ public class BoardService {
     // todo: 허용되지 않은 형식 에러 리턴 예정
     return null;
   }
+
+  @Transactional
+  public void updateBoard(BoardSaveRequest request, List<String> imageUuids, Long boardId) {
+    User user = userRepository.findByEmail(request.authorEmail()).get();
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
+    String plainText = Jsoup.parse(request.content()).text();
+    String preview;
+    try {
+      preview = summarizationService.summarize(request.title(), plainText);
+    } catch (Exception e) {
+      log.warn("Gemini 요약 실패 , 풀백 처리 : {}", e.getMessage());
+      preview = plainText.length() > 100 ? plainText.substring(0, 100) + "..." : plainText;
+    }
+
+    Board foundBoard = boardRepository.findById(boardId).get();
+    foundBoard.setTitle(request.title());
+    foundBoard.setContent(request.content());
+    foundBoard.setUser(user);
+    foundBoard.setPreview(preview);
+    foundBoard.setAuthorEmail(request.authorEmail());
+    foundBoard.setThumbnail(thumbnail);
+    foundBoard.setCategory(Category.valueOf(request.category()));
+
+    boardRepository.save(foundBoard);
+  }
 }
