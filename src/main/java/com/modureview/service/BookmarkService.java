@@ -49,19 +49,26 @@ public class BookmarkService {
 
   public BookmarkDetailResponse bookmarkDetail(Long reviewId, String email) {
     log.info("reviewId == {}", reviewId);
-    log.info("email == {}", email);
-    Board targetBoard = boardRepository.findById(reviewId).orElseThrow(
-        () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
-    );
+    log.info("email    == {}", email);
+
+    Board targetBoard = boardRepository.findById(reviewId)
+        .orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
+    
     if (!"null".equals(email)) {
-      userRepository.findByEmail(email).orElseThrow(
-          () -> new CustomException(JwtErrorCode.FORBIDDEN)
+      userRepository.findByEmail(email)
+          .orElseThrow(() -> new CustomException(JwtErrorCode.FORBIDDEN));
+
+      boolean hasBookmark = bookmarkRepository.existsByBoardIdAndEmail(reviewId, email);
+      return BookmarkDetailResponse.fromEntity(
+          hasBookmark,
+          targetBoard.getBookmarksCount()
       );
-      bookmarkRepository.existsByBoardIdAndEmail(reviewId, email)
-          .orElse(false);
-      return BookmarkDetailResponse.fromEntity(true, targetBoard.getBookmarksCount());
-    } else {
-      return BookmarkDetailResponse.fromEntity(false, targetBoard.getBookmarksCount());
     }
+
+    // 비로그인 상태면 무조건 false
+    return BookmarkDetailResponse.fromEntity(
+        false,
+        targetBoard.getBookmarksCount()
+    );
   }
 }

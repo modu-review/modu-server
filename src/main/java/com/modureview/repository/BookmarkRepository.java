@@ -8,6 +8,6 @@ public interface BookmarkRepository extends JpaRepository<BookMark, Long> {
 
   Optional<BookMark> findByEmailAndBoardId(String userEmail, Long boardId);
 
-  Optional<Boolean> existsByBoardIdAndEmail(Long boardId, String email);
+  Boolean existsByBoardIdAndEmail(Long boardId, String email);
 
 }

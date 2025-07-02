@@ -6,8 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,6 @@ public class Comment {
   private Long userId;
 
   private String userEmail;
-  private String author;
 
   private String content;
 
