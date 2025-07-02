@@ -2,7 +2,7 @@ package com.modureview.controller;
 
 import com.modureview.dto.request.BookmarkRequest;
 import com.modureview.service.BoardService;
-import com.modureview.service.BookmarkService;
+import com.modureview.service.BookMarkService;
 import com.modureview.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,15 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class BookmarkController {
 
   private final BoardService boardService;
-  private final BookmarkService bookmarkService;
+  private final BookMarkService bookmarkService;
   private final UserService userService;
 
   @PostMapping("reviews/{reviewId}/bookmark")
-  public ResponseEntity<?> updateBookmark(@PathVariable Long reviewId, BookmarkRequest bookmarkRequest) {
+  public ResponseEntity<?> updateBookmark(@PathVariable Long reviewId,
+      BookmarkRequest bookmarkRequest) {
     String userEmail = bookmarkRequest.userEmail();
     boardService.findBoard(reviewId);
     Long userId = userService.findUserId(userEmail);
-    bookmarkService.saveBookmark(reviewId,userId, userEmail);
+    bookmarkService.saveBookmark(reviewId, userId, userEmail);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }

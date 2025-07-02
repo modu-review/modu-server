@@ -3,18 +3,17 @@ package com.modureview.service;
 import com.modureview.entity.Bookmarks;
 import com.modureview.enums.errors.BookmarkErrorCode;
 import com.modureview.exception.bookmark.BookmarkNotExistException;
-import com.modureview.repository.BookmarkRepository;
+import com.modureview.repository.BookMarkRepository;
 import jakarta.transaction.Transactional;
-import java.util.NoSuchElementException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class BookmarkService {
+public class BookMarkService {
 
-  private final BookmarkRepository bookmarkRepository;
+  private final BookMarkRepository bookmarkRepository;
 
   private final StringRedisTemplate stringRedisTemplate;
 
