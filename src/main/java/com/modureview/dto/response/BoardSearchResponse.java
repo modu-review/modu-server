@@ -11,9 +11,10 @@ public record BoardSearchResponse(
     Long board_id,
     String title,
     Category category,
-    String author,
-    LocalDateTime create_At,
-    String content,
+    String author_id,
+    String author_email,
+    LocalDateTime created_at,
+    String preview,
     Integer comments_count,
     Integer bookmarks
 ) {
@@ -23,9 +24,10 @@ public record BoardSearchResponse(
         .board_id(board.getId())
         .title(board.getTitle())
         .category(board.getCategory())
-        .author(board.getAuthorEmail())
-        .create_At(board.getCreatedAt())
-        .content(board.getContent())
+        .author_id(board.getAuthorEmail().split("@")[0])
+        .author_email(board.getAuthorEmail())
+        .created_at(board.getCreatedAt())
+        .preview(board.getPreview())
         .comments_count(board.getCommentsCount())
         .bookmarks(board.getBookmarksCount())
         .build();
