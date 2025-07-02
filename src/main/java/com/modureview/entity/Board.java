@@ -1,5 +1,6 @@
 package com.modureview.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,6 +42,7 @@ public class Board {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
+  @JsonBackReference
   private User user;
 
   private String authorEmail;
@@ -54,25 +56,30 @@ public class Board {
 
   private String thumbnail;
 
+  private String preview;
+
   @Builder.Default
   private Integer commentsCount = 0;
 
   @Builder.Default
   private Integer bookmarksCount = 0;
 
-  @Column( name = "created_at")
+  @Builder.Default
+  private Integer viewCount = 0;
+
+  @Column(name = "created_at")
   private LocalDateTime createdAt;
 
-  @Column( name = "modified_at")
+  @Column(name = "modified_at")
   private LocalDateTime modifiedAt;
 
   @PrePersist
-  protected void onCreate(){
+  protected void onCreate() {
     this.createdAt = LocalDateTime.now();
   }
 
   @PreUpdate
-  protected void onUpdate(){
+  protected void onUpdate() {
     this.modifiedAt = LocalDateTime.now();
   }
 
@@ -86,7 +93,8 @@ public class Board {
   }
 
   @Builder
-  public Board(String title ,String authorEmail, Category category, String content, Integer commentsCount, Integer bookmarksCount) {
+  public Board(String title, String authorEmail, Category category, String content,
+      Integer commentsCount, Integer bookmarksCount) {
     this.title = title;
     this.authorEmail = authorEmail;
     this.category = category;

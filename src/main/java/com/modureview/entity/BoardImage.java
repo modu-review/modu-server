@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity(name = "board_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +20,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class BoardImage {
+
+  @Value("${custom.default.image.url}")
+  private String defaultImageUrl;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +42,10 @@ public class BoardImage {
     return BoardImage.builder()
         .uuid(uuid)
         .build();
+  }
+
+  public String getFullImageUrl() {
+    return defaultImageUrl + this.uuid;
   }
 }
 

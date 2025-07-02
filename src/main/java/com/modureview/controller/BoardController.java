@@ -1,8 +1,8 @@
 package com.modureview.controller;
 
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
 import com.modureview.dto.request.PresignRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.service.BoardService;
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.modureview.dto;
+package com.modureview.dto.response;
 
 import com.modureview.entity.Category;
 import java.time.LocalDateTime;
@@ -9,10 +9,10 @@ public record BoardDetailResponse(
     Long board_id,
     String title,
     Category category,
-    String author,
-    LocalDateTime created_at,
-    String content,
-    Integer bookmarks
+    String author_email,
+    String author_id,
+    LocalDateTime create_at,
+    String content
 ) {
 
 

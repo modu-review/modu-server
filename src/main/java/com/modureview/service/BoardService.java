@@ -2,8 +2,8 @@ package com.modureview.service;
 
 
 import com.modureview.config.AwsS3Config;
-import com.modureview.dto.BoardDetailResponse;
 import com.modureview.dto.request.BoardSaveRequest;
+import com.modureview.dto.response.BoardDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.BoardImage;
 import com.modureview.entity.Category;
@@ -14,10 +14,12 @@ import com.modureview.exception.BoardError.BoardSaveError;
 import com.modureview.exception.BoardError.ImageSrcExtractError;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
+import com.modureview.exception.bookmark.BoardNotExistException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.UserRepository;
+import com.modureview.service.utill.SummarizationService;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -45,9 +47,11 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 @Transactional
 @Slf4j
 public class BoardService {
+
   private final BoardRepository boardRepository;
   private final AwsS3Config awsS3Config;
   private final UserRepository userRepository;
+  private final SummarizationService summarizationService;
 
   @Value("${custom.default.image.url}")
   private String defaultImageUrl;
@@ -55,22 +59,26 @@ public class BoardService {
   @Value("${custom.image}")
   private String cndUrl;
 
+  public void findBoard(Long boardId) {
+    if(boardRepository.findById(boardId).isEmpty()){
+      throw new BoardNotExistException(BoardErrorCode.BOARD_NOT_EXIST);
+    }
+
+  }
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
     );
-    BoardDetailResponse response = BoardDetailResponse.builder()
+    return BoardDetailResponse.builder()
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .author(findBoard.getAuthorEmail())
-        .created_at(findBoard.getCreatedAt())
+        .author_email(findBoard.getAuthorEmail())
+        .author_id(findBoard.getAuthorEmail().split("@")[0])
+        .create_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
-        .bookmarks(findBoard.getBookmarksCount())
         .build();
-
-    return response;
-    }
+  }
 
   public String createImageID() {
     try {
@@ -97,7 +105,6 @@ public class BoardService {
           .contentType(contentType)
           .build();
 
-
       PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
           .signatureDuration(Duration.ofMinutes(10))
           .putObjectRequest(objectRequest)
@@ -121,7 +128,8 @@ public class BoardService {
   public void htmlSanitizer(BoardSaveRequest request) {
     String content = request.content().toLowerCase();
 
-    if (content.contains("<script") || content.contains("onerror=") || content.contains("javascript:")) {
+    if (content.contains("<script") || content.contains("onerror=") || content.contains(
+        "javascript:")) {
       log.warn(" XSS 코드 탐지됨: {}", content);
       throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
     }
@@ -130,12 +138,20 @@ public class BoardService {
   @Transactional
   public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
     User user = userRepository.findByEmail(request.authorEmail()).get();
-
-    String thumbnail = imageUuids.isEmpty()? defaultImageUrl: cndUrl+imageUuids.get(0);
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
+    String plainText = Jsoup.parse(request.content()).text();
+    String preview;
+    try {
+      preview = summarizationService.summarize(request.title(), plainText);
+    } catch (Exception e) {
+      log.warn("Gemini 요약 실패 , 풀백 처리 : {}", e.getMessage());
+      preview = plainText.length() > 100 ? plainText.substring(0, 100) + "..." : plainText;
+    }
     Board board = Board.builder()
         .title(request.title())
         .content(request.content())
         .user(user)
+        .preview(preview)
         .authorEmail(request.authorEmail())
         .thumbnail(thumbnail)
         .category(Category.valueOf(request.category()))

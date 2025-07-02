@@ -31,6 +31,9 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.34'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    //Spring batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
@@ -57,6 +60,10 @@ dependencies {
     //jsoup이미지 링크 저장
     implementation 'org.jsoup:jsoup:1.17.2'
 
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'com.google.genai:google-genai:1.6.0'
 }
 
 tasks.named('test') {

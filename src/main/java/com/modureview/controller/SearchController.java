@@ -41,7 +41,7 @@ public class SearchController {
         .toList();
     CustomPageResponse<BoardSearchResponse> SearchPage = new CustomPageResponse<>(
         listSearchBoard,
-        boardPage.getNumber(),
+        boardPage.getNumber() + 1,
         boardPage.getTotalPages()
     );
 
