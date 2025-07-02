@@ -11,10 +11,8 @@ public record BoardDetailResponse(
     Category category,
     String author_email,
     String author_id,
-    LocalDateTime create_At,
-    String content,
-    Integer comment_count,
-    Integer bookmarks
+    LocalDateTime create_at,
+    String content
 ) {
 
 
