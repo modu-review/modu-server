@@ -3,13 +3,13 @@ package com.modureview.dto.response;
 import lombok.Builder;
 
 @Builder
-public record BookMarkDetailResponse(
+public record BookmarkDetailResponse(
     Integer bookmarks,
     boolean hasBookmarked
 ) {
 
-  public static BookMarkDetailResponse fromEntity(boolean hasBookMark, Integer bookmark_count) {
-    return BookMarkDetailResponse.builder()
+  public static BookmarkDetailResponse fromEntity(boolean hasBookMark, Integer bookmark_count) {
+    return BookmarkDetailResponse.builder()
         .bookmarks(bookmark_count)
         .hasBookmarked(hasBookMark)
         .build();

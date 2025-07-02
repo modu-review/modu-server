@@ -35,6 +35,8 @@ public class SecurityConfig {
                 "favicon.io"
             )
             .permitAll()
+            .requestMatchers("/reviews/**")
+            .permitAll()
             .anyRequest().authenticated()
         )
         .exceptionHandling(ex -> ex

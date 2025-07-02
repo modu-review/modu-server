@@ -3,11 +3,15 @@ package com.modureview.controller;
 import com.modureview.enums.errors.JwtErrorCode;
 import com.modureview.exception.jwtError.InvalidTokenException;
 import com.modureview.service.JwtTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,5 +47,29 @@ public class LoginController {
     response.addHeader("Set-Cookie", newAccessToken.toString());
 
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/logout")
+  public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response){
+    HttpHeaders headers = new HttpHeaders();
+
+    Cookie[] cookies = request.getCookies();
+
+    if (cookies != null) {
+      Arrays.stream(cookies).forEach(cookie -> {
+        if (cookie.getName().equals("accessToken") ||
+            cookie.getName().equals("refreshToken") ||
+            cookie.getName().equals("userEmail")) {
+
+          ResponseCookie expiredCookie = jwtTokenService.expireCookie(
+              ResponseCookie.from(cookie.getName(), "").build()
+          );
+          headers.add(HttpHeaders.SET_COOKIE, expiredCookie.toString());
+          log.info("Expired cookie: {}", cookie.getName());
+        }
+      });
+    }
+    return ResponseEntity.ok().headers(headers).body("Logged out successfully.");
+
   }
 }

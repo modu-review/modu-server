@@ -1,5 +1,7 @@
 package com.modureview.dto.request;
 
-public record BookmarkRequest(String userEmail) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record BookmarkRequest(@JsonProperty("user_email") String userEmail) {
 
 }

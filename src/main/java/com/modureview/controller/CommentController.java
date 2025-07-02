@@ -1,8 +1,7 @@
 package com.modureview.controller;
 
-import com.modureview.dto.response.CommentDetailResponse;
-import com.modureview.dto.response.CommentListResponse;
-import com.modureview.entity.Comment;
+import com.modureview.dto.request.CommentDeleteRequest;
+import com.modureview.dto.request.CommentSaveRequest;
 import com.modureview.dto.response.CommentDetailResponse;
 import com.modureview.dto.response.CommentListResponse;
 import com.modureview.entity.Comment;
@@ -12,29 +11,25 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class CommentController {
 
   private final UserService userService;
   private final CommentService commentService;
 
   @PostMapping("/reviews/{reviewId}/comments")
-  public ResponseEntity<?> addComment(@PathVariable Long reviewId, CommentSaveRequest commentSaveRequest) {
+  public ResponseEntity<?> addComment(@PathVariable Long reviewId,
+      @RequestBody CommentSaveRequest commentSaveRequest) {
     Long userId = userService.findUserId(commentSaveRequest.userEmail());
     commentService.saveComment(reviewId, userId, commentSaveRequest);
 
@@ -43,7 +38,7 @@ public class CommentController {
 
   @DeleteMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> deleteComment(@PathVariable Long reviewId,
-      CommentDeleteRequest commentDeleteRequest) {
+     @RequestBody CommentDeleteRequest commentDeleteRequest) {
 
     commentService.deleteComment(commentDeleteRequest.commentId());
     return new ResponseEntity<>(HttpStatus.OK);

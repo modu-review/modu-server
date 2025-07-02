@@ -6,7 +6,6 @@ import com.modureview.exception.jwtError.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -119,6 +118,17 @@ public class JwtTokenService {
         .parseClaimsJws(token)
         .getBody()
         .getSubject();
+  }
+
+  public ResponseCookie expireCookie(ResponseCookie responseCookie) {
+    return ResponseCookie.from(responseCookie.getName(), responseCookie.getValue())
+        .httpOnly(responseCookie.isHttpOnly())
+        .secure(responseCookie.isSecure())
+        .sameSite(responseCookie.getSameSite())
+        .path(responseCookie.getPath())
+        .maxAge(0)
+        .domain(responseCookie.getDomain())
+        .build();
   }
 }
 

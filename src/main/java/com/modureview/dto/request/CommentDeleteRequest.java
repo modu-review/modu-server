@@ -1,5 +1,8 @@
 package com.modureview.dto.request;
 
-public record CommentDeleteRequest(String userEmail, Long boardId, Long commentId) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record CommentDeleteRequest(@JsonProperty("user_email") String userEmail, Long boardId,
+                                   Long commentId) {
 
 }

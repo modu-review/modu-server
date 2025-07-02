@@ -20,9 +20,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class CommentService {
 
   private final CommentRepository commentRepository;

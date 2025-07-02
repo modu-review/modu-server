@@ -1,9 +1,9 @@
 package com.modureview.controller;
 
 import com.modureview.dto.request.BookmarkRequest;
-import com.modureview.dto.response.BookMarkDetailResponse;
+import com.modureview.dto.response.BookmarkDetailResponse;
 import com.modureview.service.BoardService;
-import com.modureview.service.BookMarkService;
+import com.modureview.service.BookmarkService;
 import com.modureview.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,27 +14,28 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @AllArgsConstructor
-public class BookMarkController {
+public class BookmarkController {
 
   private final BoardService boardService;
-  private final BookMarkService bookmarkService;
+  private final BookmarkService bookmarkService;
   private final UserService userService;
 
   @GetMapping("/reviews/{reviewId}/bookmarks")
-  public ResponseEntity<BookMarkDetailResponse> getBookMarkDetail(
+  public ResponseEntity<BookmarkDetailResponse> getBookMarkDetail(
       @PathVariable Long reviewId,
       @CookieValue(name = "email", required = false, defaultValue = "null") String email) {
-    BookMarkDetailResponse bookMarkDetailResponse = bookmarkService.bookMarkDetail(reviewId, email);
+    BookmarkDetailResponse bookMarkDetailResponse = bookmarkService.bookmarkDetail(reviewId, email);
     return ResponseEntity.ok(bookMarkDetailResponse);
 
   }
 
-  @PostMapping("reviews/{reviewId}/bookmark")
+  @PostMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> updateBookmark(@PathVariable Long reviewId,
-      BookmarkRequest bookmarkRequest) {
+     @RequestBody BookmarkRequest bookmarkRequest) {
     String userEmail = bookmarkRequest.userEmail();
     boardService.findBoard(reviewId);
     Long userId = userService.findUserId(userEmail);
@@ -43,9 +44,9 @@ public class BookMarkController {
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
-  @DeleteMapping("reviews/{reviewId}/bookmark")
+  @DeleteMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> deleteBookmark(@PathVariable Long reviewId,
-      BookmarkRequest bookmarkRequest) {
+     @RequestBody BookmarkRequest bookmarkRequest) {
     String userEmail = bookmarkRequest.userEmail();
     bookmarkService.deleteBookmark(reviewId, userEmail);
 
