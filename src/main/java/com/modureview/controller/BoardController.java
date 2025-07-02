@@ -10,7 +10,9 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +54,23 @@ public class BoardController {
 
     Map<String, String> response = Map.of("message", "게시글이 성공적으로 등록되었습니다.");
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @PatchMapping("/reviews/{boardId}")
+  public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardSaveRequest boardSaveRequest) {
+    boardService.findBoard(boardId);
+    boardService.htmlSanitizer(boardSaveRequest);
+    List<String> images = boardService.extractImageInfo(boardSaveRequest);
+    boardService.updateBoard(boardSaveRequest, images,boardId);
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @DeleteMapping("/reviews/{boardId}")
+  public ResponseEntity<?> deleteBoard(@PathVariable Long boardId) {
+    boardService.deleteBoard(boardId);
+
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }
