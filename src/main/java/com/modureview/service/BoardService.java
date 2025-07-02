@@ -14,6 +14,7 @@ import com.modureview.exception.BoardError.BoardSaveError;
 import com.modureview.exception.BoardError.ImageSrcExtractError;
 import com.modureview.exception.BoardError.NotAllowedHtmlError;
 import com.modureview.exception.CustomException;
+import com.modureview.exception.bookmark.BoardNotExistException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
@@ -58,6 +59,12 @@ public class BoardService {
   @Value("${custom.image}")
   private String cndUrl;
 
+  public void findBoard(Long boardId) {
+    if(boardRepository.findById(boardId).isEmpty()){
+      throw new BoardNotExistException(BoardErrorCode.BOARD_NOT_EXIST);
+    }
+
+  }
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)

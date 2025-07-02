@@ -84,3 +84,7 @@ custom:
       url: https://d1izijuzr22yly.cloudfront.net/no-thumbnail.png
   image:
     url:https://d1izijuzr22yly.cloudfront.net/
+
+genai:
+  api-key: AIzaSyCXaeQvi7Hbd0aLna6KpBPRxqFxrjzoXGU
+  model: gemini-2.0
