@@ -11,7 +11,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   @Query(value =
       "WITH RankedBoards AS (" +
           "    SELECT b.*, " +
-          "           ROW_NUMBER() OVER (PARTITION BY b.category ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn " +
+          "           ROW_NUMBER() OVER (PARTITION BY b.category ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn "
+          +
           "    FROM board b " +
           "    LEFT JOIN user u ON b.user_id = u.id" +
           ") " +
@@ -22,7 +23,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   @Query(value =
       "WITH RankedBoards AS (" +
           "    SELECT b.*, " +
-          "           ROW_NUMBER() OVER (ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn " +
+          "           ROW_NUMBER() OVER (ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn "
+          +
           "    FROM board b " +
           ") " +
           "SELECT rb.* FROM RankedBoards rb WHERE rb.rn <= 6",
@@ -32,4 +34,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.id IN :ids")
   List<Board> findByIdsWithUser(@Param("ids") List<Long> ids);
 
+  Board findByAuthorEmail(String mail);
+
+  @Query("SELECT b.commentsCount FROM Board b WHERE b.id = :boardId")
+  Integer findCommentsCountById(@Param("boardId") Long boardId);
 }

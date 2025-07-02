@@ -27,6 +27,8 @@ public class BookMark {
 
   private String email;
 
+  private Long userId;
+
   private Long boardId;
 
   @Column(name = "created_at")

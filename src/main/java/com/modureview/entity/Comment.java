@@ -1,11 +1,13 @@
 package com.modureview.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,13 +32,25 @@ public class Comment {
   private Long userId;
 
   private String userEmail;
+  private String author;
 
   private String content;
 
+  @Column(name = "created_at")
   private LocalDateTime createdAt;
 
+  @Column(name = "modified_at")
+  private LocalDateTime modifiedAt;
+
   @PrePersist
-  protected void onCreate() {
+  protected void onCreated() {
     this.createdAt = LocalDateTime.now();
   }
+
+  @PreUpdate
+  protected void onUpdated() {
+    this.modifiedAt = LocalDateTime.now();
+  }
+
+
 }
