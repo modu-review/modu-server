@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,10 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-;
-
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class BoardController {
 
   private final BoardService boardService;
@@ -48,6 +48,7 @@ public class BoardController {
   @PostMapping("/review")
   public ResponseEntity<Map<String, String>> saveBoard(
       @RequestBody BoardSaveRequest boardSaveRequest) {
+
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> imageUuids = boardService.extractImageInfo(boardSaveRequest);
     boardService.saveBoard(boardSaveRequest, imageUuids);
@@ -58,6 +59,9 @@ public class BoardController {
 
   @PatchMapping("/reviews/{boardId}")
   public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardSaveRequest boardSaveRequest) {
+    log.info("boardId == {}", boardId);
+    log.info("boardSaveRequest == {}", boardSaveRequest);
+
     boardService.findBoard(boardId);
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> images = boardService.extractImageInfo(boardSaveRequest);
@@ -68,8 +72,9 @@ public class BoardController {
 
   @DeleteMapping("/reviews/{boardId}")
   public ResponseEntity<?> deleteBoard(@PathVariable Long boardId) {
+    log.info("boardId == {}", boardId);
+    log.info("deleteBoard == {}", boardId);
     boardService.deleteBoard(boardId);
-
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 

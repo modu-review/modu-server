@@ -30,7 +30,8 @@ public class SecurityConfig {
                 "/token/refresh",
                 "/reviews/best",
                 "/reviews",
-                "/reviews/**",
+                "/reviews/*/comments",
+                "/reviews/*/bookmarks",
                 "/search",
                 "favicon.io"
             )

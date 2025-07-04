@@ -9,6 +9,7 @@ import com.modureview.service.CommentService;
 import com.modureview.service.UserService;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 public class CommentController {
 
   private final UserService userService;
@@ -39,6 +41,9 @@ public class CommentController {
   @DeleteMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> deleteComment(@PathVariable Long reviewId,
      @RequestBody CommentDeleteRequest commentDeleteRequest) {
+    log.info("댓글삭제");
+    log.info("deleteComment == {}", commentDeleteRequest);
+    log.info("reviewId == {}", reviewId);
 
     commentService.deleteComment(commentDeleteRequest.commentId());
     return new ResponseEntity<>(HttpStatus.OK);
