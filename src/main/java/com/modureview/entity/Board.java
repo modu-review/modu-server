@@ -58,6 +58,8 @@ public class Board {
 
   private String thumbnail;
 
+  @Lob
+  @Column(columnDefinition = "TEXT")
   private String preview;
 
   @Builder.Default
