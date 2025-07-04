@@ -4,14 +4,8 @@ import com.modureview.dto.request.CommentSaveRequest;
 import com.modureview.entity.Comment;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.CommentRepository;
-import lombok.AllArgsConstructor;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +38,7 @@ public class CommentService {
   }
 
   public Page<Comment> commentList(Long boardId, int Page) {
-    Pageable pageable = PageRequest.of(Page - 1, 12, Sort.by(Direction.DESC, "createdAt"));
+    Pageable pageable = PageRequest.of(Page - 1, 8, Sort.by(Direction.ASC, "createdAt"));
 
     return commentRepository.findByBoardId(boardId, pageable);
   }
