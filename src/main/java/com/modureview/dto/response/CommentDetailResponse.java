@@ -7,17 +7,19 @@ import lombok.Builder;
 @Builder
 public record CommentDetailResponse(
     Long id,
-    String author,
+    String author_id,
+    String author_email,
     String content,
-    LocalDateTime createdAt
+    LocalDateTime created_at
 ) {
 
   public static CommentDetailResponse fromEntity(Comment comment) {
     return CommentDetailResponse.builder()
         .id(comment.getId())
-        .author(comment.getAuthor())
+        .author_id(comment.getUserEmail().split("@")[0])
+        .author_email(comment.getUserEmail())
         .content(comment.getContent())
-        .createdAt(comment.getCreatedAt())
+        .created_at(comment.getCreatedAt())
         .build();
   }
 
