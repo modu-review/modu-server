@@ -45,7 +45,7 @@ public class CommentController {
     log.info("deleteComment == {}", commentDeleteRequest);
     log.info("reviewId == {}", reviewId);
 
-    commentService.deleteComment(commentDeleteRequest.commentId());
+    commentService.deleteComment(commentDeleteRequest.commentId(), reviewId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

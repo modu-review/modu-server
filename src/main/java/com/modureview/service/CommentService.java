@@ -31,10 +31,19 @@ public class CommentService {
 
     commentRepository.save(comment);
 
+    boardRepository.findById(boardId).ifPresent(board -> {
+      board.setCommentsCount(board.getCommentsCount() + 1);
+      boardRepository.save(board);
+    });
+
   }
 
-  public void deleteComment(Long commentId) {
+  public void deleteComment(Long commentId, Long boardId) {
     commentRepository.deleteById(commentId);
+    boardRepository.findById(boardId).ifPresent(board -> {
+      board.setCommentsCount(board.getCommentsCount() - 1);
+      boardRepository.save(board);
+    });
   }
 
   public Page<Comment> commentList(Long boardId, int Page) {
