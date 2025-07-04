@@ -15,7 +15,7 @@ public record CommentDetailResponse(
   public static CommentDetailResponse fromEntity(Comment comment) {
     return CommentDetailResponse.builder()
         .id(comment.getId())
-        .author(comment.getAuthor())
+        .author(comment.getUserEmail())
         .content(comment.getContent())
         .createdAt(comment.getCreatedAt())
         .build();

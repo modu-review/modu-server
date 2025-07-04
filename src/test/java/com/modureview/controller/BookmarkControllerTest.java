@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("h2")
-class BookmarkControllerTest {
+class BookMarkControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -43,10 +43,10 @@ class BookmarkControllerTest {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private BookmarkService bookMarkService;
+  private BookmarkService bookmarkService;
 
   @Autowired
-  private BookmarkRepository bookMarkRepository;
+  private BookmarkRepository bookmarkRepository;
 
   @Autowired
   private UserRepository userRepository;
@@ -67,12 +67,12 @@ class BookmarkControllerTest {
     for (int i = 0; i < 10; i++) {
       bookMarks.add(
           BookMark.builder()
-              .userEmail("test" + i + "@test.com")
+              .email("test" + i + "@test.com")
               .boardId(board.getId())
               .build()
       );
     }
-    bookMarkRepository.saveAll(bookMarks);
+    bookmarkRepository.saveAll(bookMarks);
   }
 
   @Test
