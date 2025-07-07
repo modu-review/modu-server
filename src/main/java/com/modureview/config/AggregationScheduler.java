@@ -17,7 +17,7 @@ public class AggregationScheduler {
   private final JobLauncher jobLauncher;
   private final Job reviewAggregationJob;
 
-  @Scheduled(cron = "0 0 */3 * * *")
+  @Scheduled(cron = "0 0 */3 * * *", zone = "Asia/Seoul")
   public void runAggregationJob() {
     try {
       log.info("리뷰 집계 스케줄러를 시작합니다.");

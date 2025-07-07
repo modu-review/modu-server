@@ -12,6 +12,7 @@ import com.modureview.repository.BoardRepository;
 import com.modureview.repository.BookmarkRepository;
 import com.modureview.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +39,10 @@ public class BookmarkService {
 
     bookmarkRepository.save(bookmark);
 
+    boardRepository.findById(boardId).ifPresent(board -> {
+      board.setBookmarksCount(board.getBookmarksCount() + 1);
+      boardRepository.save(board);
+    });
   }
 
   @Transactional
@@ -45,6 +50,11 @@ public class BookmarkService {
     BookMark bookmarks = bookmarkRepository.findByEmailAndBoardId(email, boardId)
         .orElseThrow(() -> new BookmarkNotExistException(BookmarkErrorCode.BOOKMARK_NOT_FOUND));
     bookmarkRepository.delete(bookmarks);
+
+    boardRepository.findById(boardId).ifPresent(board -> {
+      board.setBookmarksCount(board.getBookmarksCount() - 1);
+      boardRepository.save(board);
+    });
   }
 
   public BookmarkDetailResponse bookmarkDetail(Long reviewId, String email) {
@@ -65,7 +75,6 @@ public class BookmarkService {
       );
     }
 
-    // 비로그인 상태면 무조건 false
     return BookmarkDetailResponse.fromEntity(
         false,
         targetBoard.getBookmarksCount()
