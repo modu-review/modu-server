@@ -60,11 +60,12 @@ public class BoardService {
   private String cndUrl;
 
   public void findBoard(Long boardId) {
-    if(boardRepository.findById(boardId).isEmpty()){
+    if (boardRepository.findById(boardId).isEmpty()) {
       throw new BoardNotExistException(BoardErrorCode.BOARD_NOT_EXIST);
     }
 
   }
+
   public BoardDetailResponse boardDetail(Long boardId) {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
@@ -75,7 +76,7 @@ public class BoardService {
         .category(findBoard.getCategory())
         .author_email(findBoard.getAuthorEmail())
         .author_id(findBoard.getAuthorEmail().split("@")[0])
-        .create_at(findBoard.getCreatedAt())
+        .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
         .build();
   }

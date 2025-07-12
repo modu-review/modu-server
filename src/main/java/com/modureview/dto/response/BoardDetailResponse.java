@@ -11,7 +11,7 @@ public record BoardDetailResponse(
     Category category,
     String author_email,
     String author_id,
-    LocalDateTime create_at,
+    LocalDateTime created_at,
     String content
 ) {
 
