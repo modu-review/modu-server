@@ -45,7 +45,7 @@ public class BoardController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
-  @PostMapping("/review")
+  @PostMapping("/reviews/new")
   public ResponseEntity<Map<String, String>> saveBoard(
       @RequestBody BoardSaveRequest boardSaveRequest) {
 
