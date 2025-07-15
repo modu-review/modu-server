@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: modu-review-server
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/modu_review
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  batch:
+    jdbc:
+      initialize-schema: ALWAYS
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        hbm2ddl.auto: update
+    open-in-view: true
+    show-sql: true
+    jdbc:
+      time_zone: Asia/Seoul
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: "8d8b112f9b151d0a13c2c66ea8e64aa0"
+            client-secret: "vnkc65v4zjcdQOvbXenlc7DrfHPwDfcL"
+            redirect-uri: "https://api.modu-review.com/login/oauth2/code/kakao"
+            scope: account_email
+            authorization-grant-type: authorization_code
+            client-name: Kakao
+            client-authentication-method: client_secret_post
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        web.filter.CommonsRequestLoggingFilter: DEBUG
+      hibernate:
+        type.descriptor.sql: TRACE
+    org.springframework.data.jpa.repository: DEBUG
+    com:
+      modureview: DEBUG
+    root: INFO
+
+#Consts
+
+frontend:
+  url: https://dev.modu-review.com:3000
+
+jwt:
+  secret: eE5Z9q2Tr9vQnFc6sB8gD7xH0LpKm1NsUaXrYwZcGbHtJvMwQrAsXyZnVpCtEfGk
+
+aws:
+  region: ap-northeast-2
+  bucket: modus3
+  credentials:
+    access-key: ${ACCESS_KEY}
+    secret-key: ${SECRET_KEY}
+
+custom:
+  default:
+    image:
+      url: https://d1izijuzr22yly.cloudfront.net/no-thumbnail.png
+  image:
+    url: https://d1izijuzr22yly.cloudfront.net/
+
+genai:
+  api-key: AIzaSyCXaeQvi7Hbd0aLna6KpBPRxqFxrjzoXGU
+  model: gemini-2.5-flash
