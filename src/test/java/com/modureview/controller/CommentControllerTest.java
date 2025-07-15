@@ -1,10 +1,12 @@
 package com.modureview.controller;
 
+import static com.modureview.entity.Category.food;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.modureview.entity.Category.food;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modureview.dto.request.CommentDeleteRequest;
+import com.modureview.dto.request.CommentSaveRequest;
 import com.modureview.entity.Board;
 import com.modureview.entity.Comment;
 import com.modureview.repository.BoardRepository;
@@ -17,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import com.modureview.dto.request.CommentDeleteRequest;
-import com.modureview.dto.request.CommentSaveRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 
-@SpringBootTest
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -90,7 +89,7 @@ class CommentControllerTest {
       comments.add(
           Comment.builder()
               .boardId(newBoardId)
-              .author(newBoard.getAuthorEmail())
+              .userEmail(newBoard.getAuthorEmail())
               .content("test content" + i)
               .createdAt(LocalDateTime.now().minusMinutes(i))
               .build());

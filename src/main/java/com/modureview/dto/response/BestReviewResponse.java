@@ -15,7 +15,7 @@ public record BestReviewResponse(
     String preview,
     int comments_count,
     int bookmarks,
-    String thumbnail
+    String image_url
 ) {
 
   @Builder
@@ -30,13 +30,13 @@ public record BestReviewResponse(
     return new BestReviewResponse(
         board.getId(),
         board.getTitle(),
-        String.valueOf(board.getUser().getId()),
+        board.getAuthorEmail().split("@")[0],
         board.getAuthorEmail(),
         board.getCategory().name(),
         board.getPreview(),
         board.getCommentsCount(),
         board.getBookmarksCount(),
-        board.getThumbnail()
+        board.getImageUrl()
     );
   }
 }

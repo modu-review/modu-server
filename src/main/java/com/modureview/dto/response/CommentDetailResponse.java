@@ -11,7 +11,7 @@ public record CommentDetailResponse(
     String author_id,
     String author_email,
     String content,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at
 ) {
 

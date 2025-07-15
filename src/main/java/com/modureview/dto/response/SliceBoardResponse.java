@@ -15,7 +15,7 @@ public record SliceBoardResponse(
     Category category,
     String preview,
     Integer comments_count,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at,
     Integer bookmarks,
     String image_url

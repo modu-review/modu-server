@@ -56,8 +56,7 @@ public class BoardService {
   @Value("${custom.default.image.url}")
   private String defaultImageUrl;
 
-  @Value("${custom.image}")
-  private String cndUrl;
+  private String cndUrl = "https://d1izijuzr22yly.cloudfront.net/";
 
   public void findBoard(Long boardId) {
     if (boardRepository.findById(boardId).isEmpty()) {
@@ -154,7 +153,7 @@ public class BoardService {
         .user(user)
         .preview(preview)
         .authorEmail(request.authorEmail())
-        .thumbnail(thumbnail)
+        .imageUrl(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
 
@@ -236,7 +235,7 @@ public class BoardService {
     foundBoard.setUser(user);
     foundBoard.setPreview(preview);
     foundBoard.setAuthorEmail(request.authorEmail());
-    foundBoard.setThumbnail(thumbnail);
+    foundBoard.setImageUrl(thumbnail);
     foundBoard.setCategory(Category.valueOf(request.category()));
 
     boardRepository.save(foundBoard);

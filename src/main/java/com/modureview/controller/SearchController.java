@@ -27,7 +27,7 @@ public class SearchController {
   private final SearchService searchService;
 
 
-  @GetMapping("/reviews")
+  @GetMapping("/search")
   public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getBoardSearch(
       @RequestParam(name = "keyword") String keyword,
       @RequestParam(name = "page", defaultValue = "0") int page,

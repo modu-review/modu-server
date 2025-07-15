@@ -8,9 +8,9 @@ import com.modureview.entity.Board;
 import com.modureview.entity.BookMark;
 import com.modureview.entity.User;
 import com.modureview.repository.BoardRepository;
-import com.modureview.repository.BookMarkRepository;
+import com.modureview.repository.BookmarkRepository;
 import com.modureview.repository.UserRepository;
-import com.modureview.service.BookMarkService;
+import com.modureview.service.BookmarkService;
 import com.modureview.utill.TestUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("h2")
-class BookMarkControllerTest {
+class BookmarkControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -43,10 +43,10 @@ class BookMarkControllerTest {
   private ObjectMapper objectMapper;
 
   @Autowired
-  private BookMarkService bookMarkService;
+  private BookmarkService bookmarkService;
 
   @Autowired
-  private BookMarkRepository bookMarkRepository;
+  private BookmarkRepository bookmarkRepository;
 
   @Autowired
   private UserRepository userRepository;
@@ -72,7 +72,7 @@ class BookMarkControllerTest {
               .build()
       );
     }
-    bookMarkRepository.saveAll(bookMarks);
+    bookmarkRepository.saveAll(bookMarks);
   }
 
   @Test

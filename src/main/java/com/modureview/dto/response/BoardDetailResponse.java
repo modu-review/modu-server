@@ -12,7 +12,7 @@ public record BoardDetailResponse(
     Category category,
     String author_email,
     String author_id,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at,
     String content
 ) {
