@@ -94,7 +94,7 @@ public class JwtTokenService {
     return ResponseCookie.from(name, value)
         .httpOnly(httpOnly)
         .secure(true)
-        .sameSite("None")
+        .sameSite("LAX")
         .path("/")
         .maxAge(maxAge)
         .domain(".modu-review.com")
@@ -122,12 +122,12 @@ public class JwtTokenService {
 
   public ResponseCookie expireCookie(ResponseCookie responseCookie) {
     return ResponseCookie.from(responseCookie.getName(), responseCookie.getValue())
-        .httpOnly(responseCookie.isHttpOnly())
-        .secure(responseCookie.isSecure())
-        .sameSite(responseCookie.getSameSite())
-        .path(responseCookie.getPath())
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("LAX")
+        .path("/")
         .maxAge(0)
-        .domain(responseCookie.getDomain())
+        .domain(".modu-review.com")
         .build();
   }
 }
