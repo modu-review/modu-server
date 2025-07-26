@@ -4,10 +4,9 @@ import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import java.time.LocalDateTime;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Value;
 
 @Builder
-public record BoardSearchResponse(
+public record SliceBoardResponse(
     Long board_id,
     String title,
     String author_id,
@@ -22,9 +21,9 @@ public record BoardSearchResponse(
 
 
 
-  public static BoardSearchResponse fromEntity(Board board) {
+  public static SliceBoardResponse fromEntity(Board board) {
 
-    return BoardSearchResponse.builder()
+    return SliceBoardResponse.builder()
         .board_id(board.getId())
         .title(board.getTitle())
         .category(board.getCategory())
