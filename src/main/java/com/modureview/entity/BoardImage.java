@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 @Getter
 public class BoardImage {
 
-  private String defaultImageUrl;
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
