@@ -9,7 +9,8 @@ public record BestReviewResponse(
 
     Long board_id,
     String title,
-    String author,
+    String author_id,
+    String author_email,
     String category,
     String preview,
     int comments_count,
@@ -29,7 +30,8 @@ public record BestReviewResponse(
     return new BestReviewResponse(
         board.getId(),
         board.getTitle(),
-        board.getUser().getEmail(),
+        String.valueOf(board.getUser().getId()),
+        board.getAuthorEmail(),
         board.getCategory().name(),
         board.getPreview(),
         board.getCommentsCount(),
