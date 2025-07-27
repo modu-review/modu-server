@@ -1,24 +1,27 @@
 package com.modureview.config;
 
+import com.modureview.filter.JwtAuthFilter;
 import com.modureview.hanlder.SuccessHandler;
+import com.modureview.service.JwtTokenService;
+import com.modureview.service.utill.CookieOAuth2AuthorizationRequestRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-  private SuccessHandler successHandler;
+  private final SuccessHandler successHandler;
   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-
-  public SecurityConfig(CustomAuthenticationEntryPoint authenticationEntryPoint,
-      SuccessHandler successHandler) {
-    this.successHandler = successHandler;
-    this.authenticationEntryPoint = authenticationEntryPoint;
-  }
+  private final CookieOAuth2AuthorizationRequestRepository cookieAuthRequestRepository;
+  private final JwtTokenService jwtTokenService;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,8 +48,15 @@ public class SecurityConfig {
             .authenticationEntryPoint(authenticationEntryPoint)
         )
         .oauth2Login(oauth2 -> oauth2
+            .authorizationEndpoint(endpoint -> endpoint
+                .authorizationRequestRepository(cookieAuthRequestRepository)
+            )
             .successHandler(successHandler)
-        );
+        )
+        .addFilterBefore(new JwtAuthFilter(jwtTokenService),
+            UsernamePasswordAuthenticationFilter.class)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     return http.build();
   }
 }
