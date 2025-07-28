@@ -1,5 +1,6 @@
 package com.modureview.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modureview.entity.Comment;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -10,6 +11,7 @@ public record CommentDetailResponse(
     String author_id,
     String author_email,
     String content,
+    @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at
 ) {
 

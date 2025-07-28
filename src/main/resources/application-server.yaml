@@ -70,7 +70,7 @@ logging:
 #Consts
 
 frontend:
-  url: https://dev.modu-review.com:3000
+  url: https://modu-review.com
 
 jwt:
   secret: eE5Z9q2Tr9vQnFc6sB8gD7xH0LpKm1NsUaXrYwZcGbHtJvMwQrAsXyZnVpCtEfGk
@@ -87,7 +87,7 @@ custom:
     image:
       url: https://d1izijuzr22yly.cloudfront.net/no-thumbnail.png
   image:
-    url:https://d1izijuzr22yly.cloudfront.net/
+    url: https://d1izijuzr22yly.cloudfront.net/
 
 genai:
   api-key: AIzaSyCXaeQvi7Hbd0aLna6KpBPRxqFxrjzoXGU

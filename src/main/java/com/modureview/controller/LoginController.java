@@ -27,7 +27,7 @@ public class LoginController {
 
 	private final JwtTokenService jwtTokenService;
 
-	@GetMapping("/user/login")
+	@GetMapping("/users/login")
 	public ResponseEntity<String> tokenIssue(@RequestParam String email,
 		HttpServletResponse response) {
 		List<ResponseCookie> responseCookies = jwtTokenService.loginTokenIssue(email);
@@ -52,7 +52,7 @@ public class LoginController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/user/logout")
+	@GetMapping("/users/logout")
 	public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
 		HttpHeaders headers = new HttpHeaders();
 
@@ -63,7 +63,6 @@ public class LoginController {
 				if (cookie.getName().equals("accessToken") ||
 					cookie.getName().equals("refreshToken") ||
 					cookie.getName().equals("userEmail")) {
-
 					ResponseCookie expiredCookie = jwtTokenService.expireCookie(
 						ResponseCookie.from(cookie.getName(), "").build()
 					);

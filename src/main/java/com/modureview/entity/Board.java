@@ -47,16 +47,18 @@ public class Board {
   @JsonBackReference
   private User user;
 
+  @Column(name="author_email")
   private String authorEmail;
 
   @Enumerated(EnumType.STRING)
   private Category category;
 
+  @Column(name="image_url")
+  private String imageUrl;
+
   @Lob
   @Column(columnDefinition = "TEXT")
   private String content;
-
-  private String thumbnail;
 
   @Lob
   @Column(columnDefinition = "TEXT")

@@ -1,5 +1,6 @@
 package com.modureview.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public record SliceBoardResponse(
     Category category,
     String preview,
     Integer comments_count,
+    @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at,
     Integer bookmarks,
     String image_url

@@ -21,9 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 @Getter
 public class BoardImage {
 
-  @Value("${custom.default.image.url}")
-  private String defaultImageUrl;
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -45,7 +42,7 @@ public class BoardImage {
   }
 
   public String getFullImageUrl() {
-    return defaultImageUrl + this.uuid;
+    return "https://d1izijuzr22yly.cloudfront.net/" + this.uuid;
   }
 }
 

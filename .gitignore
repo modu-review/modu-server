@@ -1,11 +1,9 @@
 HELP.md
-.gradle
-build/
+.gradle/
+build
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-out/
-build/
 
 ### STS ###
 .apt_generated
@@ -16,7 +14,7 @@ build/
 .springBeans
 .sts4-cache
 .DS_Store
-bin/
+bin/.
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
@@ -25,8 +23,14 @@ bin/
 *.iws
 *.iml
 *.ipr
+/out
 !**/src/main/**/out/
 !**/src/test/**/out/
+build/.DS_Store
+build/generated/.DS_Store
+build/resources/.DS_Store
+build/tmp/.DS_Store
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -37,6 +41,3 @@ bin/
 
 #Spring
 /org/springframework
-
-
-
