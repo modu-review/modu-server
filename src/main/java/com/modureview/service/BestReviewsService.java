@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.response.BestReviewResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
+import com.modureview.enums.errors.BestReviewErrorCode;
+import com.modureview.exception.bestReviewException.JsonParsingException;
 import com.modureview.repository.BoardRepository;
 import java.time.Duration;
 import java.util.Arrays;
@@ -49,7 +51,7 @@ public class BestReviewsService {
             return objectMapper.readValue(json, BestReviewResponse.class);
           } catch (JsonProcessingException e) {
             log.error("Redis의 JSON을 DTO로 변환하는 데 실패했습니다.", e);
-            return null;
+            throw new JsonParsingException(BestReviewErrorCode.JSON_PROCESSING_ERROR);
           }
 
         })

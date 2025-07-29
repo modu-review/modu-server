@@ -5,24 +5,33 @@ import org.springframework.http.HttpStatus;
 
 public enum JwtErrorCode implements ErrorCode {
 
-  UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),
-  FORBIDDEN(HttpStatus.FORBIDDEN, "유효하지 않은 사용자입니다.");
+  UNAUTHORIZED("UNAUTHORIZED", HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),
+  FORBIDDEN("FORBIDDEN", HttpStatus.FORBIDDEN, "유효하지 않은 사용자입니다.");
 
+  private final String title;
   private final HttpStatus httpStatus;
-  private final String message;
+  private final String detail;
 
-  JwtErrorCode(HttpStatus httpStatus, String message) {
+  JwtErrorCode(String title, HttpStatus httpStatus, String detail) {
+    this.title = title;
     this.httpStatus = httpStatus;
-    this.message = message;
+    this.detail = detail;
   }
 
-  @Override // 인터페이스 메서드 구현 명시
+
+  @Override
+  public String getTitle() {
+    return title;
+  }
+
+  @Override
   public HttpStatus getHttpStatus() {
     return httpStatus;
   }
 
-  @Override // 인터페이스 메서드 구현 명시
-  public String getMessage() {
-    return message;
+  @Override
+  public String getDetail() {
+    return detail;
   }
+
 }
