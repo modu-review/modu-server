@@ -4,15 +4,22 @@ import com.modureview.enums.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum BookmarkErrorCode implements ErrorCode {
-  BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
+  BOOKMARK_NOT_FOUND("BOOKMARK_NOT_FOUND",HttpStatus.NOT_FOUND, "북마크를 찾을 수 없습니다."),
   ;
 
+  private final String title;
   private final HttpStatus httpStatus;
-  private final String message;
+  private final String detail;
 
-  BookmarkErrorCode(HttpStatus httpStatus, String message) {
+  BookmarkErrorCode(String title, HttpStatus httpStatus, String detail) {
+    this.title = title;
     this.httpStatus = httpStatus;
-    this.message = message;
+    this.detail = detail;
+  }
+
+  @Override
+  public String getTitle() {
+    return "";
   }
 
   @Override
@@ -21,7 +28,8 @@ public enum BookmarkErrorCode implements ErrorCode {
   }
 
   @Override
-  public String getMessage() {
+  public String getDetail() {
     return "";
   }
+
 }
