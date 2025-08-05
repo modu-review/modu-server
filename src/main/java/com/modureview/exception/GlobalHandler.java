@@ -16,8 +16,9 @@ public class GlobalHandler {
     ErrorCode errorCode = e.getErrorCode();
 
     ErrorResponse response = new ErrorResponse(
+        errorCode.getTitle(),
         errorCode.getHttpStatus().value(),
-        errorCode.getMessage()
+        errorCode.getDetail()
     );
 
     return ResponseEntity
@@ -29,13 +30,12 @@ public class GlobalHandler {
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponse> handleTypeMismatchException(
       MethodArgumentTypeMismatchException e) {
-    // 이전에 BoardErrorCode에 추가했던 에러 코드를 사용합니다.
     ErrorCode errorCode = BoardErrorCode.INVALID_BOARD_ID_FORMAT;
 
-    // 기존 ErrorResponse 형식에 맞게 응답을 생성합니다.
     ErrorResponse response = new ErrorResponse(
+        errorCode.getTitle(),
         errorCode.getHttpStatus().value(),
-        errorCode.getMessage()
+        errorCode.getDetail()
     );
 
     return ResponseEntity

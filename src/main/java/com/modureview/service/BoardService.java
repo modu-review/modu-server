@@ -97,7 +97,7 @@ public class BoardService {
           awsS3Config.getCredentials().getSecretKey()
       );
 
-      String contentType = resolveContentTypeByKey(key); // 아래 함수 정의 참조
+      String contentType = resolveContentTypeByKey(key);
 
       PutObjectRequest objectRequest = PutObjectRequest.builder()
           .bucket(awsS3Config.getBucket())
@@ -131,7 +131,7 @@ public class BoardService {
     if (content.contains("<script") || content.contains("onerror=") || content.contains(
         "javascript:")) {
       log.warn(" XSS 코드 탐지됨: {}", content);
-      throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML_ERROR);
+      throw new NotAllowedHtmlError(BoardErrorCode.NOT_ALLOWED_HTML);
     }
   }
 
