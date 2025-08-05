@@ -26,7 +26,7 @@ public class UserReviewsService {
 	private final UserReviewsRepository userReviewsRepository;
 	private final BoardRepository boardRepository;
 
-	public Slice<Board> UserReviews(String nickname, Long cursorId, String sort) {
+	public Slice<Board> userReviews(String nickname, Long cursorId, String sort) {
 		Pageable pageable = PageRequest.of(0, 6);
 		log.info("nickname == {}", nickname);
 		log.info("cursorId == {}", cursorId);
@@ -49,12 +49,12 @@ public class UserReviewsService {
 				default:
 					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
 			}
-			
+
 			// 사용자의 게시글이 없는 경우 빈 Slice 반환
 			if (targetBoard == null) {
 				return new SliceImpl<>(new ArrayList<>(), pageable, false);
 			}
-			
+
 		} else {
 			targetBoard = boardRepository.findById(cursorId)
 				.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));

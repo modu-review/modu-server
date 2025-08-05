@@ -30,7 +30,7 @@ public class UserReviewsController {
 		@RequestParam(name = "cursor", defaultValue = "0") Long cursor,
 		@RequestParam(name = "sort", defaultValue = "recent") String sort
 	) {
-		Slice<Board> boardSlice = userReviewsService.UserReviews(memberEmail, cursor, sort);
+		Slice<Board> boardSlice = userReviewsService.userReviews(memberEmail, cursor, sort);
 		List<SliceBoardResponse> dtoList = boardSlice.getContent().stream()
 			.map(SliceBoardResponse::fromEntity)
 			.collect(Collectors.toList());

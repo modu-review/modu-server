@@ -83,18 +83,18 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("초기 로딩 - recent 정렬 성공")
-	void UserReviews_Success_Recent_Initial() throws Exception {
+	void userReviews_Success_Recent_Initial() throws Exception {
 		String nickname = "user1";
 		Long cursorId = null;
 		String sort = "recent";
 
 		long startTime = System.nanoTime();
-		Slice<Board> result = userReviewsService.UserReviews(nickname, cursorId, sort);
+		Slice<Board> result = userReviewsService.userReviews(nickname, cursorId, sort);
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);
 		double durationMs = duration / 1_000_000.0;
-		log.info("UserReviews_Success_Recent_Initial() 실행 시간: {} ns ({} ms)", duration,
+		log.info("userReviews_Success_Recent_Initial() 실행 시간: {} ns ({} ms)", duration,
 			String.format("%.3f", durationMs));
 
 		String realJson = objectMapper
@@ -108,18 +108,18 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("초기 로딩 - hotbookmarks 정렬 성공")
-	void UserReviews_Success_HotBookmarks_Initial() throws Exception {
+	void userReviews_Success_HotBookmarks_Initial() throws Exception {
 		String nickname = "user1";
 		Long cursorId = 0L;
 		String sort = "hotbookmarks";
 
 		long startTime = System.nanoTime();
-		Slice<Board> result = userReviewsService.UserReviews(nickname, cursorId, sort);
+		Slice<Board> result = userReviewsService.userReviews(nickname, cursorId, sort);
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);
 		double durationMs = duration / 1_000_000.0;
-		log.info("UserReviews_Success_HotBookmarks_Initial() 실행 시간: {} ns ({} ms)", duration,
+		log.info("userReviews_Success_HotBookmarks_Initial() 실행 시간: {} ns ({} ms)", duration,
 			String.format("%.3f", durationMs));
 
 		String realJson = objectMapper
@@ -133,18 +133,18 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("초기 로딩 - hotcomments 정렬 성공")
-	void UserReviews_Success_HotComments_Initial() throws Exception {
+	void userReviews_Success_HotComments_Initial() throws Exception {
 		String nickname = "user1";
 		Long cursorId = null;
 		String sort = "hotcomments";
 
 		long startTime = System.nanoTime();
-		Slice<Board> result = userReviewsService.UserReviews(nickname, cursorId, sort);
+		Slice<Board> result = userReviewsService.userReviews(nickname, cursorId, sort);
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);
 		double durationMs = duration / 1_000_000.0;
-		log.info("UserReviews_Success_HotComments_Initial() 실행 시간: {} ns ({} ms)", duration,
+		log.info("userReviews_Success_HotComments_Initial() 실행 시간: {} ns ({} ms)", duration,
 			String.format("%.3f", durationMs));
 
 		String realJson = objectMapper
@@ -158,21 +158,21 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("커서 기반 페이징 - recent 정렬 성공")
-	void UserReviews_Success_Recent_Cursor() throws Exception {
+	void userReviews_Success_Recent_Cursor() throws Exception {
 		// 먼저 초기 로딩으로 첫 번째 게시글 가져오기
-		Slice<Board> firstPage = userReviewsService.UserReviews("user1", null, "recent");
+		Slice<Board> firstPage = userReviewsService.userReviews("user1", null, "recent");
 		Long cursorId = firstPage.getContent().get(0).getId();
 
 		String nickname = "user1";
 		String sort = "recent";
 
 		long startTime = System.nanoTime();
-		Slice<Board> result = userReviewsService.UserReviews(nickname, cursorId, sort);
+		Slice<Board> result = userReviewsService.userReviews(nickname, cursorId, sort);
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);
 		double durationMs = duration / 1_000_000.0;
-		log.info("UserReviews_Success_Recent_Cursor() 실행 시간: {} ns ({} ms)", duration,
+		log.info("userReviews_Success_Recent_Cursor() 실행 시간: {} ns ({} ms)", duration,
 			String.format("%.3f", durationMs));
 
 		String realJson = objectMapper
@@ -185,12 +185,12 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("존재하지 않는 cursorId로 조회 시 예외 발생")
-	void UserReviews_Fail_InvalidCursorId() {
+	void userReviews_Fail_InvalidCursorId() {
 		String nickname = "user1";
 		Long invalidCursorId = 999999L;
 		String sort = "recent";
 
-		assertThatThrownBy(() -> userReviewsService.UserReviews(nickname, invalidCursorId, sort))
+		assertThatThrownBy(() -> userReviewsService.userReviews(nickname, invalidCursorId, sort))
 			.isInstanceOf(CustomException.class)
 			.hasFieldOrPropertyWithValue("errorCode", BoardErrorCode.BOARD_ID_NOTFOUND);
 
@@ -199,12 +199,12 @@ class UserReviewsServiceTest {
 
 	@Test
 	@DisplayName("다른 사용자 게시글은 조회되지 않음")
-	void UserReviews_Success_UserFilter() throws Exception {
+	void UserReviews_Success_userFilter() throws Exception {
 		String nickname = "user1";
 		Long cursorId = null;
 		String sort = "recent";
 
-		Slice<Board> result = userReviewsService.UserReviews(nickname, cursorId, sort);
+		Slice<Board> result = userReviewsService.userReviews(nickname, cursorId, sort);
 
 		assertThat(result.getContent()).hasSize(5);
 		//assertThat(result.getContent()).allMatch(board -> board.getAuthorNickname().equals("user1"));
