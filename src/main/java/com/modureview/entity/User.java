@@ -37,6 +37,9 @@ public class User {
   @Column(name = "modified_at")
   private LocalDateTime modifiedAt;
 
+  @Column(name ="nickname")
+  private String nickname;
+
   @Column(name = "email", length = 255)
   private String email;
 
