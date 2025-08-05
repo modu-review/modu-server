@@ -49,12 +49,12 @@ public class UserReviewsService {
 				default:
 					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
 			}
-
+			
 			// 사용자의 게시글이 없는 경우 빈 Slice 반환
 			if (targetBoard == null) {
 				return new SliceImpl<>(new ArrayList<>(), pageable, false);
 			}
-
+			
 		} else {
 			targetBoard = boardRepository.findById(cursorId)
 				.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
