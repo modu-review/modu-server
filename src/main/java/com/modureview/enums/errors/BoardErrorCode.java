@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 
 public enum BoardErrorCode implements ErrorCode {
   BOARD_ID_NOTFOUND("BOARD_ID_NOT_FOUND", HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
-  NOT_ALLOWED_HTML_ERROR("WRONG_HTML_TYPE", HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 html입니다."),
-  BOARD_SAVE_ERROR("CAN_NOT_SAVE_DATA", HttpStatus.CONFLICT, "데이터를 저장할 수 없습니다."),
+  NOT_ALLOWED_HTML("WRONG_HTML_TYPE", HttpStatus.INTERNAL_SERVER_ERROR, "잘못된 html입니다."),
+  BOARD_SAVE_ERROR("CAN_NOT_SAVE_DATA", HttpStatus.INTERNAL_SERVER_ERROR, "데이터를 저장할 수 없습니다."),
   IMG_SRC_EXTRACT_ERROR("EXTRACT_IMAGE_ERROR", HttpStatus.INTERNAL_SERVER_ERROR,
       "html에서 이미지 추출중 에러가 발생했습니다."),
   BOARD_SEARCH_KEYWORD_NOTFOUND("KEYWORD_NOT_FOUND", HttpStatus.NOT_FOUND, "키워드를 찾을 수 없습니다."),
