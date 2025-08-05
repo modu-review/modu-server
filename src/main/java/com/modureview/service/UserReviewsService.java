@@ -26,7 +26,7 @@ public class UserReviewsService {
 	private final UserReviewsRepository userReviewsRepository;
 	private final BoardRepository boardRepository;
 
-	public Slice<Board> UserReviews(String nickname, Long cursorId, String sort) {
+	public Slice<Board> userReivews(String nickname, Long cursorId, String sort) {
 		Pageable pageable = PageRequest.of(0, 6);
 		log.info("nickname == {}", nickname);
 		log.info("cursorId == {}", cursorId);
