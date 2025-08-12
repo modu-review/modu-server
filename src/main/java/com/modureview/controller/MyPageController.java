@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import com.modureview.service.MyPageService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -56,5 +58,12 @@ public class MyPageController {
 			boardMyPage.getTotalPages()
 		);
 		return ResponseEntity.ok(myPage);
+	}
+
+	@PostMapping("/users/me/profileImage")
+	public ResponseEntity<?> uploadProfileImage(@RequestParam("profileImage") MultipartFile file) {
+		myPageService.validateImage(file);
+
+		return ResponseEntity.ok("");
 	}
 }
