@@ -35,7 +35,6 @@ public class UserReviewsService {
 		Board targetBoard;
 
 		if (cursorId == null || cursorId == 0L) {
-			// 초기 로딩: 해당 사용자의 최신/최다 게시글 찾기
 			switch (sort) {
 				case "recent":
 					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
