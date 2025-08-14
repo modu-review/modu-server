@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserReviewsController {
 	private final UserReviewsService userReviewsService;
 
-	@GetMapping("/users/{memberEmail}")
+	@GetMapping("/users/{memberEmail}/reviews")
     public ResponseEntity<CustomSlicePageResponse<SliceBoardResponse>> getBoardsByUserEmail(
         @PathVariable String memberEmail,
         @RequestParam(name = "cursor", defaultValue = "0") Long cursor,

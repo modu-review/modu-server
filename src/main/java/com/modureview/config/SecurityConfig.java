@@ -37,7 +37,8 @@ public class SecurityConfig {
                 "/reviews/*/bookmarks",
                 "/search",
                 "/users/login",
-                "favicon.io"
+                "favicon.io",
+                "/users/**"
             )
             .permitAll()
             .requestMatchers("/reviews/**")
