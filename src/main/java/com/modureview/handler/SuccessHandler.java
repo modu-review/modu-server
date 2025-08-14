@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,10 +36,14 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttribute("kakao_account");
     String email = (String) kakaoAccount.get("email");
 
+    String randomNickname = "리뷰어_" + UUID.randomUUID().toString().substring(0, 8);
+
     User user = userRepository.findByEmail(email)
-        .orElseGet(() -> userRepository.save(User.builder().email(email).build()));
+        .orElseGet(() -> userRepository.save(
+            User.builder().email(email).nickname(randomNickname).build()));
 
     String redirectUrl = frontURL + "/oauth2/redirect?user_email=" + email;
+    log.info("created user nickname {}", user.getNickname());
     log.info("login info {}",email);
 
     response.sendRedirect(redirectUrl);
