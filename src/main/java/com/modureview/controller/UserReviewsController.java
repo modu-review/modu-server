@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.modureview.dto.response.CustomSlicePageResponse;
-import com.modureview.dto.response.UserReviewsResponse;
+import com.modureview.dto.response.SliceBoardResponse;
 import com.modureview.entity.Board;
 import com.modureview.service.UserReviewsService;
 
@@ -25,16 +25,14 @@ public class UserReviewsController {
 	private final UserReviewsService userReviewsService;
 
 	@GetMapping("/users/{memberEmail}")
-    public ResponseEntity<CustomSlicePageResponse<UserReviewsResponse>> getBoardsByUserEmail(
+    public ResponseEntity<CustomSlicePageResponse<SliceBoardResponse>> getBoardsByUserEmail(
         @PathVariable String memberEmail,
         @RequestParam(name = "cursor", defaultValue = "0") Long cursor,
         @RequestParam(name = "sort", defaultValue = "recent") String sort
     ) {
         Slice<Board> boardSlice = userReviewsService.userReviews(memberEmail, cursor, sort);
-        // Count total results for this author once and apply to all DTOs
-        long totalResults = userReviewsService.countByAuthorEmail(memberEmail);
-        List<UserReviewsResponse> dtoList = boardSlice.getContent().stream()
-            .map(board -> UserReviewsResponse.fromEntity(board, (int) totalResults))
+        List<SliceBoardResponse> dtoList = boardSlice.getContent().stream()
+            .map(SliceBoardResponse::fromEntity)
             .collect(Collectors.toList());
 
 		Long nextCursorValue = null;
@@ -43,15 +41,15 @@ public class UserReviewsController {
 			nextCursorValue = lastBoardInSlice.getId();
 		}
 
-        CustomSlicePageResponse<UserReviewsResponse> customResponse = new CustomSlicePageResponse<>(
-            dtoList,
-            nextCursorValue,
-            boardSlice.hasNext(),
-            boardSlice.getNumberOfElements(),
-            boardSlice.getSize(),
-            boardSlice.isFirst()
-        );
+        Long totalResults = userReviewsService.countByAuthorEmail(memberEmail);
 
-		return ResponseEntity.ok(customResponse);
+		CustomSlicePageResponse<SliceBoardResponse> body = CustomSlicePageResponse.of(
+			dtoList,
+			nextCursorValue,
+			boardSlice.hasNext(),
+			totalResults
+		);
+
+		return ResponseEntity.ok(body);
 	}
 }
