@@ -50,36 +50,10 @@ public class NotificationService {
 			.notificationType(type)
 			.build();
 		notificationRepository.save(notification);
-		//sseService.sendNotificaion(receiverUserId , NotificaionPushResponse.from(notificaion));
 		Board targetBoard = boardRepository.findById(boardId)
 			.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
 		return NotificationPushResponse.from(notification, targetBoard.getTitle());
 	}
-
-	/*@Transactional(readOnly = true)
-	public List<NotificationPushResponse> getActiveNotifications(Long userId,int page) {
-		List<Notification> notifications = notificationRepository.findActiveNotifications(userId);
-		if (notifications.isEmpty())
-			return List.of();
-
-		List<Long> boardIds = notifications.stream()
-			.map(Notification::getBoardId)
-			.distinct()
-			.toList();
-
-		Map<Long, Board> boardMap = boardRepository.findAllById(boardIds)
-			.stream()
-			.collect(Collectors.toMap(Board::getId, b -> b));
-
-		return notifications.stream()
-			.map(n -> {
-				Board b = boardMap.get(n.getBoardId());
-				String title = (b != null) ? b.getTitle() : "원본 게시물이 없음";
-				title = ellipsize(title, 15);
-				return NotificationPushResponse.from(n, title);
-			})
-			.toList();
-	}*/
 
 	@Transactional(readOnly = true)
 	public Page<NotificationPushResponse> getNotifications(Long userId,int page) {
@@ -114,14 +88,6 @@ public class NotificationService {
 	@Transactional
 	public void markAsDeleted(Long notificationId) {
 		notificationRepository.findById(notificationId).ifPresent(Notification::markAsDeleted);
-	}
-
-	private static String ellipsize(String s , int limit){
-		if(s == null ) return "";
-		int count = s.codePointCount(0, s.length());
-		if(count < limit) return s;
-		int endIndex = s.offsetByCodePoints(0, limit);
-		return s.substring(0, endIndex) + "...";
 	}
 
 	@Transactional(readOnly = true)
