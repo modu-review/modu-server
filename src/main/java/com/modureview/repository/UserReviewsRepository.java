@@ -52,4 +52,6 @@ public interface UserReviewsRepository extends JpaRepository<Board, Long> {
 
 	Board findTopByAuthorEmailOrderByCommentsCountDesc(String authorEmail);
 
+	long countByAuthorEmail(String authorEmail);
+
 }

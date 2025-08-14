@@ -75,4 +75,8 @@ public class UserReviewsService {
 			targetBoard.getId(), pageable);
 	}
 
+	public long countByAuthorEmail(String authorEmail) {
+		return userReviewsRepository.countByAuthorEmail(authorEmail);
+	}
+
 }
