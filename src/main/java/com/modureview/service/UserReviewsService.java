@@ -32,44 +32,36 @@ public class UserReviewsService {
 		log.info("cursorId == {}", cursorId);
 		log.info("sort == {}", sort);
 
-		Board targetBoard;
-
 		if (cursorId == null || cursorId == 0L) {
 			switch (sort) {
 				case "recent":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
-					break;
+					return userReviewsRepository.findFirstSliceByAuthorEmailOrderByCreatedAt(nickname, pageable);
 				case "hotbookmarks":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByBookmarksCountDesc(nickname);
-					break;
+					return userReviewsRepository.findFirstSliceByAuthorEmailOrderByBookmarksCount(nickname, pageable);
 				case "hotcomments":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCommentsCountDesc(nickname);
-					break;
+					return userReviewsRepository.findFirstSliceByAuthorEmailOrderByCommentsCount(nickname, pageable);
 				default:
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
+					return userReviewsRepository.findFirstSliceByAuthorEmailOrderByCreatedAt(nickname, pageable);
 			}
-			if (targetBoard == null) {
-				return new SliceImpl<>(new ArrayList<>(), pageable, false);
-			}
-			
-		} else {
-			targetBoard = boardRepository.findById(cursorId)
-				.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
 		}
+
+		Board targetBoard = boardRepository.findById(cursorId)
+			.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
+
 		switch (sort) {
 			case "recent":
-				return userReviewsRepository.findByAuthorEmailByCreatedAt(nickname, targetBoard.getCreatedAt(),
-					targetBoard.getId(), pageable);
+				return userReviewsRepository.findByAuthorEmailByCreatedAt(
+						nickname, targetBoard.getCreatedAt(), targetBoard.getId(), pageable);
 			case "hotbookmarks":
-				return userReviewsRepository.findByAuthorEmailByBookmarksCount(nickname,
-					targetBoard.getBookmarksCount(), targetBoard.getId(), pageable);
+				return userReviewsRepository.findByAuthorEmailByBookmarksCount(
+						nickname, targetBoard.getBookmarksCount(), targetBoard.getId(), pageable);
 			case "hotcomments":
-				return userReviewsRepository.findByAuthorEmailByCommentsCount(nickname,
-					targetBoard.getCommentsCount(), targetBoard.getId(), pageable);
-
+				return userReviewsRepository.findByAuthorEmailByCommentsCount(
+						nickname, targetBoard.getCommentsCount(), targetBoard.getId(), pageable);
+			default:
+				return userReviewsRepository.findByAuthorEmailByCreatedAt(
+						nickname, targetBoard.getCreatedAt(), targetBoard.getId(), pageable);
 		}
-		return userReviewsRepository.findByAuthorEmailByCreatedAt(nickname, targetBoard.getCreatedAt(),
-			targetBoard.getId(), pageable);
 	}
 
 	public long countByAuthorEmail(String authorEmail) {

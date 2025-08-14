@@ -13,6 +13,28 @@ import com.modureview.entity.Board;
 
 @Repository
 public interface UserReviewsRepository extends JpaRepository<Board, Long> {
+
+
+	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
+		+ "ORDER BY b.createdAt DESC, b.id DESC")
+	Slice<Board> findFirstSliceByAuthorEmailOrderByCreatedAt(
+		@Param("authorEmail") String authorEmail,
+		Pageable pageable
+	);
+
+	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
+		+ "ORDER BY b.bookmarksCount DESC, b.id DESC")
+	Slice<Board> findFirstSliceByAuthorEmailOrderByBookmarksCount(
+		@Param("authorEmail") String authorEmail,
+		Pageable pageable
+	);
+
+	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
+		+ "ORDER BY b.commentsCount DESC, b.id DESC")
+	Slice<Board> findFirstSliceByAuthorEmailOrderByCommentsCount(
+		@Param("authorEmail") String authorEmail,
+		Pageable pageable
+	);
 	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
 		+ "AND (b.createdAt < :createdAt OR "
 		+ " (b.createdAt = :createdAt AND b.id < :boardId)) "
@@ -45,13 +67,6 @@ public interface UserReviewsRepository extends JpaRepository<Board, Long> {
 		@Param("boardId") Long boardId,
 		Pageable pageable
 	);
-
-	Board findTopByAuthorEmailOrderByCreatedAtDesc(String authorEmail);
-
-	Board findTopByAuthorEmailOrderByBookmarksCountDesc(String authorEmail);
-
-	Board findTopByAuthorEmailOrderByCommentsCountDesc(String authorEmail);
-
 	long countByAuthorEmail(String authorEmail);
 
 }
