@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Builder
 
-public class CustomSlicePageResponse<T> {
+public class CustomSlicePageResponse<T>  {
+
 
   private final List<T> results;
   private final Long next_cursor;
