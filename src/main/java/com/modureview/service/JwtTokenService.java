@@ -39,7 +39,8 @@ public class JwtTokenService {
     return List.of(
         createAccessToken(userEmail),
         createRefreshToken(userEmail),
-        createUserEmailCookie(userEmail)
+        createUserEmailCookie(userEmail),
+        createUserNickName(userEmail)
     );
   }
 
@@ -55,6 +56,10 @@ public class JwtTokenService {
 
   public ResponseCookie createUserEmailCookie(String userEmail) {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
+  }
+
+  public ResponseCookie createUserNickName(String userEmail){
+    return createCookie("userNickName", userEmail, refreshTokenExpire, true);
   }
 
   public void validateToken(String token) {
