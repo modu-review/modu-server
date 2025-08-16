@@ -36,8 +36,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
   @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.id IN :ids")
   List<Board> findByIdsWithUser(@Param("ids") List<Long> ids);
 
-  Board findByAuthorEmail(String mail);
-
   @Query("SELECT b.commentsCount FROM Board b WHERE b.id = :boardId")
   Integer findCommentsCountById(@Param("boardId") Long boardId);
 }

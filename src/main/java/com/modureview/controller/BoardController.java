@@ -45,14 +45,13 @@ public class BoardController {
     return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
+  //완료
   @PostMapping("/reviews/new")
   public ResponseEntity<Map<String, String>> saveBoard(
       @RequestBody BoardSaveRequest boardSaveRequest) {
-
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> imageUuids = boardService.extractImageInfo(boardSaveRequest);
     boardService.saveBoard(boardSaveRequest, imageUuids);
-
     Map<String, String> response = Map.of("message", "게시글이 성공적으로 등록되었습니다.");
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
@@ -61,7 +60,6 @@ public class BoardController {
   public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardSaveRequest boardSaveRequest) {
     log.info("boardId == {}", boardId);
     log.info("boardSaveRequest == {}", boardSaveRequest);
-
     boardService.findBoard(boardId);
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> images = boardService.extractImageInfo(boardSaveRequest);
