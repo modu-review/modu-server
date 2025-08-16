@@ -47,10 +47,13 @@ class JwtTokenServiceTest {
   @Test
   @DisplayName("지정한 토큰이 잘 지정되는지 확인 ")
   void loginTokenIssueCheck() {
-    List<ResponseCookie> cookies = jwtTokenService.loginTokenIssue("user@domain.com");
+    String email = "user@domain.com";
+    String nickname = "nickname123";
 
-    assertThat(cookies).hasSize(3);
+    List<ResponseCookie> cookies = jwtTokenService.loginTokenIssue(email, nickname);
+
+    assertThat(cookies).hasSize(4);
     assertThat(cookies.stream().map(ResponseCookie::getName).toList())
-        .containsExactlyInAnyOrder("accessToken", "refreshToken", "userEmail");
+        .containsExactlyInAnyOrder("accessToken", "refreshToken", "userEmail", "userNickName");
   }
 }

@@ -41,9 +41,10 @@ class JwtTokenServiceLoginIssueTest {
   @DisplayName("loginTokenIssue는 4개 쿠키를 발급한다")
   void loginTokenIssue_returns_four_cookies() {
     String email = "user@domain.com";
+    String nickname = "nickname123";
     JwtTokenService service = new StubJwtTokenService();
 
-    List<ResponseCookie> cookies = service.loginTokenIssue(email);
+    List<ResponseCookie> cookies = service.loginTokenIssue(email, nickname);
 
     assertThat(cookies).hasSize(4);
     assertThat(cookies.stream().map(ResponseCookie::getName).toList())
@@ -55,8 +56,7 @@ class JwtTokenServiceLoginIssueTest {
     assertThat(byName.get("userEmail").getValue()).isEqualTo(email);
     assertThat(byName.get("userEmail").isHttpOnly()).isTrue();
 
-    assertThat(byName.get("userNickName").getValue()).isEqualTo(email);
+    assertThat(byName.get("userNickName").getValue()).isEqualTo(nickname);
     assertThat(byName.get("userNickName").isHttpOnly()).isTrue();
   }
 }
-

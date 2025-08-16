@@ -35,12 +35,12 @@ public class JwtTokenService {
   private final Long accessTokenExpire = 60 * 60L;
   private final Long refreshTokenExpire = 30 * 24 * 60 * 60L;
 
-  public List<ResponseCookie> loginTokenIssue(String userEmail) {
+  public List<ResponseCookie> loginTokenIssue(String userEmail,String nickname) {
     return List.of(
         createAccessToken(userEmail),
         createRefreshToken(userEmail),
         createUserEmailCookie(userEmail),
-        createUserNickName(userEmail)
+        createUserNickname(nickname)
     );
   }
 
@@ -58,8 +58,8 @@ public class JwtTokenService {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
   }
 
-  public ResponseCookie createUserNickName(String userEmail){
-    return createCookie("userNickName", userEmail, refreshTokenExpire, true);
+  public ResponseCookie createUserNickname(String nickname){
+    return createCookie("userNickname", nickname , refreshTokenExpire, true);
   }
 
   public void validateToken(String token) {
