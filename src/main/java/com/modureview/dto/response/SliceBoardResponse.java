@@ -10,8 +10,7 @@ import lombok.Builder;
 public record SliceBoardResponse(
     Long board_id,
     String title,
-    String author_id,
-    String author_email,
+    String author_nickname,
     Category category,
     String preview,
     Integer comments_count,
@@ -29,8 +28,7 @@ public record SliceBoardResponse(
         .board_id(board.getId())
         .title(board.getTitle())
         .category(board.getCategory())
-        .author_id(board.getAuthorEmail().split("@")[0])
-        .author_email(board.getAuthorEmail())
+        .author_nickname(board.getNickname())
         .created_at(board.getCreatedAt())
         .preview(board.getPreview())
         .comments_count(board.getCommentsCount())

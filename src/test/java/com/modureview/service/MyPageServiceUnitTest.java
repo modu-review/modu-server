@@ -75,7 +75,7 @@ class MyPageServiceUnitTest {
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize,
         Sort.by(Sort.Direction.DESC, "createdAt"));
     Page<Long> idPage = new PageImpl<>(bookmarkIds, pageable, bookmarkIds.size());
-    when(myPageBookMarkRepository.findBookMarksByEmail(email, pageable))
+    when(myPageBookMarkRepository.findBookMarksByNickname(email, pageable))
         .thenReturn(idPage);
 
     Board b1 = Board.builder()

@@ -26,10 +26,11 @@ public class MyPageController {
 
 	@GetMapping("/users/me/reviews")
 	public ResponseEntity<CustomPageResponse<SliceBoardResponse>> getUserBoards(
-		@CookieValue(name = "userEmail") String email,
+		@CookieValue(name = "userNickname") String nickname,
 		@RequestParam(name = "page", defaultValue = "0") int page
 	) {
-		Page<Board> boardPage = myPageService.myPageBoard(email, page);
+
+		Page<Board> boardPage = myPageService.myPageBoard(nickname, page);
 		List<SliceBoardResponse> listMyPage = boardPage.getContent().stream()
 			.map(SliceBoardResponse::fromEntity)
 			.toList();
@@ -43,10 +44,10 @@ public class MyPageController {
 
 	@GetMapping("/users/me/bookmarks")
 	public ResponseEntity<CustomPageResponse<SliceBoardResponse>> getBookMarkBoards(
-		@CookieValue(name = "userEmail") String email,
+		@CookieValue(name = "userNickname") String nickname,
 		@RequestParam(name = "page", defaultValue = "0") int page
 	) {
-		Page<Board> boardMyPage = myPageService.myPageBookmark(email, page);
+		Page<Board> boardMyPage = myPageService.myPageBookmark(nickname, page);
 		List<SliceBoardResponse> listMyPage = boardMyPage.getContent().stream()
 			.map(SliceBoardResponse::fromEntity)
 			.toList();

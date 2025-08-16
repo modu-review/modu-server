@@ -13,9 +13,9 @@ public interface MyPageBookMarkRepository extends JpaRepository<BookMark, Long> 
   @Query(
       value = "SELECT bm.boardId "
           + "FROM BookMark bm "
-          + "WHERE bm.email = :email"
+          + "WHERE bm.nickname = :nickname"
   )
-  Page<Long> findBookMarksByEmail(String email, Pageable pageable);
+  Page<Long> findBookMarksByNickname(String nickname, Pageable pageable);
 
 
 }

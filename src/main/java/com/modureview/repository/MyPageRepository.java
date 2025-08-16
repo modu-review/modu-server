@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MyPageRepository extends JpaRepository<Board, Long> {
 
-  @Query(value = "SELECT b FROM Board b WHERE b.authorEmail = :email")
-  Page<Board> findBoardByAuthorEmail(@Param("email") String email, Pageable pageable);
+  @Query(value = "SELECT b FROM Board b WHERE b.nickname = :nickname")
+  Page<Board> findBoardByNickname(@Param("nickname") String nickname, Pageable pageable);
+
+
 
 }
