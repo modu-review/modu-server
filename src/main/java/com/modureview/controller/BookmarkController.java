@@ -29,32 +29,35 @@ public class BookmarkController {
   @GetMapping("/reviews/{reviewId}/bookmarks")
   public ResponseEntity<BookmarkDetailResponse> getBookMarkDetail(
       @PathVariable Long reviewId,
-      @CookieValue(name = "userEmail", required = false, defaultValue = "null") String email) {
-    BookmarkDetailResponse bookMarkDetailResponse = bookmarkService.bookmarkDetail(reviewId, email);
+      @CookieValue(name = "userNickname" , required = false , defaultValue = "null") String nickname) {
+    BookmarkDetailResponse bookMarkDetailResponse = bookmarkService.bookmarkDetail(reviewId, nickname);
     return ResponseEntity.ok(bookMarkDetailResponse);
 
   }
 
   @PostMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> addBookmark(@PathVariable Long reviewId,
-     @RequestBody BookmarkRequest bookmarkRequest) {
+     //@RequestBody BookmarkRequest bookmarkRequest,
+      @CookieValue (name = "userNickname" , required = true , defaultValue = "null")String nickname) {
     log.info("reviewId == {}", reviewId);
-    log.info("bookmarkRequest == {}", bookmarkRequest);
-    String userEmail = bookmarkRequest.userEmail();
+
+    log.info("nickname == {}", nickname);
+    //String userEmail = bookmarkRequest.userEmail();
     boardService.findBoard(reviewId);
-    Long userId = userService.findUserId(userEmail);
-    bookmarkService.saveBookmark(reviewId, userId, userEmail);
+    //Long userId = userService.findUserId(userEmail);
+    Long userId = userService.findUserIdByNickname(nickname);
+    bookmarkService.saveBookmark(reviewId, userId, nickname);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @DeleteMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> deleteBookmark(@PathVariable Long reviewId,
-     @RequestBody BookmarkRequest bookmarkRequest) {
+     //@RequestBody BookmarkRequest bookmarkRequest
+      @CookieValue(name = "userNickname" , required = false ,defaultValue = "null") String nickname) {
     log.info("reviewId == {}", reviewId);
-    log.info("bookmarkRequest == {}", bookmarkRequest);
-    String userEmail = bookmarkRequest.userEmail();
-    bookmarkService.deleteBookmark(reviewId, userEmail);
+    log.info("nickname == {}", nickname);
+    bookmarkService.deleteBookmark(reviewId, nickname);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

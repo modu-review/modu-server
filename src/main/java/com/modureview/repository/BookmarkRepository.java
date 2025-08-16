@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookmarkRepository extends JpaRepository<BookMark, Long> {
 
-  Optional<BookMark> findByEmailAndBoardId(String userEmail, Long boardId);
 
-  Boolean existsByBoardIdAndEmail(Long boardId, String email);
+  Optional<BookMark> findByNicknameAndBoardId(String nickname, Long boardId);
+
+  Boolean existsByNicknameAndBoardId(String nickname, Long boardId);
 
 }

@@ -30,11 +30,11 @@ public class BookmarkService {
   private final StringRedisTemplate stringRedisTemplate;
 
   @Transactional
-  public void saveBookmark(Long boardId, Long userId, String email) {
+  public void saveBookmark(Long boardId, Long userId, String nickname) {
     BookMark bookmark = BookMark.builder()
         .boardId(boardId)
         .userId(userId)
-        .email(email)
+        .nickname(nickname)
         .build();
 
     bookmarkRepository.save(bookmark);
@@ -46,8 +46,8 @@ public class BookmarkService {
   }
 
   @Transactional
-  public void deleteBookmark(Long boardId, String email) {
-    BookMark bookmarks = bookmarkRepository.findByEmailAndBoardId(email, boardId)
+  public void deleteBookmark(Long boardId, String nickname) {
+    BookMark bookmarks = bookmarkRepository.findByNicknameAndBoardId(nickname, boardId)
         .orElseThrow(() -> new BookmarkNotExistException(BookmarkErrorCode.BOOKMARK_NOT_FOUND));
     bookmarkRepository.delete(bookmarks);
 
@@ -57,18 +57,18 @@ public class BookmarkService {
     });
   }
 
-  public BookmarkDetailResponse bookmarkDetail(Long reviewId, String email) {
+  public BookmarkDetailResponse bookmarkDetail(Long reviewId, String nickname) {
     log.info("reviewId == {}", reviewId);
-    log.info("email    == {}", email);
+    log.info("email    == {}", nickname);
 
     Board targetBoard = boardRepository.findById(reviewId)
         .orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
     
-    if (!"null".equals(email)) {
-      userRepository.findByEmail(email)
+    if (!"null".equals(nickname)) {
+      userRepository.findByNickname(nickname)
           .orElseThrow(() -> new CustomException(JwtErrorCode.FORBIDDEN));
 
-      boolean hasBookmark = bookmarkRepository.existsByBoardIdAndEmail(reviewId, email);
+      boolean hasBookmark = bookmarkRepository.existsByNicknameAndBoardId(nickname, reviewId);
       return BookmarkDetailResponse.fromEntity(
           hasBookmark,
           targetBoard.getBookmarksCount()
