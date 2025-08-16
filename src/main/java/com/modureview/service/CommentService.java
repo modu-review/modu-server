@@ -24,7 +24,8 @@ public class CommentService {
   public void saveComment(Long boardId, Long userId, CommentSaveRequest commentSaveRequest) {
     Comment comment = Comment.builder()
         .boardId(boardId)
-        .userEmail(commentSaveRequest.userEmail())
+        //.userEmail(commentSaveRequest.userEmail())
+        .nickname(commentSaveRequest.nickname())
         .userId(userId)
         .content(commentSaveRequest.content())
         .build();

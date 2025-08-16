@@ -31,7 +31,9 @@ public class Comment {
 
   private Long userId;
 
-  private String userEmail;
+  private String nickname;
+
+  //private String userEmail;
 
   private String content;
 

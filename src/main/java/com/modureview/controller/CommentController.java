@@ -32,7 +32,8 @@ public class CommentController {
   @PostMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> addComment(@PathVariable Long reviewId,
       @RequestBody CommentSaveRequest commentSaveRequest) {
-    Long userId = userService.findUserId(commentSaveRequest.userEmail());
+    //Long userId = userService.findUserId(commentSaveRequest.userEmail());
+    Long userId = userService.findUserIdByNickname(commentSaveRequest.nickname());
     commentService.saveComment(reviewId, userId, commentSaveRequest);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
