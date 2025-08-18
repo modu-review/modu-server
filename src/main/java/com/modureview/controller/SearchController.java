@@ -1,8 +1,8 @@
 package com.modureview.controller;
 
-import com.modureview.dto.response.BoardSearchResponse;
 import com.modureview.dto.response.CustomPageResponse;
 import com.modureview.dto.response.CustomSlicePageResponse;
+import com.modureview.dto.response.SliceBoardResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import com.modureview.service.SearchService;
@@ -28,7 +28,7 @@ public class SearchController {
 
 
   @GetMapping("/search")
-  public ResponseEntity<CustomPageResponse<BoardSearchResponse>> getBoardSearch(
+  public ResponseEntity<CustomPageResponse<SliceBoardResponse>> getBoardSearch(
       @RequestParam(name = "keyword") String keyword,
       @RequestParam(name = "page", defaultValue = "0") int page,
       @RequestParam(name = "sort", defaultValue = "recent") String sort
@@ -36,10 +36,10 @@ public class SearchController {
     String decodeKeyword = URLDecoder.decode(keyword, "UTF-8");
     log.info("Searching for " + decodeKeyword);
     Page<Board> boardPage = searchService.boardSearch(decodeKeyword, page, sort);
-    List<BoardSearchResponse> listSearchBoard = boardPage.getContent().stream()
-        .map(BoardSearchResponse::fromEntity)
+    List<SliceBoardResponse> listSearchBoard = boardPage.getContent().stream()
+        .map(SliceBoardResponse::fromEntity)
         .toList();
-    CustomPageResponse<BoardSearchResponse> SearchPage = new CustomPageResponse<>(
+    CustomPageResponse<SliceBoardResponse> SearchPage = new CustomPageResponse<>(
         listSearchBoard,
         boardPage.getNumber() + 1,
         boardPage.getTotalPages()
@@ -50,13 +50,13 @@ public class SearchController {
 
 
   @GetMapping("/reviews")
-  public ResponseEntity<CustomSlicePageResponse<BoardSearchResponse>> getBoardsByCategory(
+  public ResponseEntity<CustomSlicePageResponse<SliceBoardResponse>> getBoardsByCategory(
       @RequestParam(name = "categoryId") Category category,
       @RequestParam(name = "cursor", defaultValue = "0") Long cursorId,
       @RequestParam(name = "sort", defaultValue = "recent") String sort) {
     Slice<Board> boardSlice = searchService.getCategoryBoard(category, cursorId, sort);
-    List<BoardSearchResponse> dtoList = boardSlice.getContent().stream()
-        .map(BoardSearchResponse::fromEntity)
+    List<SliceBoardResponse> dtoList = boardSlice.getContent().stream()
+        .map(SliceBoardResponse::fromEntity)
         .collect(Collectors.toList());
 
     Long nextCursorValue = null;
@@ -65,13 +65,10 @@ public class SearchController {
       nextCursorValue = lastBoardInSlice.getId();
     }
 
-    CustomSlicePageResponse<BoardSearchResponse> customResponse = new CustomSlicePageResponse<>(
+    CustomSlicePageResponse<SliceBoardResponse> customResponse = CustomSlicePageResponse.of(
         dtoList,
         nextCursorValue,
-        boardSlice.hasNext(),
-        boardSlice.getNumberOfElements(),
-        boardSlice.getSize(),
-        boardSlice.isFirst()
+        boardSlice.hasNext()
     );
 
     return ResponseEntity.ok(customResponse);
