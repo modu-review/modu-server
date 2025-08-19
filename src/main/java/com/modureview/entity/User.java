@@ -43,6 +43,10 @@ public class User {
   @Column(name = "email", length = 255)
   private String email;
 
+  @Column(name = "profile")
+  private String profile;
+
+
   @PrePersist
   protected void onCreate() {
     this.createdAt = LocalDateTime.now();
@@ -56,5 +60,10 @@ public class User {
   @OneToMany(mappedBy = "user")
   @Default
   private List<Board> boards = new ArrayList<>();
+
+
+  public void updateProfileImageUrl(String profileImageUrl) {
+    this.profile = profileImageUrl;
+  }
 
 }
