@@ -4,7 +4,6 @@ import com.modureview.entity.Board;
 import com.modureview.enums.errors.MypageErrorCode;
 import com.modureview.enums.errors.UserErrorCode;
 import com.modureview.exception.CustomException;
-import com.modureview.exception.mypage.InvalidFormatException;
 import com.modureview.repository.MyPageBookMarkRepository;
 import com.modureview.repository.MyPageRepository;
 import com.modureview.repository.UserRepository;
@@ -81,14 +80,14 @@ public class MyPageService {
     if (file == null || file.isEmpty() || !StringUtils.hasText(fileName)) {
 
       log.warn("파일이 비어있습니다.");
-      throw new InvalidFormatException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
+      throw new CustomException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
     }
 
     String extension = StringUtils.getFilenameExtension(fileName);
 
     if (extension == null || !ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
       log.warn("지원하지 않는 이미지 형식입니다: {}", extension);
-      throw new InvalidFormatException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
+      throw new CustomException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
     }
   }
 
