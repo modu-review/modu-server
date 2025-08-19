@@ -65,6 +65,7 @@ public class MyPageController {
 	public ResponseEntity<?> uploadProfileImage(@CookieValue("userEmail") String email,@RequestParam("profileImage") MultipartFile file) {
 		String newImageUrl = myPageService.updateProfileImage(email,file);
 
+
 		return ResponseEntity.ok().body(Map.of("imageUrl", newImageUrl));
 	}
 }
