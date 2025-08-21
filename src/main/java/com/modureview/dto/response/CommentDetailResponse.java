@@ -8,21 +8,18 @@ import lombok.Builder;
 @Builder
 public record CommentDetailResponse(
     Long id,
-    String author_id,
-    String author_email,
+    String author_nickname,
     String content,
     @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at
 ) {
 
   public static CommentDetailResponse fromEntity(Comment comment) {
-    return CommentDetailResponse.builder()
-        .id(comment.getId())
-        .author_id(comment.getUserEmail().split("@")[0])
-        .author_email(comment.getUserEmail())
-        .content(comment.getContent())
-        .created_at(comment.getCreatedAt())
-        .build();
+      return CommentDetailResponse.builder()
+          .id(comment.getId())
+          .author_nickname(comment.getNickname())
+          .content(comment.getContent())
+          .created_at(comment.getCreatedAt())
+          .build();
   }
-
 }

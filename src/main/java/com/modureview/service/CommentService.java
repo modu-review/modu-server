@@ -21,11 +21,10 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final BoardRepository boardRepository;
 
-  public void saveComment(Long boardId, Long userId, CommentSaveRequest commentSaveRequest) {
+  public void saveComment(Long boardId,String nickname, Long userId, CommentSaveRequest commentSaveRequest) {
     Comment comment = Comment.builder()
         .boardId(boardId)
-        //.userEmail(commentSaveRequest.userEmail())
-        .nickname(commentSaveRequest.nickname())
+        .nickname(nickname)
         .userId(userId)
         .content(commentSaveRequest.content())
         .build();

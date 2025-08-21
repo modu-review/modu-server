@@ -8,11 +8,14 @@ import com.modureview.entity.Comment;
 import com.modureview.service.CommentService;
 import com.modureview.service.UserService;
 import java.util.List;
+
+import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,10 +34,11 @@ public class CommentController {
 
   @PostMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> addComment(@PathVariable Long reviewId,
-      @RequestBody CommentSaveRequest commentSaveRequest) {
+      @RequestBody CommentSaveRequest commentSaveRequest,
+      @CookieValue(name = "userNickname") String nickname) {
     //Long userId = userService.findUserId(commentSaveRequest.userEmail());
-    Long userId = userService.findUserIdByNickname(commentSaveRequest.nickname());
-    commentService.saveComment(reviewId, userId, commentSaveRequest);
+    Long userId = userService.findUserIdByNickname(nickname);
+    commentService.saveComment(reviewId,nickname, userId, commentSaveRequest);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
@@ -53,7 +57,7 @@ public class CommentController {
   @GetMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<CommentListResponse> getCommentList(
       @PathVariable Long reviewId,
-      @RequestParam(name = "page", defaultValue = "1") int page  // 페이지 기본값을 1로 바꿔도 좋습니다
+      @RequestParam(name = "page", defaultValue = "1") int page
   ) {
     Page<Comment> commentPage = commentService.commentList(reviewId, page);
     List<CommentDetailResponse> listComment = commentPage.getContent().stream()
