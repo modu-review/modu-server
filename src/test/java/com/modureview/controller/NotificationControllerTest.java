@@ -77,7 +77,7 @@ class NotificationControllerTest {
     board = Board.builder()
         .title("아주아주아주아주긴제목확인용타이틀")
         .user(user)
-        .authorEmail(user.getEmail())
+        .nickname(user.getNickname())
         .category(com.modureview.entity.Category.car)
         .content("<p>content</p>")
         .commentsCount(0)
