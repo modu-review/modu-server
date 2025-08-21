@@ -62,7 +62,8 @@ public class LoginController {
 			Arrays.stream(cookies).forEach(cookie -> {
 				if (cookie.getName().equals("accessToken") ||
 					cookie.getName().equals("refreshToken") ||
-					cookie.getName().equals("userEmail")) {
+					cookie.getName().equals("userEmail") ||
+					cookie.getName().equals("userNickname")) {
 					ResponseCookie expiredCookie = jwtTokenService.expireCookie(
 						ResponseCookie.from(cookie.getName(), "").build()
 					);
