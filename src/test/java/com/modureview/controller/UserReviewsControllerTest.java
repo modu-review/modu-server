@@ -60,7 +60,7 @@ class UserReviewsControllerTest {
           Board.builder()
               .title("테스트 게시물 " + i)
               .user(testUser)
-              .authorEmail("test@example.com")
+              .nickname(testUser.getNickname())
               .category(Category.car)
               .content("<p>테스트 내용 " + i + "</p>")
               .commentsCount(i * 2)
@@ -74,7 +74,7 @@ class UserReviewsControllerTest {
           Board.builder()
               .title("다른 사용자 게시물 " + i)
               .user(otherUser)
-              .authorEmail("other@example.com")
+              .nickname(otherUser.getNickname())
               .category(Category.food)
               .content("<p>다른 사용자 내용 " + i + "</p>")
               .commentsCount(i * 5)
@@ -93,11 +93,11 @@ class UserReviewsControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/{memberEmail} - recent 정렬로 사용자 리뷰 조회 성공")
+  @DisplayName("GET /users/{nickname}/reviews - recent 정렬로 사용자 리뷰 조회 성공")
   void getUserReviews_Success_Recent() throws Exception {
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(
-            get("/users/test@example.com")
+            get("/users/test/reviews")
                 .param("cursor", "0")
                 .param("sort", "recent")
                 .accept(MediaType.APPLICATION_JSON))
@@ -120,13 +120,13 @@ class UserReviewsControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/{memberEmail} - hotcomment 정렬로 사용자 리뷰 조회 성공")
+  @DisplayName("GET /users/{nickname}/reviews - hotcomment 정렬로 사용자 리뷰 조회 성공")
   void getUserReviews_Success_HotComment() throws Exception {
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(
-            get("/users/test@example.com")
+            get("/users/test/reviews")
                 .param("cursor", "0")
-                .param("sort", "hotcomment")
+                .param("sort", "hotcomments")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn();
@@ -148,13 +148,13 @@ class UserReviewsControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/{memberEmail} - hotbookmark 정렬로 사용자 리뷰 조회 성공")
+  @DisplayName("GET /users/{nickname}/reviews - hotbookmark 정렬로 사용자 리뷰 조회 성공")
   void getUserReviews_Success_HotBookmark() throws Exception {
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(
-            get("/users/test@example.com")
+            get("/users/test/reviews")
                 .param("cursor", "0")
-                .param("sort", "hotbookmark")
+                .param("sort", "hotbookmarks")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn();
@@ -176,11 +176,11 @@ class UserReviewsControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/{memberEmail} - 존재하지 않는 사용자 이메일로 조회")
+  @DisplayName("GET /users/{nickname}/reviews - 존재하지 않는 사용자 닉네임으로 조회")
   void getUserReviews_Success_NonExistentUser() throws Exception {
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(
-            get("/users/nonexistent@example.com")
+            get("/users/nonexistent/reviews")
                 .param("cursor", "0")
                 .param("sort", "recent")
                 .accept(MediaType.APPLICATION_JSON))
@@ -204,14 +204,14 @@ class UserReviewsControllerTest {
   }
 
   @Test
-  @DisplayName("GET /users/{memberEmail} - 커서 기반 페이징 테스트")
+  @DisplayName("GET /users/{nickname}/reviews - 커서 기반 페이징 테스트")
   void getUserReviews_Success_CursorPaging() throws Exception {
     List<Board> savedBoards = userReviewsRepository.findAll();
     Long existingBoardId = savedBoards.get(2).getId();
     
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(
-            get("/users/test@example.com")
+            get("/users/test/reviews")
                 .param("cursor", existingBoardId.toString())
                 .param("sort", "recent")
                 .accept(MediaType.APPLICATION_JSON))

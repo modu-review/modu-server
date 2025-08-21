@@ -13,45 +13,60 @@ import com.modureview.entity.Board;
 
 @Repository
 public interface UserReviewsRepository extends JpaRepository<Board, Long> {
-	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
-		+ "AND (b.createdAt < :createdAt OR "
-		+ " (b.createdAt = :createdAt AND b.id < :boardId)) "
-		+ "ORDER BY b.createdAt DESC , b.id DESC")
-	Slice<Board> findByAuthorEmailByCreatedAt(
-		@Param("authorEmail") String authorEmail,
-		@Param("createdAt") LocalDateTime createdAt,
-		@Param("boardId") Long boardId,
-		Pageable pageable
-	);
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname "
+        + "AND (b.createdAt < :createdAt OR "
+        + " (b.createdAt = :createdAt AND b.id < :boardId)) "
+        + "ORDER BY b.createdAt DESC , b.id DESC")
+    Slice<Board> findByNicknameByCreatedAt(
+        @Param("nickname") String nickname,
+        @Param("createdAt") LocalDateTime createdAt,
+        @Param("boardId") Long boardId,
+        Pageable pageable
+    );
 
-	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
-		+ "AND(b.bookmarksCount < :bookmarksCount OR "
-		+ "(b.bookmarksCount = :bookmarksCount AND b.id < :boardId)) "
-		+ "ORDER BY b.bookmarksCount DESC , b.id DESC")
-	Slice<Board> findByAuthorEmailByBookmarksCount(
-		@Param("authorEmail") String authorEmail,
-		@Param("bookmarksCount") Integer bookmarksCount,
-		@Param("boardId") Long boardId,
-		Pageable pageable
-	);
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname "
+        + "AND(b.bookmarksCount < :bookmarksCount OR "
+        + "(b.bookmarksCount = :bookmarksCount AND b.id < :boardId)) "
+        + "ORDER BY b.bookmarksCount DESC , b.id DESC")
+    Slice<Board> findByNicknameByBookmarksCount(
+        @Param("nickname") String nickname,
+        @Param("bookmarksCount") Integer bookmarksCount,
+        @Param("boardId") Long boardId,
+        Pageable pageable
+    );
 
-	@Query("SELECT b FROM Board b WHERE b.authorEmail = :authorEmail "
-		+ "AND(b.commentsCount < :commentsCount OR "
-		+ "(b.commentsCount = :commentsCount AND b.id < :boardId)) "
-		+ "ORDER BY b.commentsCount DESC , b.id DESC")
-	Slice<Board> findByAuthorEmailByCommentsCount(
-		@Param("authorEmail") String authorEmail,
-		@Param("commentsCount") Integer commentsCount,
-		@Param("boardId") Long boardId,
-		Pageable pageable
-	);
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname "
+        + "AND(b.commentsCount < :commentsCount OR "
+        + "(b.commentsCount = :commentsCount AND b.id < :boardId)) "
+        + "ORDER BY b.commentsCount DESC , b.id DESC")
+    Slice<Board> findByNicknameByCommentsCount(
+        @Param("nickname") String nickname,
+        @Param("commentsCount") Integer commentsCount,
+        @Param("boardId") Long boardId,
+        Pageable pageable
+    );
 
-	Board findTopByAuthorEmailOrderByCreatedAtDesc(String authorEmail);
+    long countByNickname(String nickname);
 
-	Board findTopByAuthorEmailOrderByBookmarksCountDesc(String authorEmail);
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname ORDER by b.createdAt DESC , b.id DESC")
+    Slice<Board> findByNicknameOrderByCreatedAtFirst(
+        @Param("nickname") String nickname,
+        Pageable pageable
+    );
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname ORDER BY b.bookmarksCount DESC , b.id DESC")
+    Slice<Board> findByNicknameOrderByBookmarksCountFirst(
+        @Param("nickname") String nickname,
+        Pageable pageable
+    );
 
-	Board findTopByAuthorEmailOrderByCommentsCountDesc(String authorEmail);
+    @Query("SELECT b FROM Board b WHERE b.nickname = :nickname ORDER BY b.commentsCount DESC, b.id DESC")
+    Slice<Board> findByNicknameOrderByCommentsCountFirst(
+        @Param("nickname") String nickname,
+        Pageable pageable
+    );
 
-	long countByAuthorEmail(String authorEmail);
+
+
+
 
 }
