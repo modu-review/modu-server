@@ -14,4 +14,9 @@ public class UserService {
     User user = userRepository.findByEmail(email).get();
     return user.getId();
   }
+
+  public Long findUserIdByNickname(String nickname) {
+    User user = userRepository.findByNickname(nickname).get();
+    return user.getId();
+  }
 }
