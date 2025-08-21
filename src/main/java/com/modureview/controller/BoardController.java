@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,22 +49,26 @@ public class BoardController {
   //완료
   @PostMapping("/reviews/new")
   public ResponseEntity<Map<String, String>> saveBoard(
-      @RequestBody BoardSaveRequest boardSaveRequest) {
+      @RequestBody BoardSaveRequest boardSaveRequest,
+      @CookieValue(name = "userNickname") String nickname) {
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> imageUuids = boardService.extractImageInfo(boardSaveRequest);
-    boardService.saveBoard(boardSaveRequest, imageUuids);
+    boardService.saveBoard(boardSaveRequest,nickname, imageUuids);
     Map<String, String> response = Map.of("message", "게시글이 성공적으로 등록되었습니다.");
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @PatchMapping("/reviews/{boardId}")
-  public ResponseEntity<?> updateBoard(@PathVariable Long boardId, @RequestBody BoardSaveRequest boardSaveRequest) {
+  public ResponseEntity<?> updateBoard(
+      @PathVariable Long boardId,
+      @RequestBody BoardSaveRequest boardSaveRequest,
+      @CookieValue(name = "userNickname") String nickname) {
     log.info("boardId == {}", boardId);
     log.info("boardSaveRequest == {}", boardSaveRequest);
     boardService.findBoard(boardId);
     boardService.htmlSanitizer(boardSaveRequest);
     List<String> images = boardService.extractImageInfo(boardSaveRequest);
-    boardService.updateBoard(boardSaveRequest, images,boardId);
+    boardService.updateBoard(boardSaveRequest, nickname, images,boardId);
 
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

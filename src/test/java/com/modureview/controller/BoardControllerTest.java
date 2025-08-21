@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import jakarta.servlet.http.Cookie;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -93,7 +94,6 @@ class BoardControllerTest {
     req.put("title", "악성 스크립트 테스트");
     req.put("content", "<p>정상</p><script>alert('x')</script>");
     req.put("category", "car");
-    req.put("nickname", email.split("@")[0]);
 
     String json = objectMapper.writeValueAsString(req);
 
@@ -102,6 +102,7 @@ class BoardControllerTest {
             org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/reviews/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
+                .cookie(new Cookie("userNickname", email.split("@")[0]))
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -118,7 +119,6 @@ class BoardControllerTest {
     req.put("title", "수정 제목");
     req.put("content", "<img src=\"a.png\" onerror=\"alert(1)\"/>");
     req.put("category", "car");
-    req.put("nickname", email.split("@")[0]);
 
     String json = objectMapper.writeValueAsString(req);
 
@@ -127,6 +127,7 @@ class BoardControllerTest {
             org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/reviews/{boardId}", board.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
+                .cookie(new Cookie("userNickname", email.split("@")[0]))
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
   }
@@ -144,7 +145,6 @@ class BoardControllerTest {
     req.put("title", "새 게시글 제목");
     req.put("content", "<p>내용</p><img src=\"https://cdn.example.com/uuid-1111.png\"/>");
     req.put("category", "car");
-    req.put("nickname", email.split("@")[0]);
 
     String json = objectMapper.writeValueAsString(req);
 
@@ -153,6 +153,7 @@ class BoardControllerTest {
             org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/reviews/new")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
+                .cookie(new Cookie("userNickname", email.split("@")[0]))
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated())
         .andReturn();
@@ -176,7 +177,6 @@ class BoardControllerTest {
     req.put("title", "수정된 제목");
     req.put("content", "<p>수정된 내용</p><img src=\"https://cdn.example.com/uuid-2222.jpg\"/>");
     req.put("category", "car");
-    req.put("nickname", email.split("@")[0]);
 
     String json = objectMapper.writeValueAsString(req);
 
@@ -184,7 +184,8 @@ class BoardControllerTest {
     mockMvc.perform(
             org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch("/reviews/{boardId}", board.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content(json)
+                .cookie(new Cookie("userNickname", email.split("@")[0])))
         .andExpect(status().isNoContent());
 
     // then: DB 반영 확인

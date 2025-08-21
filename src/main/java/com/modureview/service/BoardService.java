@@ -73,7 +73,7 @@ public class BoardService {
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .nickname(findBoard.getNickname())
+        .author_nickname(findBoard.getNickname())
         .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
         .build();
@@ -135,8 +135,8 @@ public class BoardService {
   }
 
   @Transactional
-  public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
-    User user = userRepository.findByNickname(request.nickname()).get();
+  public void saveBoard(BoardSaveRequest request,String nickname, List<String> imageUuids) {
+    User user = userRepository.findByNickname(nickname).get();
     String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
@@ -151,7 +151,7 @@ public class BoardService {
         .content(request.content())
         .user(user)
         .preview(preview)
-        .nickname(request.nickname())
+        .nickname(nickname)
         .imageUrl(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
@@ -216,8 +216,8 @@ public class BoardService {
   }
 
   @Transactional
-  public void updateBoard(BoardSaveRequest request, List<String> imageUuids, Long boardId) {
-    User user = userRepository.findByNickname(request.nickname()).get();
+  public void updateBoard(BoardSaveRequest request, String nickname, List<String> imageUuids, Long boardId) {
+    User user = userRepository.findByNickname(nickname).get();
     String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
@@ -233,7 +233,7 @@ public class BoardService {
     foundBoard.setContent(request.content());
     foundBoard.setUser(user);
     foundBoard.setPreview(preview);
-    foundBoard.setNickname(request.nickname());
+    foundBoard.setNickname(nickname);
     foundBoard.setImageUrl(thumbnail);
     foundBoard.setCategory(Category.valueOf(request.category()));
 

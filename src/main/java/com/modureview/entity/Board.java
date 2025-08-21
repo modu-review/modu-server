@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,7 +44,12 @@ public class Board {
   private String title;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(
+      name = "user_id",
+      referencedColumnName = "id",
+      nullable = false,
+      foreignKey = @ForeignKey(name = "fk_board_user")
+  )
   @JsonBackReference
   private User user;
 
@@ -59,6 +65,8 @@ public class Board {
   @Lob
   @Column(columnDefinition = "TEXT")
   private String content;
+
+  private String author_nickname;
 
   @Lob
   @Column(columnDefinition = "TEXT")
