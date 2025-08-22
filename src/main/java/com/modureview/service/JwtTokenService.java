@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@lombok.RequiredArgsConstructor
 public class JwtTokenService {
 
   @Value("${jwt.secret}")
@@ -34,12 +35,18 @@ public class JwtTokenService {
   }
   private final Long accessTokenExpire = 60 * 60L;
   private final Long refreshTokenExpire = 30 * 24 * 60 * 60L;
+  private final com.modureview.repository.UserRepository userRepository;
 
   public List<ResponseCookie> loginTokenIssue(String userEmail) {
+    String nickname = userRepository.findByEmail(userEmail)
+        .map(com.modureview.entity.User::getNickname)
+        .orElse("익명");
+
     return List.of(
         createAccessToken(userEmail),
         createRefreshToken(userEmail),
-        createUserEmailCookie(userEmail)
+        createUserEmailCookie(userEmail),
+        createNicknameCookie(nickname)
     );
   }
 
@@ -55,6 +62,11 @@ public class JwtTokenService {
 
   public ResponseCookie createUserEmailCookie(String userEmail) {
     return createCookie("userEmail", userEmail, refreshTokenExpire, true);
+  }
+
+  public ResponseCookie createNicknameCookie(String nickname) {
+    // nickname may contain non-ASCII (e.g., Korean); ensure cookie-safe value
+    return createCookie("userNickname", nickname, refreshTokenExpire, false);
   }
 
   public void validateToken(String token) {
@@ -91,7 +103,18 @@ public class JwtTokenService {
   }
 
   private ResponseCookie createCookie(String name, String value, long maxAge, boolean httpOnly) {
-    return ResponseCookie.from(name, value)
+    String safeValue = value;
+    // RFC6265 allows only US-ASCII in cookie value; encode when non-ASCII is present
+    if (!isAscii(value)) {
+      try {
+        safeValue = java.net.URLEncoder.encode(value, java.nio.charset.StandardCharsets.UTF_8);
+      } catch (Exception e) {
+        // Fallback to empty if encoding somehow fails
+        safeValue = "";
+      }
+    }
+
+    return ResponseCookie.from(name, safeValue)
         .httpOnly(httpOnly)
         .secure(true)
         .sameSite("LAX")
@@ -99,6 +122,13 @@ public class JwtTokenService {
         .maxAge(maxAge)
         .domain(".modu-review.com")
         .build();
+  }
+
+  private boolean isAscii(String s) {
+    for (int i = 0; i < s.length(); i++) {
+      if (s.charAt(i) > 0x7F) return false;
+    }
+    return true;
   }
 
   public Optional<String> extractCookie(HttpServletRequest request, String cookieName) {
@@ -131,4 +161,3 @@ public class JwtTokenService {
         .build();
   }
 }
-
