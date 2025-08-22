@@ -24,6 +24,7 @@ public class BestReviewController {
 
   @GetMapping("/reviews/best")
   public ResponseEntity<Map<String, Map<String, Object>>> getBestReviews() {
+    log.info("집계 반환 로직 시작");
     Map<String, Map<String, Object>> finalResponse =
         Arrays.stream(Category.values())
             .collect(Collectors.toMap(
@@ -36,6 +37,7 @@ public class BestReviewController {
                   );
                 }
             ));
+    log.info("집계결과 반환 : {}", finalResponse.toString());
     return ResponseEntity.ok(finalResponse);
   }
 }

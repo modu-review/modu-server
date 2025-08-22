@@ -35,6 +35,7 @@ public class BestReviewsService {
     Set<String> boardIds = redisTemplate.opsForZSet().reverseRange(zsetKey, 0, -1);
 
     if (boardIds == null || boardIds.isEmpty()) {
+      log.info("redis에 저장된 집계 값이 없습니다.");
       return Collections.emptyList();
     }
 
