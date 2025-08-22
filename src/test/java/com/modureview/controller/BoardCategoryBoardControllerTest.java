@@ -49,7 +49,7 @@ class BoardCategoryBoardControllerTest {
       boards.add(
           Board.builder()
               .title("테스트" + i)
-              .authorEmail("작성자" + i)
+              .nickname("작성자" + i)
               .category(Category.car)
               .content("<p>내용 예시 " + i + "<p/>")
               .commentsCount(i + i)
@@ -70,8 +70,8 @@ class BoardCategoryBoardControllerTest {
   void Category_success_reviews_recent() throws Exception {
     long startTime = System.nanoTime();
     MvcResult mvcResult = mockMvc.perform(get("/reviews")
-            .param("category", "car")
-            .param("cursorId", "0")
+            .param("categoryId", "car")
+            .param("cursor", "0")
             .param("sort", "recent")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
@@ -94,8 +94,8 @@ class BoardCategoryBoardControllerTest {
     log.info("prettyJson == {}", prettyJson);
 
     MvcResult mvcResult1 = mockMvc.perform(get("/reviews")
-            .param("category", "car")
-            .param("cursorId", "25")
+            .param("categoryId", "car")
+            .param("cursor", "25")
             .param("sort", "recent")
             .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())

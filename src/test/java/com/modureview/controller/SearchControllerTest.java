@@ -47,7 +47,7 @@ class SearchControllerTest {
       boards.add(
           Board.builder()
               .title("테스트" + i)
-              .authorEmail("작성자" + i)
+              .nickname("작성자" + i)
               .category(Category.car)
               .content("<p>내용 예시 " + i + "<p/>")
               .commentsCount(i + i)
@@ -57,7 +57,7 @@ class SearchControllerTest {
       boards.add(
           Board.builder()
               .title("target_1")
-              .authorEmail("target_1")
+              .nickname("target_1")
               .category(Category.car)
               .content("<p> target_1 <p/>")
               .commentsCount(24)
@@ -68,7 +68,7 @@ class SearchControllerTest {
         boards.add(
             Board.builder()
                 .title("테스트" + i)
-                .authorEmail("작성자" + i)
+                .nickname("작성자" + i)
                 .category(Category.car)
                 .content("<p>내용 예시 " + i + "<p/>")
                 .commentsCount(i + i)
@@ -78,7 +78,7 @@ class SearchControllerTest {
         boards.add(
             Board.builder()
                 .title("target_2")
-                .authorEmail("target_2")
+                .nickname("target_2")
                 .category(Category.car)
                 .content("<p> target_2 <p/>")
                 .commentsCount(22)
@@ -88,7 +88,7 @@ class SearchControllerTest {
         boards.add(
             Board.builder()
                 .title("target_3")
-                .authorEmail("target_4")
+                .nickname("target_4")
                 .category(Category.car)
                 .content("<p> Target_5 <p/>")
                 .commentsCount(22)
@@ -141,7 +141,7 @@ class SearchControllerTest {
             get("/search")
                 .param("keyword", "테스트")
                 .param("page", "1")
-                .param("sort", "hotcomment")
+                .param("sort", "hotcomments")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn();
@@ -171,7 +171,7 @@ class SearchControllerTest {
             get("/search")
                 .param("keyword", "테스트")
                 .param("page", "2")
-                .param("sort", "hotbookmark")
+                .param("sort", "hotbookmarks")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn();
@@ -201,7 +201,7 @@ class SearchControllerTest {
             get("/search")
                 .param("keyword", "장충동왕족발보쌈")
                 .param("page", "2")
-                .param("sort", "hotbookmark")
+                .param("sort", "hotbookmarks")
                 .accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andReturn();
@@ -223,4 +223,3 @@ class SearchControllerTest {
   }
 
 }
-

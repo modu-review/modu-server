@@ -48,13 +48,13 @@ class MyPageServiceUnitTest {
   @Test
   @DisplayName("존재하지 않는 사용자가 북마크 페이지 조회시 USER_NOT_FOUND 예외 발생")
   void testMyPageBookmark_UserNotFound() {
-    String email = "nouser@example.com";
+    String nickname = "nouser";
     int page = 1;
 
-    when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+    when(userRepository.findByNickname(nickname)).thenReturn(Optional.empty());
 
     CustomException ex = assertThrows(CustomException.class,
-        () -> service.myPageBookmark(email, page));
+        () -> service.myPageBookmark(nickname, page));
 
     log.info("ex.getErrorCode() == {}", ex.getErrorCode());
   }
@@ -62,25 +62,26 @@ class MyPageServiceUnitTest {
   @Test
   @DisplayName("존재하는 사용자가 북마크 페이지 조회 시 정상 결과 반환")
   void testMyPageBookmark_Success() {
-    String email = "user@example.com";
+    String nickname = "user";
     int pageNumber = 1;
     int pageSize = 6;
 
     User newUser = User.builder()
         .email("user@example.com")
+        .nickname(nickname)
         .build();
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(newUser));
+    when(userRepository.findByNickname(nickname)).thenReturn(Optional.of(newUser));
 
     List<Long> bookmarkIds = List.of(10L, 20L, 30L);
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize,
         Sort.by(Sort.Direction.DESC, "createdAt"));
     Page<Long> idPage = new PageImpl<>(bookmarkIds, pageable, bookmarkIds.size());
-    when(myPageBookMarkRepository.findBookMarksByNickname(email, pageable))
+    when(myPageBookMarkRepository.findBookMarksByNickname(nickname, pageable))
         .thenReturn(idPage);
 
     Board b1 = Board.builder()
         .title("타이틀1")
-        .authorEmail(email)
+        .nickname(nickname)
         .category(Category.book)
         .content("내용1")
         .commentsCount(0)
@@ -90,7 +91,7 @@ class MyPageServiceUnitTest {
 
     Board b2 = Board.builder()
         .title("타이틀2")
-        .authorEmail(email)
+        .nickname(nickname)
         .category(Category.book)
         .content("내용2")
         .commentsCount(0)
@@ -100,7 +101,7 @@ class MyPageServiceUnitTest {
 
     Board b3 = Board.builder()
         .title("타이틀3")
-        .authorEmail(email)
+        .nickname(nickname)
         .category(Category.book)
         .content("내용3")
         .commentsCount(0)
@@ -111,7 +112,7 @@ class MyPageServiceUnitTest {
     when(myPageRepository.findAllById(bookmarkIds))
         .thenReturn(List.of(b2, b3, b1));
 
-    Page<Board> result = service.myPageBookmark(email, pageNumber);
+    Page<Board> result = service.myPageBookmark(nickname, pageNumber);
 
     List<Long> resultIds = result.getContent().stream()
         .map(Board::getId)

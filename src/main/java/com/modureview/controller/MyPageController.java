@@ -1,5 +1,7 @@
 package com.modureview.controller;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -30,7 +32,8 @@ public class MyPageController {
 		@RequestParam(name = "page", defaultValue = "0") int page
 	) {
 
-		Page<Board> boardPage = myPageService.myPageBoard(nickname, page);
+		String decoded = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+		Page<Board> boardPage = myPageService.myPageBoard(decoded, page);
 		List<SliceBoardResponse> listMyPage = boardPage.getContent().stream()
 			.map(SliceBoardResponse::fromEntity)
 			.toList();
@@ -47,7 +50,8 @@ public class MyPageController {
 		@CookieValue(name = "userNickname") String nickname,
 		@RequestParam(name = "page", defaultValue = "0") int page
 	) {
-		Page<Board> boardMyPage = myPageService.myPageBookmark(nickname, page);
+		String decoded = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+		Page<Board> boardMyPage = myPageService.myPageBookmark(decoded, page);
 		List<SliceBoardResponse> listMyPage = boardMyPage.getContent().stream()
 			.map(SliceBoardResponse::fromEntity)
 			.toList();
