@@ -43,13 +43,15 @@ class MyPageServiceTest {
   @BeforeEach
   void setUp() {
     User newUser = User.builder()
-        .email("TargetEmail")
+        .email("target@example.com")
+        .nickname("target")
         .build();
 
     User user = userRepository.save(newUser);
 
     User notTargetUser = User.builder()
-        .email("NotTargetEmail")
+        .email("notarget@example.com")
+        .nickname("notarget")
         .build();
 
     User NotTargetUser = userRepository.save(notTargetUser);
@@ -58,13 +60,13 @@ class MyPageServiceTest {
     for (int i = 0; i < 30; i++) {
       if (i % 2 != 0) {
         boards.add(
-            Board.builder().title("TestTitle" + i).user(NotTargetUser).authorEmail("NotTargetEmail")
+            Board.builder().title("TestTitle" + i).user(NotTargetUser).nickname(NotTargetUser.getNickname())
                 .content("<p>내용 예시 " + i + "</p>")
                 .commentsCount(ThreadLocalRandom.current().nextInt(1, 101))
                 .bookmarksCount(ThreadLocalRandom.current().nextInt(1, 101)).build());
       } else {
         boards.add(
-            Board.builder().user(user).authorEmail(newUser.getEmail())
+            Board.builder().user(user).nickname(user.getNickname())
                 .content("<p>내용 예시 " + i + "</p>")
                 .commentsCount(ThreadLocalRandom.current().nextInt(1, 101))
                 .bookmarksCount(ThreadLocalRandom.current().nextInt(1, 101)).build());
@@ -81,7 +83,7 @@ class MyPageServiceTest {
   @Test
   @DisplayName("작성자가 올바른 사람인지 확인")
   void MyPage_success() throws Exception {
-    String email = "TargetEmail";
+    String email = "target";
     int page = 1;
     long startTime = System.nanoTime();
     Page<Board> rep = myPageService.myPageBoard(email, page);
@@ -96,4 +98,3 @@ class MyPageServiceTest {
     log.info("realJson == {}", realJson);
   }
 }
-
