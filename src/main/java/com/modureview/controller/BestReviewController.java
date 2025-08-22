@@ -36,6 +36,7 @@ public class BestReviewController {
                   );
                 }
             ));
+    log.info("집계결과 반환 : {}", finalResponse.toString());
     return ResponseEntity.ok(finalResponse);
   }
 }
