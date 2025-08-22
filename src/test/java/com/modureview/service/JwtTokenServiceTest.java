@@ -49,8 +49,8 @@ class JwtTokenServiceTest {
   void loginTokenIssueCheck() {
     List<ResponseCookie> cookies = jwtTokenService.loginTokenIssue("user@domain.com");
 
-    assertThat(cookies).hasSize(3);
+    assertThat(cookies).hasSize(4);
     assertThat(cookies.stream().map(ResponseCookie::getName).toList())
-        .containsExactlyInAnyOrder("accessToken", "refreshToken", "userEmail");
+        .containsExactlyInAnyOrder("accessToken", "refreshToken", "userEmail", "userNickname");
   }
 }

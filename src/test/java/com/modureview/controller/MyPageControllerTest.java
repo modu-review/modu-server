@@ -44,27 +44,32 @@ class MyPageControllerTest {
   @Autowired
   private UserRepository userRepository;
 
+  private String targetNickname;
+
   @BeforeEach
   void setUp() {
 
     User newUser = userRepository.save(User.builder()
-        .email("작성자")
+        .email("writer@test.com")
+        .nickname("작성자")
         .build());
     User targetUser = userRepository.save(User.builder()
-        .email("test")
+        .email("target@test.com")
+        .nickname("테스트닉")
         .build());
+    targetNickname = targetUser.getNickname();
 
     List<Board> boards = new ArrayList<>();
     for (int i = 0; i < 30; i++) {
       if (i % 2 != 0) {
         boards.add(
-            Board.builder().title("TestTitle" + i).user(newUser).authorEmail(newUser.getEmail())
+            Board.builder().title("TestTitle" + i).user(newUser).nickname(newUser.getNickname())
                 .content("<p>내용 예시 " + i + "</p>")
                 .commentsCount(ThreadLocalRandom.current().nextInt(1, 101))
                 .bookmarksCount(ThreadLocalRandom.current().nextInt(1, 101)).build());
       } else {
         boards.add(
-            Board.builder().user(targetUser).authorEmail(targetUser.getEmail())
+            Board.builder().user(targetUser).nickname(targetUser.getNickname())
                 .content("<p>내용 예시 " + i + "</p>")
                 .commentsCount(ThreadLocalRandom.current().nextInt(1, 101))
                 .bookmarksCount(ThreadLocalRandom.current().nextInt(1, 101)).build());
@@ -84,7 +89,7 @@ class MyPageControllerTest {
     long startTime = System.currentTimeMillis();
     MvcResult mvcResult = mockMvc.perform(
             get("/users/me/reviews")
-                .cookie(new Cookie("userEmail", "test"))
+                .cookie(new Cookie("userNickname", targetNickname))
                 .param("page", "1")
         )
         .andExpect(status().isOk())

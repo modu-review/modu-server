@@ -73,8 +73,7 @@ public class BoardService {
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .author_email(findBoard.getAuthorEmail())
-        .author_id(findBoard.getAuthorEmail().split("@")[0])
+        .author_nickname(findBoard.getNickname())
         .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
         .build();
@@ -136,8 +135,8 @@ public class BoardService {
   }
 
   @Transactional
-  public void saveBoard(BoardSaveRequest request, List<String> imageUuids) {
-    User user = userRepository.findByEmail(request.authorEmail()).get();
+  public void saveBoard(BoardSaveRequest request,String nickname, List<String> imageUuids) {
+    User user = userRepository.findByNickname(nickname).get();
     String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
@@ -152,7 +151,7 @@ public class BoardService {
         .content(request.content())
         .user(user)
         .preview(preview)
-        .authorEmail(request.authorEmail())
+        .nickname(nickname)
         .imageUrl(thumbnail)
         .category(Category.valueOf(request.category()))
         .build();
@@ -217,8 +216,8 @@ public class BoardService {
   }
 
   @Transactional
-  public void updateBoard(BoardSaveRequest request, List<String> imageUuids, Long boardId) {
-    User user = userRepository.findByEmail(request.authorEmail()).get();
+  public void updateBoard(BoardSaveRequest request, String nickname, List<String> imageUuids, Long boardId) {
+    User user = userRepository.findByNickname(nickname).get();
     String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
@@ -234,7 +233,7 @@ public class BoardService {
     foundBoard.setContent(request.content());
     foundBoard.setUser(user);
     foundBoard.setPreview(preview);
-    foundBoard.setAuthorEmail(request.authorEmail());
+    foundBoard.setNickname(nickname);
     foundBoard.setImageUrl(thumbnail);
     foundBoard.setCategory(Category.valueOf(request.category()));
 

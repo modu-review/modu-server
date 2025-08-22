@@ -38,7 +38,7 @@ class SearchServiceTest {
       boards.add(
           Board.builder()
               .title("테스트" + i)
-              .authorEmail("작성자" + i)
+              .nickname("작성자" + i)
               .category(Category.car)
               .content("<p>내용 예시 " + i + "<p/>")
               .commentsCount(i + i)
@@ -48,7 +48,7 @@ class SearchServiceTest {
       boards.add(
           Board.builder()
               .title("target_1")
-              .authorEmail("target_1")
+              .nickname("target_1")
               .category(Category.car)
               .content("<p> target_1 <p/>")
               .commentsCount(24)
@@ -59,7 +59,7 @@ class SearchServiceTest {
         boards.add(
             Board.builder()
                 .title("테스트" + i)
-                .authorEmail("작성자" + i)
+                .nickname("작성자" + i)
                 .category(Category.car)
                 .content("<p>내용 예시 " + i + "<p/>")
                 .commentsCount(i + i)
@@ -69,7 +69,7 @@ class SearchServiceTest {
         boards.add(
             Board.builder()
                 .title("target_2")
-                .authorEmail("target_2")
+                .nickname("target_2")
                 .category(Category.car)
                 .content("<p> target_2 <p/>")
                 .commentsCount(22)
@@ -79,7 +79,7 @@ class SearchServiceTest {
         boards.add(
             Board.builder()
                 .title("target_3")
-                .authorEmail("target_4")
+                .nickname("target_4")
                 .category(Category.car)
                 .content("<p> Target_5 <p/>")
                 .commentsCount(22)

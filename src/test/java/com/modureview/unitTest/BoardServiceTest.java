@@ -50,7 +50,7 @@ public class BoardServiceTest {
     <img src="https://cdn.example.com/uuid1-aaaa.jpg" />
     <img src="https://cdn.example.com/uuid2-bbbb.png" />
   """;
-    BoardSaveRequest request = new BoardSaveRequest("제목", html, "car", "testuser@example.com");
+    BoardSaveRequest request = new BoardSaveRequest("제목", html, "car");
 
     // when
     List<String> uuids = boardService.extractImageInfo(request);
@@ -66,11 +66,13 @@ public class BoardServiceTest {
   public void boardSaveTest() {
     // given
     String email = "testuser@example.com";
+    String nickname = "testuser";
     User mockUser = User.builder()
         .email(email)
+        .nickname(nickname)
         .build();
 
-    when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
+    when(userRepository.findByNickname(nickname)).thenReturn(Optional.of(mockUser));
 
     String html = """
         <p>본문입니다</p>
@@ -81,13 +83,12 @@ public class BoardServiceTest {
     BoardSaveRequest request = new BoardSaveRequest(
         "테스트 제목",
         html,
-        "car",
-        email
+        "car"
     );
 
     // when
     List<String> uuids = boardService.extractImageInfo(request);
-    boardService.saveBoard(request, uuids);
+    boardService.saveBoard(request, nickname, uuids);
 
     // then
     ArgumentCaptor<Board> captor = ArgumentCaptor.forClass(Board.class);
@@ -97,7 +98,7 @@ public class BoardServiceTest {
 
     assertEquals("테스트 제목", savedBoard.getTitle());
     assertEquals(Category.car, savedBoard.getCategory());
-    assertEquals(email, savedBoard.getAuthorEmail());
+    assertEquals(nickname, savedBoard.getNickname());
 
     List<BoardImage> images = savedBoard.getImages();
     assertEquals(2, images.size());

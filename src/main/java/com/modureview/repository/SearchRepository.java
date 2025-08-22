@@ -20,7 +20,7 @@ public interface SearchRepository extends JpaRepository<Board, Long> {
             FROM Board b
             WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
                OR b.content      LIKE CONCAT('%', :keyword, '%')
-               OR LOWER(b.authorEmail) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(b.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
           """
       ,
       countQuery = """
@@ -28,7 +28,7 @@ public interface SearchRepository extends JpaRepository<Board, Long> {
             FROM Board b
             WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
                OR b.content      LIKE CONCAT('%', :keyword, '%')
-               OR LOWER(b.authorEmail) LIKE LOWER(CONCAT('%', :keyword, '%'))
+               OR LOWER(b.nickname) LIKE LOWER(CONCAT('%', :keyword, '%'))
           """)
   Page<Board> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 

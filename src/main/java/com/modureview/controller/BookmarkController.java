@@ -5,6 +5,8 @@ import com.modureview.dto.response.BookmarkDetailResponse;
 import com.modureview.service.BoardService;
 import com.modureview.service.BookmarkService;
 import com.modureview.service.UserService;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,32 +31,34 @@ public class BookmarkController {
   @GetMapping("/reviews/{reviewId}/bookmarks")
   public ResponseEntity<BookmarkDetailResponse> getBookMarkDetail(
       @PathVariable Long reviewId,
-      @CookieValue(name = "userEmail", required = false, defaultValue = "null") String email) {
-    BookmarkDetailResponse bookMarkDetailResponse = bookmarkService.bookmarkDetail(reviewId, email);
+      @CookieValue(name = "userNickname" , required = false , defaultValue = "null") String nickname) {
+    String decoded = "null".equals(nickname) ? nickname : URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+    BookmarkDetailResponse bookMarkDetailResponse = bookmarkService.bookmarkDetail(reviewId, decoded);
     return ResponseEntity.ok(bookMarkDetailResponse);
 
   }
 
   @PostMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> addBookmark(@PathVariable Long reviewId,
-     @RequestBody BookmarkRequest bookmarkRequest) {
+      @CookieValue (name = "userNickname" , required = true , defaultValue = "null")String nickname) {
     log.info("reviewId == {}", reviewId);
-    log.info("bookmarkRequest == {}", bookmarkRequest);
-    String userEmail = bookmarkRequest.userEmail();
+
+    String decoded = URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+    log.info("nickname == {}", decoded);
     boardService.findBoard(reviewId);
-    Long userId = userService.findUserId(userEmail);
-    bookmarkService.saveBookmark(reviewId, userId, userEmail);
+    Long userId = userService.findUserIdByNickname(decoded);
+    bookmarkService.saveBookmark(reviewId, userId, decoded);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @DeleteMapping("reviews/{reviewId}/bookmarks")
   public ResponseEntity<?> deleteBookmark(@PathVariable Long reviewId,
-     @RequestBody BookmarkRequest bookmarkRequest) {
+      @CookieValue(name = "userNickname" , required = false ,defaultValue = "null") String nickname) {
     log.info("reviewId == {}", reviewId);
-    log.info("bookmarkRequest == {}", bookmarkRequest);
-    String userEmail = bookmarkRequest.userEmail();
-    bookmarkService.deleteBookmark(reviewId, userEmail);
+    String decoded = "null".equals(nickname) ? nickname : URLDecoder.decode(nickname, StandardCharsets.UTF_8);
+    log.info("nickname == {}", decoded);
+    bookmarkService.deleteBookmark(reviewId, decoded);
 
     return new ResponseEntity<>(HttpStatus.OK);
   }

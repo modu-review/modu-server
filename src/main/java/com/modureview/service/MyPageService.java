@@ -22,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+
+//email -> 완료
 @Slf4j
 @Service
 @Transactional
@@ -32,24 +34,24 @@ public class MyPageService {
   private final MyPageRepository myPageRepository;
   private final MyPageBookMarkRepository myPageBookMarkRepository;
 
-  public Page<Board> myPageBoard(String email, int page) {
+  public Page<Board> myPageBoard(String nickname, int page) {
     Sort sortCriteria = Sort.by(Direction.DESC, "createdAt");
     Pageable pageable = PageRequest.of(page - 1, 6, sortCriteria);
 
-    if (userRepository.findByEmail(email).isPresent()) {
-      return myPageRepository.findBoardByAuthorEmail(email, pageable);
+    if (userRepository.findByNickname(nickname).isPresent()) {
+      return myPageRepository.findBoardByNickname(nickname, pageable);
     }
     throw new CustomException(UserErrorCode.USER_NOT_FOUND);
   }
 
-  public Page<Board> myPageBookmark(String email, int page) {
+  public Page<Board> myPageBookmark(String nickname, int page) {
     Sort sortCriteria = Sort.by(Direction.DESC, "createdAt");
     Pageable pageable = PageRequest.of(page - 1, 6, sortCriteria);
-    if (userRepository.findByEmail(email).isEmpty()) {
+    if (userRepository.findByNickname(nickname).isEmpty()) {
       throw new CustomException(UserErrorCode.USER_NOT_FOUND);
     }
 
-    Page<Long> boardIdPage = myPageBookMarkRepository.findBookMarksByEmail(email, pageable);
+    Page<Long> boardIdPage = myPageBookMarkRepository.findBookMarksByNickname(nickname, pageable);
     List<Long> boardIds = boardIdPage.getContent();
     List<Board> boardList = myPageRepository.findAllById(boardIds);
     Map<Long, Board> boardMap = boardList.stream()
@@ -59,9 +61,5 @@ public class MyPageService {
         .filter(Objects::nonNull)
         .toList();
     return new PageImpl<>(sortedBoards, pageable, boardIdPage.getTotalElements());
-
-
   }
-
-
 }

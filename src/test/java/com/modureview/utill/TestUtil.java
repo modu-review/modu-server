@@ -9,6 +9,7 @@ public class TestUtil {
   public User newUser(String email) {
     return User.builder()
         .email(email)
+        .nickname(email.contains("@") ? email.substring(0, email.indexOf('@')) : email)
         .build();
   }
 
@@ -16,7 +17,7 @@ public class TestUtil {
     return Board.builder()
         .title("테스트")
         .user(newUser)
-        .authorEmail(newUser.getEmail())
+        .nickname(newUser.getNickname())
         .category(Category.car)
         .content("<p>내용 예시</p>")
         .commentsCount(10)

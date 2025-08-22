@@ -23,59 +23,47 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @Slf4j
 public class UserReviewsService {
-	private final UserReviewsRepository userReviewsRepository;
-	private final BoardRepository boardRepository;
+    private final UserReviewsRepository userReviewsRepository;
+    private final BoardRepository boardRepository;
 
-	public Slice<Board> userReviews(String nickname, Long cursorId, String sort) {
-		Pageable pageable = PageRequest.of(0, 6);
-		log.info("nickname == {}", nickname);
-		log.info("cursorId == {}", cursorId);
-		log.info("sort == {}", sort);
+    public Slice<Board> userReviews(String nickname, Long cursorId, String sort)
+    {
 
-		Board targetBoard;
+        Pageable pageable = PageRequest.of(0, 6);
+        log.info("nickname == {}", nickname);
+        log.info("cursorId == {}", cursorId);
+        log.info("sort == {}", sort);
 
-		if (cursorId == null || cursorId == 0L) {
-			switch (sort) {
-				case "recent":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
-					break;
-				case "hotbookmarks":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByBookmarksCountDesc(nickname);
-					break;
-				case "hotcomments":
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCommentsCountDesc(nickname);
-					break;
-				default:
-					targetBoard = userReviewsRepository.findTopByAuthorEmailOrderByCreatedAtDesc(nickname);
-			}
-			
-			// 사용자의 게시글이 없는 경우 빈 Slice 반환
-			if (targetBoard == null) {
-				return new SliceImpl<>(new ArrayList<>(), pageable, false);
-			}
-			
-		} else {
-			targetBoard = boardRepository.findById(cursorId)
-				.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
-		}
-		switch (sort) {
-			case "recent":
-				return userReviewsRepository.findByAuthorEmailByCreatedAt(nickname, targetBoard.getCreatedAt(),
-					targetBoard.getId(), pageable);
-			case "hotbookmarks":
-				return userReviewsRepository.findByAuthorEmailByBookmarksCount(nickname,
-					targetBoard.getBookmarksCount(), targetBoard.getId(), pageable);
-			case "hotcomments":
-				return userReviewsRepository.findByAuthorEmailByCommentsCount(nickname,
-					targetBoard.getCommentsCount(), targetBoard.getId(), pageable);
+        boolean isFirstPage = (cursorId == null || cursorId == 0L);
 
-		}
-		return userReviewsRepository.findByAuthorEmailByCreatedAt(nickname, targetBoard.getCreatedAt(),
-			targetBoard.getId(), pageable);
-	}
+        if (isFirstPage) {
+            return switch (sort) {
+                case "hotbookmarks" -> userReviewsRepository.findByNicknameOrderByBookmarksCountFirst(nickname, pageable);
+                case "hotcomments" -> userReviewsRepository.findByNicknameOrderByCommentsCountFirst(nickname, pageable);
+                case "recent" -> userReviewsRepository.findByNicknameOrderByCreatedAtFirst(nickname, pageable)
+                ;
+                default -> userReviewsRepository.findByNicknameOrderByCreatedAtFirst(nickname, pageable)
+                ;
+            };
+        } else {
+            Board anchor = boardRepository.findById(cursorId)
+                .orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
 
-	public long countByAuthorEmail(String authorEmail) {
-		return userReviewsRepository.countByAuthorEmail(authorEmail);
-	}
+            return switch (sort) {
+                case "hotbookmarks" -> userReviewsRepository.findByNicknameByBookmarksCount(
+                    nickname, anchor.getBookmarksCount(), anchor.getId(), pageable);
+                case "hotcomments" -> userReviewsRepository.findByNicknameByCommentsCount(
+                    nickname, anchor.getCommentsCount(), anchor.getId(), pageable);
+                case "recent" -> userReviewsRepository.findByNicknameByCreatedAt
+                    (
+                        nickname, anchor.getCreatedAt(), anchor.getId(), pageable);
+                default -> userReviewsRepository.findByNicknameByCreatedAt(
+                    nickname, anchor.getCreatedAt(), anchor.getId(), pageable);
+            };
+        }
+    }
 
+    public long countByNickname(String nickname) {
+        return userReviewsRepository.countByNickname(nickname);
+    }
 }

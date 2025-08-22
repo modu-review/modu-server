@@ -64,7 +64,9 @@ class CommentControllerTest {
   @Test
   @DisplayName("save comment결과")
   void saveComment() {
-    CommentSaveRequest commentSaveRequest = new CommentSaveRequest("user1@example.com", food,
+    // 사전 준비: 유저 생성 (닉네임=user1)
+    userRepository.save(testUtil.newUser("user1@example.com"));
+    CommentSaveRequest commentSaveRequest = new CommentSaveRequest("user1", food,
         "네네 아이고아이고");
     commentController.addComment(1L, commentSaveRequest);
   }
@@ -72,7 +74,7 @@ class CommentControllerTest {
   @Test
   @DisplayName("delete 결과")
   void deleteComment() {
-    CommentDeleteRequest commentDeleteRequest = new CommentDeleteRequest("user1@example.com",1L,1L);
+    CommentDeleteRequest commentDeleteRequest = new CommentDeleteRequest("user1@example.com",1L);
 
     commentController.deleteComment(1L, commentDeleteRequest);
 
@@ -89,7 +91,7 @@ class CommentControllerTest {
       comments.add(
           Comment.builder()
               .boardId(newBoardId)
-              .userEmail(newBoard.getAuthorEmail())
+              .nickname(newBoard.getNickname())
               .content("test content" + i)
               .createdAt(LocalDateTime.now().minusMinutes(i))
               .build());

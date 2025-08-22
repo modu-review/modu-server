@@ -47,28 +47,28 @@ class UserReviewsServiceTest {
 		// user1의 게시글들
 		for (int i = 0; i < 5; i++) {
 			boards.add(
-				Board.builder()
-					.title("user1_게시글_" + i)
-					.authorEmail("user1@test.com")
-					.category(Category.book)
-					.content("<p>user1 내용 " + i + "</p>")
-					.commentsCount(i * 3)
-					.bookmarksCount(i * 5)
-					.build()
+            Board.builder()
+                .title("user1_게시글_" + i)
+                .nickname("user1")
+                .category(Category.book)
+                .content("<p>user1 내용 " + i + "</p>")
+                .commentsCount(i * 3)
+                .bookmarksCount(i * 5)
+                .build()
 			);
 		}
 
 		// user2의 게시글들 (구분용)
 		for (int i = 0; i < 3; i++) {
 			boards.add(
-				Board.builder()
-					.title("user2_게시글_" + i)
-					.authorEmail("user2@test.com")
-					.category(Category.car)
-					.content("<p>user2 내용 " + i + "</p>")
-					.commentsCount(i * 2)
-					.bookmarksCount(i * 4)
-					.build()
+            Board.builder()
+                .title("user2_게시글_" + i)
+                .nickname("user2")
+                .category(Category.car)
+                .content("<p>user2 내용 " + i + "</p>")
+                .commentsCount(i * 2)
+                .bookmarksCount(i * 4)
+                .build()
 			);
 		}
 
