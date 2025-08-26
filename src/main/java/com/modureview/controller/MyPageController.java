@@ -4,6 +4,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -67,8 +68,8 @@ public class MyPageController {
 
 	@PostMapping("/users/me/profileImage")
 	public ResponseEntity<?> uploadProfileImage(@RequestParam("profileImage") MultipartFile file) {
-		myPageService.validateImage(file);
+		String newImageUrl = myPageService.updateProfileImage(file);
 
-		return ResponseEntity.ok("");
+		return ResponseEntity.ok().body(Map.of("imageUrl", newImageUrl));
 	}
 }
