@@ -143,12 +143,12 @@ public class MyPageService {
     userRepository.findByEmail(email).ifPresent(user -> {
      user.getProfile();
    });
-    return "no-thumbnail.png";
+    return "no-profileImage.png";
   }
 
   public void deleteProfileImage(String email) {
     userRepository.findByEmail(email).ifPresent(user -> {
-      user.updateProfileImageUrl("no-thumbnail.png");
+      user.updateProfileImageUrl("no-profileImage.png");
     });
   }
 }
