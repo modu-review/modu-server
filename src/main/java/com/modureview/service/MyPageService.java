@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -69,16 +70,29 @@ public class MyPageService {
 
   }
 
-  public String updateProfileImage(MultipartFile file) {
+  public String updateProfileImage(String email, MultipartFile file) {
     validateImage(file);
     validateFileSize(file);
+    validateUser(email);
+
+    String originalFilename = file.getOriginalFilename();
+    String extension = StringUtils.getFilenameExtension(originalFilename);
+    String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
+    log.info("생성된 고유 파일명: {}", uniqueFileName);
+
 
     return "url";
   }
 
+  private void validateUser(String email) {
+    userRepository.findByEmail(email)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+    log.info("사용자 확인 완료 = {}", email);
+  }
+
   private void validateImage(MultipartFile file) {
     String fileName = file.getOriginalFilename();
-    if (file == null || file.isEmpty() || !StringUtils.hasText(fileName)) {
+    if (file.isEmpty() || !StringUtils.hasText(fileName)) {
 
       log.warn("파일이 비어있습니다.");
       throw new CustomException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
