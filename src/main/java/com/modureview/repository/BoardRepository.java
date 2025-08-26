@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
+  List<Board> findTop6ByOrderByCreatedAtAsc();
+
   @Query(value =
       "WITH RankedBoards AS (" +
           "    SELECT b.*, " +
@@ -38,4 +40,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
   @Query("SELECT b.commentsCount FROM Board b WHERE b.id = :boardId")
   Integer findCommentsCountById(@Param("boardId") Long boardId);
+
+
 }
