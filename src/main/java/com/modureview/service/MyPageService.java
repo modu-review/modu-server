@@ -137,4 +137,18 @@ public class MyPageService {
       throw new CustomException(MypageErrorCode.FILE_SIZE_EXCEEDED);
     }
   }
+
+
+  public String getProfileImage(String email) {
+    userRepository.findByEmail(email).ifPresent(user -> {
+     user.getProfile();
+   });
+    return "no-thumbnail.png";
+  }
+
+  public void deleteProfileImage(String email) {
+    userRepository.findByEmail(email).ifPresent(user -> {
+      user.updateProfileImageUrl("no-thumbnail.png");
+    });
+  }
 }

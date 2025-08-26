@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MyPageController {
 
 	private final MyPageService myPageService;
+
 
 	@GetMapping("/users/me/reviews")
 	public ResponseEntity<CustomPageResponse<SliceBoardResponse>> getUserBoards(
@@ -71,5 +73,17 @@ public class MyPageController {
 		String newImageUrl = myPageService.updateProfileImage(email,file);
 
 		return ResponseEntity.ok().body(Map.of("imageUrl", newImageUrl));
+	}
+	@GetMapping("/users/me/profileImage")
+	public ResponseEntity<?> getProfileImage(@CookieValue(name = "userEmail") String email) {
+		String profileImage = myPageService.getProfileImage(email);
+		return ResponseEntity.ok().body(profileImage);
+
+	}
+
+	@DeleteMapping("/users/me/profileImage")
+	public ResponseEntity<?> deleteProfileImage(@CookieValue(name = "userEmail") String email) {
+		myPageService.deleteProfileImage(email);
+		return ResponseEntity.ok().body("이미지가 기본으로 변경되었습니다.");
 	}
 }
