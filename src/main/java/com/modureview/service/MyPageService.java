@@ -85,10 +85,10 @@ public class MyPageService {
     String extension = StringUtils.getFilenameExtension(originalFilename);
     String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
     log.info("생성된 고유 파일명: {}", uniqueFileName);
-    String imageUrl = null;
+    String imageUrl = "https://d1izijuzr22yly.cloudfront.net/profile-images/" + uniqueFileName;
 
     try {
-      imageUrl = s3UploadService.upload(file, PROFILE_IMAGE_DIR, uniqueFileName);
+      s3UploadService.upload(file, PROFILE_IMAGE_DIR, uniqueFileName);
       log.info("S3 업로드 성공. URL: {}", imageUrl);
 
       user.updateProfileImageUrl(imageUrl);
@@ -139,16 +139,15 @@ public class MyPageService {
   }
 
 
-  public String getProfileImage(String email) {
-    userRepository.findByEmail(email).ifPresent(user -> {
-     user.getProfile();
-   });
-    return "no-profileImage.png";
+  public String getProfileImage(String nickname) {
+    return userRepository.findByNickname(nickname)
+        .map(User::getProfile)
+        .orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
   }
 
   public void deleteProfileImage(String email) {
     userRepository.findByEmail(email).ifPresent(user -> {
-      user.updateProfileImageUrl("no-profileImage.png");
+      user.updateProfileImageUrl("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
     });
   }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,12 +73,12 @@ public class MyPageController {
 	public ResponseEntity<?> uploadProfileImage(@CookieValue("userEmail") String email,@RequestParam("profileImage") MultipartFile file) {
 		String newImageUrl = myPageService.updateProfileImage(email,file);
 
-		return ResponseEntity.ok().body(Map.of("imageUrl", newImageUrl));
+		return ResponseEntity.ok().body("");
 	}
-	@GetMapping("/users/me/profileImage")
-	public ResponseEntity<?> getProfileImage(@CookieValue(name = "userEmail") String email) {
-		String profileImage = myPageService.getProfileImage(email);
-		return ResponseEntity.ok().body(profileImage);
+	@GetMapping("/users/{nickname}/profileImage")
+	public ResponseEntity<?> getProfileImage( @PathVariable String nickname) {
+		String profileImage = myPageService.getProfileImage(nickname);
+		return ResponseEntity.ok().body(Map.of("profileImage", profileImage));
 
 	}
 
