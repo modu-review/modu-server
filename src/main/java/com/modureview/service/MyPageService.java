@@ -21,9 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-
-//email -> 완료
 @Slf4j
 @Service
 @Transactional
@@ -61,5 +61,16 @@ public class MyPageService {
         .filter(Objects::nonNull)
         .toList();
     return new PageImpl<>(sortedBoards, pageable, boardIdPage.getTotalElements());
+  }
+
+  public void validateImage(MultipartFile file) {
+    String fileName = file.getOriginalFilename();
+    String extension = StringUtils.getFilenameExtension(fileName);
+
+    if (extension == null || !extension.equals("jpg") || !extension.equals("png")
+        || !extension.equals("jpeg")) {
+      log.info("Invalid image format");
+
+    }
   }
 }
