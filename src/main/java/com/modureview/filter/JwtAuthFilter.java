@@ -33,7 +33,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       "/search",
       "/users/login",
       "/users/*/reviews",
-      "/favicon.io"
+      "/favicon.io",
+      "/latestReviews"
   );
 
 
