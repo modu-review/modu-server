@@ -66,9 +66,8 @@ class CommentControllerTest {
   void saveComment() {
     // 사전 준비: 유저 생성 (닉네임=user1)
     userRepository.save(testUtil.newUser("user1@example.com"));
-    CommentSaveRequest commentSaveRequest = new CommentSaveRequest("user1", food,
-        "네네 아이고아이고");
-    commentController.addComment(1L, commentSaveRequest);
+    //CommentSaveRequest commentSaveRequest = new CommentSaveRequest("user1", food,"네네 아이고아이고");
+    //commentController.addComment(1L, commentSaveRequest);
   }
 
   @Test

@@ -55,7 +55,7 @@ class CommentServiceTest {
         .mapToObj(i -> Comment.builder()
             .id((long) i)
             .boardId(boardId)
-            .author("test@test.com")
+            //.author("test@test.com")
             .content("test content " + i)
             .createdAt(LocalDateTime.now().minusMinutes(i))
             .build())
