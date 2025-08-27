@@ -11,6 +11,7 @@ public enum BoardErrorCode implements ErrorCode {
       "html에서 이미지 추출중 에러가 발생했습니다."),
   BOARD_SEARCH_KEYWORD_NOTFOUND("KEYWORD_NOT_FOUND", HttpStatus.NOT_FOUND, "키워드를 찾을 수 없습니다."),
   BOARD_NOT_EXIST("BOARD_NOT_EXIST", HttpStatus.INTERNAL_SERVER_ERROR, "게시글이 존재하지 않습니다."),
+  BOARD_USER_NOT_EQUALS("BOARD_USER_NOT_EQUALS", HttpStatus.FORBIDDEN, "개사글 작성한 유저와 동일하지 않습니다."),
   INVALID_BOARD_ID_FORMAT("INVALID_BOARD_ID_FORMAT", HttpStatus.BAD_REQUEST, "잘못된 파라미터 형식입니다.");
 
   private final String title;
