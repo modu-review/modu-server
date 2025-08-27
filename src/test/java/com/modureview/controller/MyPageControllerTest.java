@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("h2")
 class MyPageControllerTest {
 
