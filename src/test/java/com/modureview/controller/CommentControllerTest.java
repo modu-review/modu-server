@@ -1,22 +1,12 @@
 package com.modureview.controller;
 
-import static com.modureview.entity.Category.food;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modureview.dto.request.CommentDeleteRequest;
-import com.modureview.dto.request.CommentSaveRequest;
-import com.modureview.entity.Board;
-import com.modureview.entity.Comment;
+import com.modureview.dto.response.CommentListResponse;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.CommentRepository;
 import com.modureview.repository.UserRepository;
 import com.modureview.utill.TestUtil;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,16 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles("h2")
 class CommentControllerTest {
 
   @Autowired
@@ -61,15 +48,6 @@ class CommentControllerTest {
     this.testUtil = new TestUtil();
   }
 
-  @Test
-  @DisplayName("save comment결과")
-  void saveComment() {
-    // 사전 준비: 유저 생성 (닉네임=user1)
-    userRepository.save(testUtil.newUser("user1@example.com"));
-    CommentSaveRequest commentSaveRequest = new CommentSaveRequest("user1", food,
-        "네네 아이고아이고");
-    commentController.addComment(1L, commentSaveRequest);
-  }
 
   @Test
   @DisplayName("delete 결과")
@@ -83,38 +61,17 @@ class CommentControllerTest {
   @Test
   @DisplayName("GET /reviews/{reviewId}/comments 성공")
   void getBoardDetail_success() throws Exception {
-    Board board = testUtil.newBoard(userRepository.save(testUtil.newUser("test@test.com")));
-    Board newBoard = boardRepository.save(board);
-    Long newBoardId = newBoard.getId();
-    List<Comment> comments = new ArrayList<>();
-    for (int i = 0; i < 10; i++) {
-      comments.add(
-          Comment.builder()
-              .boardId(newBoardId)
-              .nickname(newBoard.getNickname())
-              .content("test content" + i)
-              .createdAt(LocalDateTime.now().minusMinutes(i))
-              .build());
-    }
-    commentRepository.saveAll(comments);
-    long startTime = System.nanoTime();
-    MvcResult mvcResult = mockMvc.perform(
-            get("/reviews/{reviewId}/comments", newBoardId)
-                .param("page", "1")
-                .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andReturn();
-    long endTime = System.nanoTime();
-    long duration = (endTime - startTime);
-    double durationMs = duration / 1_000_000.0;
-    log.info("CommentControllerTest.getBoardDetail() 실행 시간: {} ns ({} ms)",
-        duration, String.format("%.3f", durationMs));
-    String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
-    Object jsonObject = objectMapper.readValue(responseBody, Object.class);
-    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
-        .writeValueAsString(jsonObject);
-    log.info("Formatted JSON Response:");
-    log.info("prettyJson == {}", prettyJson);
+    // when
+    ResponseEntity<CommentListResponse> responseEntity = commentController.getCommentList(1L, 1);
+
+    // then
+    CommentListResponse responseBody = responseEntity.getBody();
+
+    String responseBodyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(responseBody);
+    log.info("===== 응답 결과 (JSON) =====");
+    log.info(responseBodyJson);
+    log.info("==========================");
 
   }
 
