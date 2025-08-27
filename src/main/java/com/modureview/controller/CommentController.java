@@ -36,7 +36,6 @@ public class CommentController {
   public ResponseEntity<?> addComment(@PathVariable Long reviewId,
       @RequestBody CommentSaveRequest commentSaveRequest,
       @CookieValue(name = "userNickname") String nickname) {
-    //Long userId = userService.findUserId(commentSaveRequest.userEmail());
     Long userId = userService.findUserIdByNickname(nickname);
     commentService.saveComment(reviewId,nickname, userId, commentSaveRequest);
 
@@ -60,16 +59,17 @@ public class CommentController {
       @RequestParam(name = "page", defaultValue = "1") int page
   ) {
     Page<Comment> commentPage = commentService.commentList(reviewId, page);
-    List<CommentDetailResponse> listComment = commentPage.getContent().stream()
-        .map(CommentDetailResponse::fromEntity)
-        .toList();
+    Page<CommentDetailResponse> listComment = commentPage.map(comment ->
+            CommentDetailResponse.fromEntity(comment, comment.getUser()));
+
     Integer rawCount = commentService.commentCount(reviewId);
+
     int commentsCount = rawCount != null ? rawCount : 0;
     int totalPages = commentPage.getTotalPages();
     int currentPage = (totalPages == 0 ? 0 : commentPage.getNumber() + 1);
     CommentListResponse response = CommentListResponse.builder()
         .commentsCount(commentsCount)
-        .comments(listComment)
+        .comments(listComment.getContent())
         .currentPage(currentPage)
         .totalPages(totalPages)
         .build();
