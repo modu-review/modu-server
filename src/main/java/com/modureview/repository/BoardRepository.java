@@ -12,24 +12,21 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
   @Query(value =
       "WITH RankedBoards AS (" +
-          "    SELECT b.*, " +
-          "           ROW_NUMBER() OVER (PARTITION BY b.category ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn "
-          +
+          "    SELECT b.id, " +
+          "           ROW_NUMBER() OVER (PARTITION BY b.category ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn " +
           "    FROM board b " +
-          "    LEFT JOIN user u ON b.user_id = u.id" +
           ") " +
-          "SELECT * FROM RankedBoards WHERE rn <= 6",
+          "SELECT id FROM RankedBoards WHERE rn <= 6",
       nativeQuery = true)
   List<Long> findTop6BoardsPerCategory();
 
   @Query(value =
       "WITH RankedBoards AS (" +
-          "    SELECT b.*, " +
-          "           ROW_NUMBER() OVER (ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn "
-          +
+          "    SELECT b.id, " +
+          "           ROW_NUMBER() OVER (ORDER BY (b.bookmarks_count * 4 + b.view_count + b.comments_count * 2) DESC) as rn " +
           "    FROM board b " +
           ") " +
-          "SELECT rb.* FROM RankedBoards rb WHERE rb.rn <= 6",
+          "SELECT id FROM RankedBoards WHERE rn <= 6",
       nativeQuery = true)
   List<Long> findallCategory();
 
