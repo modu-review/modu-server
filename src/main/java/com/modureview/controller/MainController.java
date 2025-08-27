@@ -20,7 +20,7 @@ public class MainController {
 
   private final MainService mainService;
 
-  @GetMapping("/latestReviews")
+  @GetMapping("/reviews/latest")
   public ResponseEntity<?> getLatestReviews() {
     List<Board> recentBoards = mainService.latest6Reviews();
     List<BestReviewResponse> collect = recentBoards.stream()
