@@ -62,8 +62,9 @@ public class MyPageController {
 	}
 
 	@PostMapping("/users/me/profileImage")
-	public ResponseEntity<?> uploadProfileImage(@RequestParam("profileImage") MultipartFile file) {
-		String newImageUrl = myPageService.saveProfileImage(file);
+	public ResponseEntity<?> uploadProfileImage(@CookieValue("userEmail") String email,@RequestParam("profileImage") MultipartFile file) {
+		String newImageUrl = myPageService.updateProfileImage(email,file);
+
 
 		return ResponseEntity.ok().body(Map.of("imageUrl", newImageUrl));
 	}
