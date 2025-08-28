@@ -22,8 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-
-//email -> 완료
 @Slf4j
 @Service
 @Transactional
@@ -33,6 +31,9 @@ public class MyPageService {
   private final UserRepository userRepository;
   private final MyPageRepository myPageRepository;
   private final MyPageBookMarkRepository myPageBookMarkRepository;
+
+  private static final List<String> ALLOWED_EXTENSIONS = List.of("jpeg", "jpg", "png");
+  private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   public Page<Board> myPageBoard(String nickname, int page) {
     Sort sortCriteria = Sort.by(Direction.DESC, "createdAt");
@@ -61,5 +62,34 @@ public class MyPageService {
         .filter(Objects::nonNull)
         .toList();
     return new PageImpl<>(sortedBoards, pageable, boardIdPage.getTotalElements());
+  }
+
+  public String updateProfileImage(MultipartFile file) {
+    validateImage(file);
+    validateFileSize(file);
+
+    return "url";
+  }
+  private void validateImage(MultipartFile file) {
+    String fileName = file.getOriginalFilename();
+    if (file == null || file.isEmpty() || !StringUtils.hasText(fileName)) {
+
+      log.warn("파일이 비어있습니다.");
+      throw new CustomException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    String extension = StringUtils.getFilenameExtension(fileName);
+
+    if (extension == null || !ALLOWED_EXTENSIONS.contains(extension.toLowerCase())) {
+      log.warn("지원하지 않는 이미지 형식입니다: {}", extension);
+      throw new CustomException(MypageErrorCode.UNSUPPORTED_MEDIA_TYPE);
+    }
+  }
+
+  private void validateFileSize(MultipartFile imageFile) {
+    if (imageFile.getSize() > MAX_FILE_SIZE) {
+      log.warn("파일 크기 초과: {} bytes (최대: {} bytes)", imageFile.getSize(), MAX_FILE_SIZE);
+      throw new CustomException(MypageErrorCode.FILE_SIZE_EXCEEDED);
+    }
   }
 }

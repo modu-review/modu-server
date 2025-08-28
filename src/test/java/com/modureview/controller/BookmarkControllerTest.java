@@ -8,9 +8,9 @@ import com.modureview.entity.Board;
 import com.modureview.entity.BookMark;
 import com.modureview.entity.User;
 import com.modureview.repository.BoardRepository;
-import com.modureview.repository.BookmarkRepository;
+import com.modureview.repository.BookMarkRepository;
 import com.modureview.repository.UserRepository;
-import com.modureview.service.BookmarkService;
+import com.modureview.service.BookMarkService;
 import com.modureview.utill.TestUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.transaction.Transactional;
@@ -34,88 +34,92 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("h2")
-class BookmarkControllerTest {
+class BookMarkControllerTest {
 
-  @Autowired private MockMvc mockMvc;
-  @Autowired private ObjectMapper objectMapper;
-  @Autowired private BookmarkService bookmarkService;
-  @Autowired private BookmarkRepository bookmarkRepository;
-  @Autowired private UserRepository userRepository;
-  @Autowired private BoardRepository boardRepository;
+  @Autowired
+  private MockMvc mockMvc;
+
+  @Autowired
+  private ObjectMapper objectMapper;
+
+  @Autowired
+  private BookMarkService bookMarkService;
+
+  @Autowired
+  private BookMarkRepository bookMarkRepository;
+
+  @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
+  private BoardRepository boardRepository;
 
   private TestUtil testUtil;
-  private Board savedBoard;
-  private User user1;
-  private User user2;
+
 
   @BeforeEach
   void setUp() {
     this.testUtil = new TestUtil();
-    user1 = userRepository.save(testUtil.newUser("test@test.com"));
-    user2 = userRepository.save(testUtil.newUser("test1@test.com"));
-    savedBoard = boardRepository.save(testUtil.newBoard(user1));
-
+    User user = userRepository.save(testUtil.newUser("test@test.com"));
+    userRepository.save(testUtil.newUser("test1@test.com"));
+    Board board = boardRepository.save(testUtil.newBoard(user));
     List<BookMark> bookMarks = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 10; i++) {
       bookMarks.add(
           BookMark.builder()
-              .nickname(user2.getNickname())
-              .boardId(savedBoard.getId())
-              .build());
+              .email("test" + i + "@test.com")
+              .boardId(board.getId())
+              .build()
+      );
     }
-    bookmarkRepository.saveAll(bookMarks);
+    bookMarkRepository.saveAll(bookMarks);
   }
 
   @Test
-  @DisplayName("GET /reviews/{reviewId}/bookmarks - isBookmarked : false")
+  @DisplayName("GET /reviews/{reviewId}/bookMarkController - isBookmarked : false")
   void getBookmark_false() throws Exception {
+    Board byAuthorEmail = boardRepository.findByAuthorEmail("test@test.com");
     long startTime = System.nanoTime();
-    MvcResult mvcResult =
-        mockMvc
-            .perform(
-                get("/reviews/{reviewId}/bookmarks", savedBoard.getId())
-                    // no nickname cookie -> defaultValue="null"
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/reviews/{reviewId}/bookmarks", byAuthorEmail.getId())
+                .cookie(new Cookie("email", "test@test.com"))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
     long endTime = System.nanoTime();
     long duration = (endTime - startTime);
     double durationMs = duration / 1_100_000.0;
-    log.info(
-        "BookmarkControllerTest.getBoardDetail()-false 실행 시간 : {} ns ({} ms)",
-        duration,
+    log.info("BookMarkControllerTest.getBoardDetail()-false 실행 시간 : {} ns ({} ms)", duration,
         String.format("%.3f", durationMs));
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
     Object jsonObject = objectMapper.readValue(responseBody, Object.class);
-    String prettyJson =
-        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
     log.info("Formatted JSON Response:");
     log.info("prettyJson == {}", prettyJson);
   }
 
+
   @Test
-  @DisplayName("GET /reviews/{reviewId}/bookmarks - isBookmarked : true")
+  @DisplayName("GET /reviews/{reviewId}/bookMarkController - isBookmarked : true")
   void getBookmark_success() throws Exception {
+    Board byAuthorEmail = boardRepository.findByAuthorEmail("test@test.com");
     long startTime = System.nanoTime();
-    MvcResult mvcResult =
-        mockMvc
-            .perform(
-                get("/reviews/{reviewId}/bookmarks", savedBoard.getId())
-                    .cookie(new Cookie("userNickname", user2.getNickname()))
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andReturn();
+    MvcResult mvcResult = mockMvc.perform(
+            get("/reviews/{reviewId}/bookmarks", byAuthorEmail.getId())
+                .cookie(new Cookie("email", "test1@test.com"))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn();
     long endTime = System.nanoTime();
     long duration = (endTime - startTime);
     double durationMs = duration / 1_100_000.0;
-    log.info(
-        "BookmarkControllerTest.getBoardDetail()-true 실행 시간 : {} ns ({} ms)",
-        duration,
+    log.info("BookMarkControllerTest.getBoardDetail()-true 실행 시간 : {} ns ({} ms)", duration,
         String.format("%.3f", durationMs));
     String responseBody = mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8);
     Object jsonObject = objectMapper.readValue(responseBody, Object.class);
-    String prettyJson =
-        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+    String prettyJson = objectMapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(jsonObject);
     log.info("Formatted JSON Response:");
     log.info("prettyJson == {}", prettyJson);
   }
