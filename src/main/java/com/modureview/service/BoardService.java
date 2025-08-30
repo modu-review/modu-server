@@ -241,8 +241,13 @@ public class BoardService {
   }
 
   @Transactional
-  public void deleteBoard(Long boardId) {
-    Board foundBoard = boardRepository.findById(boardId).get();
+  public void deleteBoard(Long boardId,String nickname) {
+    Board foundBoard = boardRepository.findById(boardId).orElseThrow(
+        () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
+    );
+    if(!foundBoard.getNickname().equals(nickname)){
+      throw new CustomException(BoardErrorCode.BOARD_USER_NOT_EQUALS);
+    }
     boardRepository.delete(foundBoard);
   }
 }
