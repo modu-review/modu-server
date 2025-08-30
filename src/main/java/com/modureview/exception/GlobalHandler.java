@@ -18,7 +18,7 @@ public class GlobalHandler {
     ErrorResponse response = new ErrorResponse(
         errorCode.getTitle(),
         errorCode.getHttpStatus().value(),
-        errorCode.getDetail()
+        e.getMessage()
     );
 
     return ResponseEntity

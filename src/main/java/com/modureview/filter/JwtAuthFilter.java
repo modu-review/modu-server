@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtTokenService jwtTokenService;
+  private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
   private static final List<String> EXEMPT_URIS = Arrays.asList(
       "/user/oauth2/**",
@@ -33,9 +35,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       "/search",
       "/users/login",
       "/users/*/reviews",
-      "/favicon.io"
+      "/favicon.io",
+      "/users/*/profileImage"
   );
 
+  @Override
+  protected boolean shouldNotFilterAsyncDispatch(){
+    return false;
+  }
+
+  @Override
+  protected boolean shouldNotFilterErrorDispatch(){
+    return false;
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -44,7 +56,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     log.info("Filter request url: {}", request.getRequestURL());
 
     String requestURI = request.getRequestURI();
-    boolean isExempt = EXEMPT_URIS.stream().anyMatch(uri -> requestURI.startsWith(uri));
+
+    boolean isExempt = EXEMPT_URIS.stream()
+        .anyMatch(uri -> pathMatcher.match(uri, requestURI));
 
     if (isExempt) {
       filterChain.doFilter(request, response);

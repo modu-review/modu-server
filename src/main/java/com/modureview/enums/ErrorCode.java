@@ -6,6 +6,4 @@ public interface ErrorCode {
   String getTitle();
   HttpStatus getHttpStatus();
   String getDetail();
-
-
 }

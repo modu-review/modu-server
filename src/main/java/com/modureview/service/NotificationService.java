@@ -40,6 +40,8 @@ public class NotificationService {
 	@Transactional
 	public NotificationPushResponse sendNotification(Long receiverUserId,Long senderUserId,Long boardId,
 		NotificationType type) {
+		log.debug("Create notification: receiver={}, sender={}, board={}, type={}",
+			receiverUserId, senderUserId, boardId, type);
 		userRepository.findById(receiverUserId).orElseThrow(
 			() -> new CustomException(UserErrorCode.USER_NOT_FOUND)
 		);
@@ -50,6 +52,7 @@ public class NotificationService {
 			.notificationType(type)
 			.build();
 		notificationRepository.save(notification);
+		log.info("Notification persisted: id={}", notification.getId());
 		Board targetBoard = boardRepository.findById(boardId)
 			.orElseThrow(() -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND));
 		return NotificationPushResponse.from(notification, targetBoard.getTitle());

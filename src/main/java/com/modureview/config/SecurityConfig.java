@@ -7,6 +7,7 @@ import com.modureview.service.utill.CookieOAuth2AuthorizationRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,39 +26,44 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers(
-                "/user/oauth2/**",
-                "/token/refresh",
-                "/reviews/best",
-                "/reviews",
-                "/reviews/*/comments",
-                "/reviews/*/bookmarks",
-                "/search",
-                "/users/login",
-                "/users/*/reviews",
-                "favicon.io"
-            )
-            .permitAll()
-            .requestMatchers("/reviews/**")
-            .permitAll()
-            .anyRequest().authenticated()
-        )
-        .exceptionHandling(ex -> ex
-            .authenticationEntryPoint(authenticationEntryPoint)
-        )
-        .oauth2Login(oauth2 -> oauth2
-            .authorizationEndpoint(endpoint -> endpoint
-                .authorizationRequestRepository(cookieAuthRequestRepository)
-            )
-            .successHandler(successHandler)
-        )
-        .addFilterBefore(new JwtAuthFilter(jwtTokenService),
-            UsernamePasswordAuthenticationFilter.class)
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+      http
+          .csrf(csrf -> csrf.disable())
+          .authorizeHttpRequests(auth -> auth
+              .requestMatchers(
+                  "/user/oauth2/**",
+                  "/token/refresh",
+                  "/reviews/best",
+                  "/reviews",
+                  "/reviews/*/comments",
+                  "/reviews/*/bookmarks",
+                  "/search",
+                  "/users/login",
+                  "/users/*/reviews",
+                  "/users/me/reviews",
+                  "favicon.io",
+                  "/users/*/profileImage"
+              )
+              .permitAll()
+              .requestMatchers("/reviews/**")
+              .permitAll()
+              .requestMatchers(HttpMethod.OPTIONS, "/notifications/stream").permitAll()
+              .requestMatchers(HttpMethod.GET, "/notifications/stream").authenticated()
+              .requestMatchers(HttpMethod.GET,"/users/me/reviews").authenticated()
+              .anyRequest().authenticated()
+          )
+          .exceptionHandling(ex -> ex
+              .authenticationEntryPoint(authenticationEntryPoint)
+          )
+          .oauth2Login(oauth2 -> oauth2
+              .authorizationEndpoint(endpoint -> endpoint
+                  .authorizationRequestRepository(cookieAuthRequestRepository)
+              )
+              .successHandler(successHandler)
+          )
+          .addFilterBefore(new JwtAuthFilter(jwtTokenService),
+              UsernamePasswordAuthenticationFilter.class)
+          .sessionManagement(
+              session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     return http.build();
   }
 }
