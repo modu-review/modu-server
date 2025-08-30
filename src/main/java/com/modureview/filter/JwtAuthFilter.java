@@ -39,6 +39,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       "/users/*/profileImage"
   );
 
+  @Override
+  protected boolean shouldNotFilterAsyncDispatch(){
+    return false;
+  }
+
+  @Override
+  protected boolean shouldNotFilterErrorDispatch(){
+    return false;
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,

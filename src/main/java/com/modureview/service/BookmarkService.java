@@ -3,6 +3,8 @@ package com.modureview.service;
 import com.modureview.dto.response.BookmarkDetailResponse;
 import com.modureview.entity.Board;
 import com.modureview.entity.BookMark;
+import com.modureview.entity.NotificationType;
+import com.modureview.dto.response.NotificationPushResponse;
 import com.modureview.enums.errors.BoardErrorCode;
 import com.modureview.enums.errors.BookmarkErrorCode;
 import com.modureview.enums.errors.JwtErrorCode;
@@ -28,6 +30,8 @@ public class BookmarkService {
   private final UserRepository userRepository;
   private final BoardRepository boardRepository;
   private final StringRedisTemplate stringRedisTemplate;
+  private final NotificationService notificationService;
+  private final NotificationSseService notificationSseService;
 
   @Transactional
   public void saveBookmark(Long boardId, Long userId, String nickname) {
@@ -42,6 +46,17 @@ public class BookmarkService {
     boardRepository.findById(boardId).ifPresent(board -> {
       board.setBookmarksCount(board.getBookmarksCount() + 1);
       boardRepository.save(board);
+
+      Long receiverUserId = board.getUser() != null ? board.getUser().getId() : null;
+      if (receiverUserId != null && !receiverUserId.equals(userId)) {
+        NotificationPushResponse payload = notificationService.sendNotification(
+            receiverUserId,
+            userId,
+            boardId,
+            NotificationType.bookmark
+        );
+        notificationSseService.sendNotification(receiverUserId, payload);
+      }
     });
   }
 
