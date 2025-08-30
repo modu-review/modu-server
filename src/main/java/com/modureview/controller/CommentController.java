@@ -37,7 +37,9 @@ public class CommentController {
       @RequestBody CommentSaveRequest commentSaveRequest,
       @CookieValue(name = "userNickname") String nickname) {
     //Long userId = userService.findUserId(commentSaveRequest.userEmail());
+    log.info("Add comment request: reviewId={}, nickname={}", reviewId, nickname);
     Long userId = userService.findUserIdByNickname(nickname);
+    log.info("Resolved userId for nickname {}: {}", nickname, userId);
     commentService.saveComment(reviewId,nickname, userId, commentSaveRequest);
 
     return new ResponseEntity<>(HttpStatus.CREATED);
@@ -45,12 +47,13 @@ public class CommentController {
 
   @DeleteMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> deleteComment(@PathVariable Long reviewId,
-     @RequestBody CommentDeleteRequest commentDeleteRequest) {
+     @RequestBody CommentDeleteRequest commentDeleteRequest,
+      @CookieValue("userNickname") String nickname) {
     log.info("댓글삭제");
     log.info("deleteComment == {}", commentDeleteRequest);
     log.info("reviewId == {}", reviewId);
 
-    commentService.deleteComment(commentDeleteRequest.commentId(), reviewId);
+    commentService.deleteComment(commentDeleteRequest.commentId(), reviewId,nickname);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
