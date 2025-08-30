@@ -10,6 +10,7 @@ public record BoardDetailResponse(
     Long board_id,
     String title,
     Category category,
+    String profile_image,
     String author_nickname,
     @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at,
