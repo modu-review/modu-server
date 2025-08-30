@@ -7,6 +7,7 @@ import com.modureview.service.utill.CookieOAuth2AuthorizationRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,7 +39,8 @@ public class SecurityConfig {
                 "/search",
                 "/users/login",
                 "/users/*/reviews",
-                "favicon.io"
+                "favicon.io",
+                "/users/*/profileImage"
             )
             .permitAll()
             .requestMatchers("/reviews/**")

@@ -75,7 +75,7 @@ public class NotificationController {
 		Long userId = userService.findUserId(userEmail);
 
 		boolean read = request.isRead();
-		boolean delete = request.isDelete();
+		boolean delete = request.isDeleted();
 
 
 		if (read == delete ){
