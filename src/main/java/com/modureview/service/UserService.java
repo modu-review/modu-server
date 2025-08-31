@@ -19,4 +19,7 @@ public class UserService {
     User user = userRepository.findByNickname(nickname).get();
     return user.getId();
   }
+
+  public User findUserByNickname(String nickname) {
+  }
 }
