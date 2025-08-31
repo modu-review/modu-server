@@ -15,6 +15,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
   Page<Comment> findByBoardId(Long boardId, Pageable pageable);
 
   Optional<Comment> findByNickname(String nickname);
-
-  Optional<Comment> findByCommentId(Long commentId);
 }
