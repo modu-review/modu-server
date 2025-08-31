@@ -7,6 +7,11 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 30
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      leak-detection-threshold: 6000
 
   batch:
     jdbc:

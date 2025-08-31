@@ -28,7 +28,7 @@ public class SummarizationService {
     if (text == null || text.isBlank()) {
       return "";
     }
-    String prompt = "다음 글을 130자 내외로 " + title + "을 기준으로 한국어로 요약해줘:\n" + text;
+    String prompt = "다음 글을 130자 내외로 " + title + "을 기준으로 밝은 분위기로 한국어로 요약해줘:\n " + text;
 
     // ★ 여기가 핵심 수정 포인트 ★
     // 잘못된 호출: client.models() → 올바른 호출: client.models
