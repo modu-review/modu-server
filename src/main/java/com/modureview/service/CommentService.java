@@ -10,7 +10,7 @@ import com.modureview.repository.BoardRepository;
 import com.modureview.repository.CommentRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -72,7 +73,7 @@ public class CommentService {
   }
 
   public void deleteComment(Long commentId, Long boardId, String nickname) {
-    Comment targetComment = commentRepository.findByCommentId(commentId).orElseThrow(() -> new CustomException(
+    Comment targetComment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(
         CommentErrorCode.COMMENT_NOT_FOUND));
     if(!targetComment.getNickname().equals(nickname)) {
       throw new CustomException(CommentErrorCode.COMMENT_USER_NOT_EQUAL,nickname);
@@ -84,12 +85,14 @@ public class CommentService {
     });
   }
 
+  @Transactional(readOnly = true)
   public Page<Comment> commentList(Long boardId, int Page) {
     Pageable pageable = PageRequest.of(Page - 1, 8, Sort.by(Direction.ASC, "createdAt"));
 
     return commentRepository.findByBoardId(boardId, pageable);
   }
 
+  @Transactional(readOnly = true)
   public Integer commentCount(Long boardId) {
     return boardRepository.findCommentsCountById(boardId);
   }

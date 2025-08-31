@@ -13,12 +13,13 @@ import com.modureview.exception.bookmark.BookmarkNotExistException;
 import com.modureview.repository.BoardRepository;
 import com.modureview.repository.BookmarkRepository;
 import com.modureview.repository.UserRepository;
-import jakarta.transaction.Transactional;
+
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -72,6 +73,8 @@ public class BookmarkService {
     });
   }
 
+
+  @Transactional(readOnly = true)
   public BookmarkDetailResponse bookmarkDetail(Long reviewId, String nickname) {
     log.info("reviewId == {}", reviewId);
     log.info("email    == {}", nickname);
