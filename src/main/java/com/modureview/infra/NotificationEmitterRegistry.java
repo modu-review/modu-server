@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationEmitterRegistry {
 	private final Map<Long, CopyOnWriteArrayList<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter register(Long userId , long timeoutMs){
+    /*public SseEmitter register(Long userId , long timeoutMs){
         SseEmitter emitter = new SseEmitter(timeoutMs);
         emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()).add(emitter);
         emitter.onCompletion(() -> remove(userId, emitter));
@@ -25,6 +25,34 @@ public class NotificationEmitterRegistry {
             remove(userId , emitter);
         });
         return emitter;
+    }*/
+
+    public SseEmitter register(Long userId , long timeoutMs){
+        List<SseEmitter> existingEmitters = emitters.get(userId);
+        if(existingEmitters != null){
+            log.info("기존 SSE 연결이 존재하여 종료합니다.  userId={}", userId);
+            for(SseEmitter emitter : List.copyOf(existingEmitters)){
+                try{
+                    emitter.complete();
+                } catch (Exception e){
+                    log.error("기존 Emitter 완료 처리 중 오류 발생 . userId = {} , emitter = {}", userId, emitter, e);
+                }
+            }
+            existingEmitters.clear();
+        }
+        SseEmitter newEmitter = new SseEmitter(timeoutMs);
+        CopyOnWriteArrayList<SseEmitter> userEmitters = emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>());
+        userEmitters.add(newEmitter);
+
+        newEmitter.onCompletion(()->remove(userId , newEmitter));
+        newEmitter.onTimeout(()->remove(userId , newEmitter));
+        newEmitter.onError((e) -> {
+            log.error("SSE emitter 에러 발생 . userId = {} , cause = {} ", userId, e.toString());
+            remove(userId , newEmitter);
+        });
+        log.info("새로운 SSE 연결이 등록되었습니다 . userId = {} ", userId);
+        return newEmitter;
+
     }
 
 	public void remove(Long userId, SseEmitter emitter){
