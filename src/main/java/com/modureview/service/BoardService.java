@@ -69,10 +69,12 @@ public class BoardService {
     Board findBoard = boardRepository.findById(boardId).orElseThrow(
         () -> new CustomException(BoardErrorCode.BOARD_ID_NOTFOUND)
     );
+    User user = userRepository.findByNickname(findBoard.getNickname()).get();
     return BoardDetailResponse.builder()
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
+        .profile_image(user.getProfile())
         .author_nickname(findBoard.getNickname())
         .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())

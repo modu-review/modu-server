@@ -10,6 +10,7 @@ public record CommentDetailResponse(
     Long id,
     String author_nickname,
     String content,
+    String profile_image,
     @JsonFormat(pattern = "yyyy-MM-dd HH시 mm분", shape = JsonFormat.Shape.STRING, timezone = "Asia/Seoul")
     LocalDateTime created_at
 ) {
@@ -21,5 +22,14 @@ public record CommentDetailResponse(
           .content(comment.getContent())
           .created_at(comment.getCreatedAt())
           .build();
+  }
+  public static CommentDetailResponse of(Comment comment, String profileImage) {
+    return new CommentDetailResponse(
+        comment.getId(),
+        comment.getNickname(),
+        comment.getContent(),
+        profileImage,
+        comment.getCreatedAt()
+    );
   }
 }

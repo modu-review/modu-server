@@ -5,6 +5,7 @@ import com.modureview.dto.request.CommentSaveRequest;
 import com.modureview.dto.response.CommentDetailResponse;
 import com.modureview.dto.response.CommentListResponse;
 import com.modureview.entity.Comment;
+import com.modureview.entity.User;
 import com.modureview.service.CommentService;
 import com.modureview.service.UserService;
 import java.util.List;
@@ -64,7 +65,12 @@ public class CommentController {
   ) {
     Page<Comment> commentPage = commentService.commentList(reviewId, page);
     List<CommentDetailResponse> listComment = commentPage.getContent().stream()
-        .map(CommentDetailResponse::fromEntity)
+        .map(comment->{
+          String nickname = comment.getNickname();
+          User user = userService.findUserByNickname(nickname);
+          String profileImage = user.getProfile();
+          return CommentDetailResponse.of(comment, profileImage);
+        })
         .toList();
     Integer rawCount = commentService.commentCount(reviewId);
     int commentsCount = rawCount != null ? rawCount : 0;
