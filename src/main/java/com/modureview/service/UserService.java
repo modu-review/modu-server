@@ -1,6 +1,8 @@
 package com.modureview.service;
 
 import com.modureview.entity.User;
+import com.modureview.enums.errors.UserErrorCode;
+import com.modureview.exception.CustomException;
 import com.modureview.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +23,8 @@ public class UserService {
   }
 
   public User findUserByNickname(String nickname) {
+    return userRepository.findByNickname(nickname).orElseThrow(
+        () -> new CustomException(UserErrorCode.USER_NOT_FOUND)
+    );
   }
 }
