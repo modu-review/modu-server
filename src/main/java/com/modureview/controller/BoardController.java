@@ -75,7 +75,7 @@ public class BoardController {
 
   @DeleteMapping("/reviews/{boardId}")
   public ResponseEntity<?> deleteBoard(@PathVariable Long boardId,
-      @CookieValue("userNicnkname")String nickname) {
+      @CookieValue("userNickname")String nickname) {
     log.info("boardId == {}", boardId);
     log.info("deleteBoard == {}", boardId);
     log.info("nickname == {}", nickname);
