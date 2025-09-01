@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-  List<Board> findTop6ByOrderByCreatedAtAsc();
+  List<Board> findTop6ByOrderByCreatedAtDesc();
 
   @Query(value =
       "WITH RankedBoards AS (" +
