@@ -11,6 +11,7 @@ import com.modureview.service.UserService;
 import java.util.List;
 
 import jakarta.servlet.http.Cookie;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,8 @@ public class CommentController {
 
   private final UserService userService;
   private final CommentService commentService;
+
+
 
   @PostMapping("/reviews/{reviewId}/comments")
   public ResponseEntity<?> addComment(@PathVariable Long reviewId,
@@ -68,7 +71,10 @@ public class CommentController {
         .map(comment->{
           String nickname = comment.getNickname();
           User user = userService.findUserByNickname(nickname);
-          String profileImage = user.getProfile();
+
+
+          String profileImage = Optional.ofNullable(user.getProfile())
+              .orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
           return CommentDetailResponse.of(comment, profileImage);
         })
         .toList();
