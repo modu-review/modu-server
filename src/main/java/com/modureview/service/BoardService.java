@@ -24,6 +24,7 @@ import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,7 @@ public class BoardService {
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .profile_image(user.getProfile())
+        .profile_image(Optional.ofNullable(user.getProfile()).orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png"))
         .author_nickname(findBoard.getNickname())
         .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
