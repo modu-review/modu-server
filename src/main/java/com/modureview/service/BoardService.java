@@ -18,6 +18,8 @@ import com.modureview.exception.bookmark.BoardNotExistException;
 import com.modureview.exception.imageSaveError.CreatPresignedUrlError;
 import com.modureview.exception.imageSaveError.CreateUuidError;
 import com.modureview.repository.BoardRepository;
+import com.modureview.repository.BookmarkRepository;
+import com.modureview.repository.CommentRepository;
 import com.modureview.repository.UserRepository;
 import com.modureview.service.utill.SummarizationService;
 import jakarta.transaction.Transactional;
@@ -53,6 +55,8 @@ public class BoardService {
   private final AwsS3Config awsS3Config;
   private final UserRepository userRepository;
   private final SummarizationService summarizationService;
+  private final CommentRepository commentRepository;
+  private final BookmarkRepository bookmarkRepository;
 
   @Value("${custom.default.image.url}")
   private String defaultImageUrl;
@@ -251,6 +255,8 @@ public class BoardService {
     if(!foundBoard.getNickname().equals(nickname)){
       throw new CustomException(BoardErrorCode.BOARD_USER_NOT_EQUALS);
     }
+    commentRepository.deleteByBoardId(boardId);
+    bookmarkRepository.deleteByBoardId(boardId);
     boardRepository.delete(foundBoard);
   }
 }

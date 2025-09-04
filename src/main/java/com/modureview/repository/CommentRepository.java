@@ -1,6 +1,7 @@
 package com.modureview.repository;
 
 
+import java.util.Collection;
 import java.util.Optional;
 
 import com.modureview.entity.Comment;
@@ -15,4 +16,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
   Page<Comment> findByBoardId(Long boardId, Pageable pageable);
 
   Optional<Comment> findByNickname(String nickname);
+
+  void deleteByBoardId(Long boardId);
+
+  void deleteByBoardIdIn(Collection<Long> boardIds);
 }
