@@ -44,12 +44,7 @@ public class Board {
   private String title;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(
-      name = "user_id",
-      referencedColumnName = "id",
-      nullable = false,
-      foreignKey = @ForeignKey(name = "fk_board_user")
-  )
+  @JoinColumn(name = "user_id", nullable = false)
   @JsonBackReference
   private User user;
 

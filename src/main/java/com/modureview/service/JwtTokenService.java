@@ -65,8 +65,7 @@ public class JwtTokenService {
   }
 
   public ResponseCookie createNicknameCookie(String nickname) {
-    // nickname may contain non-ASCII (e.g., Korean); ensure cookie-safe value
-    return createCookie("userNickname", nickname, refreshTokenExpire, false);
+    return createCookie("userNickname", nickname, refreshTokenExpire, true);
   }
 
   public void validateToken(String token) {

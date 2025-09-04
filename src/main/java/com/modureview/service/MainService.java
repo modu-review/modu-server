@@ -14,7 +14,7 @@ public class MainService {
   private final BoardRepository boardRepository;
 
   public List<Board> latest6Reviews() {
-    return boardRepository.findTop6ByOrderByCreatedAtAsc();
+    return boardRepository.findTop6ByOrderByCreatedAtDesc();
 
   }
 }
