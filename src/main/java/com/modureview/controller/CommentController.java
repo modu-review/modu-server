@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class CommentController {
 
+
   private final UserService userService;
   private final CommentService commentService;
-
 
 
   @PostMapping("/reviews/{reviewId}/comments")
@@ -74,7 +75,7 @@ public class CommentController {
 
 
           String profileImage = Optional.ofNullable(user.getProfile())
-              .orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
+              .orElse("https://cdn.modu-review.com/no-profileImage.png");
           return CommentDetailResponse.of(comment, profileImage);
         })
         .toList();

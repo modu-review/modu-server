@@ -20,6 +20,10 @@ import org.springframework.beans.factory.annotation.Value;
 @Builder
 @Getter
 public class BoardImage {
+/*
+  @Value("${custom.image.url}")
+  private String cdnUrl;*/
+
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +46,7 @@ public class BoardImage {
   }
 
   public String getFullImageUrl() {
-    return "https://d1izijuzr22yly.cloudfront.net/" + this.uuid;
+    return "https://cdn.modu-review.com/" + this.uuid;
   }
 }
 

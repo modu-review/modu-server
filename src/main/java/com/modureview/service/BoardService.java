@@ -57,7 +57,8 @@ public class BoardService {
   @Value("${custom.default.image.url}")
   private String defaultImageUrl;
 
-  private String cndUrl = "https://d1izijuzr22yly.cloudfront.net/";
+  @Value("${custom.image.url}")
+  private String cdnUrl;
 
   public void findBoard(Long boardId) {
     if (boardRepository.findById(boardId).isEmpty()) {
@@ -75,7 +76,7 @@ public class BoardService {
         .board_id(findBoard.getId())
         .title(findBoard.getTitle())
         .category(findBoard.getCategory())
-        .profile_image(Optional.ofNullable(user.getProfile()).orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png"))
+        .profile_image(Optional.ofNullable(user.getProfile()).orElse(cdnUrl + "no-profileImage.png"))
         .author_nickname(findBoard.getNickname())
         .created_at(findBoard.getCreatedAt())
         .content(findBoard.getContent())
@@ -140,7 +141,7 @@ public class BoardService {
   @Transactional
   public void saveBoard(BoardSaveRequest request,String nickname, List<String> imageUuids) {
     User user = userRepository.findByNickname(nickname).get();
-    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cdnUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
     try {
@@ -221,7 +222,7 @@ public class BoardService {
   @Transactional
   public void updateBoard(BoardSaveRequest request, String nickname, List<String> imageUuids, Long boardId) {
     User user = userRepository.findByNickname(nickname).get();
-    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cndUrl + imageUuids.get(0);
+    String thumbnail = imageUuids.isEmpty() ? defaultImageUrl : cdnUrl + imageUuids.get(0);
     String plainText = Jsoup.parse(request.content()).text();
     String preview;
     try {
