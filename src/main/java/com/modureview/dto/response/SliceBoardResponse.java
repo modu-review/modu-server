@@ -5,6 +5,7 @@ import com.modureview.entity.Board;
 import com.modureview.entity.Category;
 import java.time.LocalDateTime;
 import lombok.Builder;
+import org.springframework.beans.factory.annotation.Value;
 
 @Builder
 public record SliceBoardResponse(
@@ -24,6 +25,7 @@ public record SliceBoardResponse(
 
   public static SliceBoardResponse fromEntity(Board board) {
 
+
     return SliceBoardResponse.builder()
         .board_id(board.getId())
         .title(board.getTitle())
@@ -33,7 +35,7 @@ public record SliceBoardResponse(
         .preview(board.getPreview())
         .comments_count(board.getCommentsCount())
         .bookmarks(board.getBookmarksCount())
-        .image_url(board.getImages().isEmpty()?  "https://d1izijuzr22yly.cloudfront.net/no-thumbnail.png": board.getImages().get(0).getFullImageUrl())
+        .image_url(board.getImages().isEmpty()?  "https://cdn.modu-review.com/no-thumbnail.png": board.getImages().get(0).getFullImageUrl())
         .build();
   }
 

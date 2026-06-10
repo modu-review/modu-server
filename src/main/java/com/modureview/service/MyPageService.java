@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 @RequiredArgsConstructor
 public class MyPageService {
+
+  @Value("${custom.image.url}")
+  private String cdnUrl;
 
   private final UserRepository userRepository;
   private final MyPageRepository myPageRepository;
@@ -83,7 +87,7 @@ public class MyPageService {
     String extension = StringUtils.getFilenameExtension(originalFilename);
     String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
     log.info("생성된 고유 파일명: {}", uniqueFileName);
-    String imageUrl = "https://d1izijuzr22yly.cloudfront.net/profile-images/" + uniqueFileName;
+    String imageUrl = cdnUrl + "/profile-images/" + uniqueFileName;
 
     try {
       s3UploadService.upload(file, PROFILE_IMAGE_DIR, uniqueFileName);
@@ -140,12 +144,12 @@ public class MyPageService {
   public String getProfileImage(String nickname) {
     return userRepository.findByNickname(nickname)
         .map(User::getProfile)
-        .orElse("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
+        .orElse(cdnUrl + "no-profileImage.png");
   }
 
   public void deleteProfileImage(String email) {
     userRepository.findByEmail(email).ifPresent(user -> {
-      user.updateProfileImageUrl("https://d1izijuzr22yly.cloudfront.net/no-profileImage.png");
+      user.updateProfileImageUrl(cdnUrl+ "no-profileImage.png");
     });
   }
 }

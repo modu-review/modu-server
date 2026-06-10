@@ -23,6 +23,9 @@ public class S3UploadService {
 
   private final S3Client s3Client;
 
+  @Value("${custom.image.url}")
+  private String cdnUrl;
+
   @Value("${aws.bucket}")
   private String bucket;
 
@@ -49,22 +52,54 @@ public class S3UploadService {
   }
 
 
-  public void deleteImage(String fileUrl) {
-    if (!StringUtils.hasText(fileUrl)) {
-      return;
-    }
-    try {
-      String key = fileUrl.substring(fileUrl.indexOf(bucket + "/") + bucket.length() + 1);
-
-      DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-          .bucket(bucket)
-          .key(key)
-          .build();
-
-      s3Client.deleteObject(deleteObjectRequest);
-      log.info("S3 파일 삭제 성공: {}", key);
-    } catch (Exception e) {
-      log.error("S3 파일 삭제 중 오류 발생. URL: {}", fileUrl, e);
-    }
+//  public void deleteImage(String fileUrl) {
+//    if (!StringUtils.hasText(fileUrl)) {
+//      return;
+//    }
+//    try {
+//      String key = fileUrl.substring(fileUrl.indexOf(bucket + "/") + bucket.length() + 1);
+//
+//      DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+//          .bucket(bucket)
+//          .key(key)
+//          .build();
+//
+//      s3Client.deleteObject(deleteObjectRequest);
+//      log.info("S3 파일 삭제 성공: {}", key);
+//    } catch (Exception e) {
+//      log.error("S3 파일 삭제 중 오류 발생. URL: {}", fileUrl, e);
+//    }
+//  }
+public void deleteImage(String fileUrl) {
+  if (!StringUtils.hasText(fileUrl)) {
+    return;
   }
+  try {
+    String key;
+
+    if (fileUrl.startsWith(cdnUrl)) {
+      key = fileUrl.substring(cdnUrl.length());
+    }
+
+    else if (fileUrl.contains(bucket + "/")) {
+      key = fileUrl.substring(fileUrl.indexOf(bucket + "/") + bucket.length() + 1);
+    }
+
+    else {
+      java.net.URI uri = new java.net.URI(fileUrl);
+      String path = uri.getPath();
+      key = path.startsWith("/") ? path.substring(1) : path;
+    }
+
+    DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+        .bucket(bucket)
+        .key(key)
+        .build();
+
+    s3Client.deleteObject(deleteObjectRequest);
+    log.info("S3 파일 삭제 성공: {}", key);
+  } catch (Exception e) {
+    log.error("S3 파일 삭제 중 오류 발생. URL: {}", fileUrl, e);
+  }
+}
 }
